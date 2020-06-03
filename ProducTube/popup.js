@@ -34,3 +34,6 @@ var display = function(block_name, title) {
   $('#freq').on('click', function() {
     display('freqBlock', $(this));
   });
+
+  /*COPIED CODE*/
+  

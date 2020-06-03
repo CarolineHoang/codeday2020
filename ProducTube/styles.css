@@ -29,14 +29,14 @@
 }
 
 .sectionHeader{
-  background: none repeat scroll 0 0 #ffffff;
-  font-size: 0.8rem;
+  background: none repeat scroll 0 0 #f10000;
+  color: white;
+  font: bold 0.8rem courier;
   margin: 0 auto;
   position: relative;
   text-align: center;
   text-transform: uppercase;
 }
-
 
 .middleBlock {
   display:flex;
@@ -69,6 +69,12 @@
 
 label {
   display: block;
+  background-image:url('https://cdn.bitdegree.org/learn/search-icon.png?229dfb2d');
+  background-position: 9px 10px;
+  background-size: 10px;
+  background-position: 3px 3px;
+  background-repeat: no-repeat;
+  padding-left: 20px;  
   width:180 rem;
   font: 1rem 'Fira Sans', sans-serif;
 }
@@ -77,3 +83,19 @@ input,
 label {
   margin: .4rem 0;
 }
+input[type=text2] {
+  background-image: url('plus.png');
+  background-size: 1rem;
+  background-position: .3rem .1rem;
+  background-repeat: no-repeat;
+  padding-left: 2rem;  
+}
+input[type=submit] {
+  background-color: #c4302b;
+  border: none;
+  color: white;
+  padding: 0.1rem 0.2rem;
+  text-decoration: none;
+  margin: 0.5rem 0.4rem; 
+}
+
