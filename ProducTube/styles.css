@@ -44,11 +44,12 @@
   flex-direction: column;
   height: 10.0rem;
   padding: 0.05rem 0.05rem;
-  background: red;
+  background: #f9b9b9;
 }
 .middleBlock h3 {
   font: small-caps bold .8 rem sans-serif;
   text-align: left;
+  line-height:0px;
 }
 .middleBlock p {
   font: .5rem sans-serif;
@@ -68,6 +69,7 @@
 
 label {
   display: block;
+  width:180 rem;
   font: 1rem 'Fira Sans', sans-serif;
 }
 
