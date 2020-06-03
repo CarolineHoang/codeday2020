@@ -17,7 +17,7 @@
   float: left;
   color: #000202;
   text-align: center;
-  padding: 1.4rem 1.6rem;
+  padding: 0.5rem 1.5rem;
   text-decoration: none;
   font-size: 0.55rem;
 }
@@ -31,7 +31,6 @@
 .sectionHeader{
   background: none repeat scroll 0 0 #ffffff;
   font-size: 0.8rem;
- 
   margin: 0 auto;
   position: relative;
   text-align: center;
@@ -40,8 +39,39 @@
 
 
 .middleBlock {
-  
-  height: 3.5rem;
-  padding: 2.5rem 8.5rem;
+  display:flex;
+  margin: 0 auto;
+  flex-direction: column;
+  height: 10.0rem;
+  padding: 0.05rem 0.05rem;
   background: red;
+}
+.middleBlock h3 {
+  font: small-caps bold .8 rem sans-serif;
+  text-align: left;
+}
+.middleBlock p {
+  font: .5rem sans-serif;
+  text-align: left;
+}
+/* .middleBlock .Description{
+  float:left
+  top: 5rem;
+  height: 1.5rem;
+  text-align: left;
+  left: 0px;
+  margin: 0.21rem;
+  padding: 0.1rem;
+  font-size: 0.5rem;
+  background-color: #133A5D;
+} */
+
+label {
+  display: block;
+  font: 1rem 'Fira Sans', sans-serif;
+}
+
+input,
+label {
+  margin: .4rem 0;
 }

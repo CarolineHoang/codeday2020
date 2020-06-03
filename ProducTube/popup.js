@@ -24,13 +24,13 @@ var display = function(block_name, title) {
   }
   
   $('#timer').on('click', function() {
-    display('firstBlock', $(this));
+    display('timeBlock', $(this));
   });
   
   $('#list').on('click', function() {
-    display('secondBlock', $(this));
+    display('listBlock', $(this));
   });
   
   $('#freq').on('click', function() {
-    display('thirdBlock', $(this));
+    display('freqBlock', $(this));
   });

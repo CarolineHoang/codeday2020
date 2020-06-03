@@ -22,28 +22,27 @@
         </div>
         <div class="midSection sections" >
             
-            <div id="firstBlock" class="middleBlock" style = "display:none;">
-              <div class="firstBlockContent leftblock">
-                <h3>"subscribe"<br>"to blah" </h3>
-              </div>
-          
-            </div>
-            <div id="secondBlock" class="middleBlock" style="background:blue; display:none;">
-              <div class="secondBlockContent leftblock">
-                <h3>"subscribe"<br>"to blah"</h3>
-              </div>
-          
-            </div>
-            <div id="thirdBlock" class="middleBlock" style="background:lightgreen; display:none;">
-              <div class="secondBlockContent leftblock">
-                <h3>"subscribe"<br>"to blah"</h3>
-              </div>
-          
+            <div id="timeBlock" class="middleBlock" style = "display:none;">
+                <h3 >"Focus Mode Timer"</h3>
+                <p>"When active, videos tagged with your NoNo Keywords will be shamed"</p> 
             </div>
           
+            <div id="listBlock" class="middleBlock" style="background:blue; display:none;">
+                <h3>"Nono Keywords List"</h3>
+                <p>"Shame alert if you watch videos with these keywords"</p>
+                <label for="key">Keyword:</label>
+                <input type="text" id="key" name="key" required minlength="3" maxlength="15" size="10">
+                <h3>"Keywords List"</h3>
+            </div>
           
-          </div>
-
+            <div id="freqBlock" class="middleBlock" style="background:lightgreen; display:none;">
+              
+                <h3>"Most Frequent Keywords"</h3>
+                <p>"These are your most frequented video keywords both in focus and out of focus mode. Consider adding some to your Nono list!"</p>
+              
+            </div>
+          
+        </div> 
         <button>Show Videos</button>
         <script src="popup.js" charset="utf-8"  ></script>
     </div>
