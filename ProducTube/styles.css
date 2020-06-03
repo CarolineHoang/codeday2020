@@ -1,0 +1,47 @@
+  .popup {
+    padding:0px;
+    margin:0px;
+    background-color: #FFF;
+    height: 15rem;
+    width:20rem;
+    overflow: hidden;
+  }
+
+.topnav {
+  background-color: #B9F9F9;
+  overflow: hidden;
+}
+
+/* Style the links inside the navigation bar */
+.topnav a {
+  float: left;
+  color: #000202;
+  text-align: center;
+  padding: 1.4rem 1.6rem;
+  text-decoration: none;
+  font-size: 0.55rem;
+}
+
+/* Change the color of links on hover */
+.topnav a:hover {
+  background-color: #b9d9f9;
+  color: black;
+}
+
+.sectionHeader{
+  background: none repeat scroll 0 0 #ffffff;
+  font-size: 0.8rem;
+ 
+  margin: 0 auto;
+  position: relative;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+
+.middleBlock {
+  
+  height: 3.5rem;
+  padding: 2.5rem 8.5rem;
+  background: red;
+}

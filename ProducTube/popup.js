@@ -13,3 +13,24 @@ document.addEventListener('DOMContentLoaded', function(){
         document.body.appendChild(div)
     }
 }, false)
+var display = function(block_name, title) {
+    // Toogle Block
+    $('.middleBlock').css('display', 'none');
+    $('#' + block_name + '').css('display', 'block');
+  
+    // Change Title Color
+    $('.menu').removeClass('active');
+    $(title).addClass('active');
+  }
+  
+  $('#timer').on('click', function() {
+    display('firstBlock', $(this));
+  });
+  
+  $('#list').on('click', function() {
+    display('secondBlock', $(this));
+  });
+  
+  $('#freq').on('click', function() {
+    display('thirdBlock', $(this));
+  });
