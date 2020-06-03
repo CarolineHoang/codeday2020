@@ -90,7 +90,7 @@ input[type=text2] {
   background-repeat: no-repeat;
   padding-left: 2rem;  
 }
-input[type=submit] {
+button[type=submit] {
   background-color: #c4302b;
   border: none;
   color: white;
