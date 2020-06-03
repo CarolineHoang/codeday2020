@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function(){
     }
     function setCount (res) {
         const div = document.createElement('div')
-        div.textContent = `${res.count} instances`
+        div.textContent = `${res.count} instances:: ${res.divContent}`
         document.body.appendChild(div)
     }
 }, false)
