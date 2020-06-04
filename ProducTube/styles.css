@@ -12,13 +12,13 @@
   overflow: hidden;
 }
 
-
 /* Style the links inside the navigation bar */
 .topnav a {
+  cursor: pointer;
   float: left;
   color: #000202;
   text-align: center;
-  padding: 0.45rem 1.36rem;
+  padding: 0.45rem 1.5rem;
   text-decoration: none;
   font-size: 0.55rem;
   text-transform: uppercase;
@@ -29,8 +29,9 @@
   background-color: #ff6666;
   color: black;
 }
-
-
+.color_change{
+  background-color: #ffe5e5
+}
 
 .sectionHeader{
   background: none repeat scroll 0 0 #f10000;
@@ -39,7 +40,7 @@
   margin: 0 auto;
   position: relative;
   text-align: center;
-  /* text-transform: uppercase; */
+  
 }
 
 .middleBlock {
@@ -52,44 +53,19 @@
 }
 .middleBlock h3 {
   font: small-caps bold .8 rem sans-serif;
-  text-align: left;
-  line-height:0px;
+  text-align: center;
+  line-height:0rem;
 }
 .middleBlock p {
   font: .8 rem sans-serif;
+  line-height: 1rem;
   text-align: left;
 }
-/* .middleBlock .Description{
-  float:left
-  top: 5rem;
-  height: 1.5rem;
-  text-align: left;
-  left: 0px;
-  margin: 0.21rem;
-  padding: 0.1rem;
-  font-size: 0.5rem;
-  background-color: #133A5D;
-} */
+
 #listBlock{
   overflow-y:auto;
 } 
 
-label {
-  display: block;
-  background-image:url('https://cdn.bitdegree.org/learn/search-icon.png?229dfb2d');
-  background-position: 9px 10px;
-  background-size: 10px;
-  background-position: 3px 3px;
-  background-repeat: no-repeat;
-  padding-left: 20px;  
-  width:180 rem;
-  font: 1rem 'Fira Sans', sans-serif;
-}
-
-input,
-label {
-  margin: .4rem 0;
-}
 input[type=text2] {
   background-image: url('plus.png');
   background-size: 1rem;
@@ -108,41 +84,35 @@ input[type=text2] {
 }
  /* Style the list items */
  ul li {
-  cursor: pointer;
+  
   position: relative;
-  margin: .12rem .12rem .12rem .12rem;
-  padding: 0.8rem 1.6rem 1.2rem 2.0rem;
+  margin: .12rem .12rem .12rem .12rem; /*  0rem 0rem 0rem 0rem; */
+  padding: 0.8rem 1.6rem 1.0rem 2.0rem;
   list-style-type: none;
   background: #fff;
   font-size: 1.0 rem;
   transition: 0.2s;
-
-
-  /* make the list items unselectable */
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
+  list-style-position:inside;
+  border: 1px solid gray;
 }
- /* Darker background-color on hover */
+ /* Lighter background-color on hover */
  ul li:hover {
-  background: #d451e6;
+  background: #ff9b9b;
   color:#fff;
 }
 
-/* When clicked on, add a background color and strike out text */
-/* ul li.checked {
-  background: #464788;
-  color: #fff;
-  text-decoration: line-through;
-} */
-
 /* Style the close button */
 .close {
+  border-left: .065rem solid rgb(0, 0, 0);
   position: absolute;
   right: 0;
   top: 0;
-  padding: 0.8rem 1.6rem 1.2rem 1.6rem;
+  padding: 0.8rem 1.6rem 1.0rem 1.6rem;
+  background-color: #f44336;
+  color: white;
+  cursor: pointer;
+
+
 }
 
 .close:hover {

@@ -14,15 +14,13 @@ document.addEventListener('DOMContentLoaded', function(){
         document.body.appendChild(div)
     }
 }, false)
-
+/*Toggle Content and Navbar Color Changing Code*/
 var display = function(block_name, title) {
     // Toogle Middle Block Content 
     $('.middleBlock').css('display', 'none');
+    
     $('#' + block_name + '').css('display', 'block');
   
-    /* // Change Title Color
-    $('.navbar').removeClass('active');
-    $(title).addClass('active'); */
   }
   
   $('#timer').on('click', function() {
@@ -36,24 +34,13 @@ var display = function(block_name, title) {
   $('#freq').on('click', function() {
     display('freqBlock', $(this));
   });
-  
-  /* var menu_change = function(menu_name, title) {
-    // Toogle Menu
-    $('.topnav').css('background-color', '#ffe5e5');   
-    $('#' + menu_name + '' +' .a').css('background-color', '#ff6666');
-  }
-  
-  $('#timer').on('click', function() {
-    menu_change('timer', $(this));
-  });
-  
-  $('#list').on('click', function() {
-    menu_change('list', $(this));
-  });
-  
-  $('#freq').on('click', function() {
-    menu_change('freq', $(this));
-  }); */
+
+  $('.color_change').click(function(e){
+    $('.color_change').css("background-color", "#ffe5e5");
+    $('.color_change').css("color", "black");
+    $(this).css("background-color", "#ff6666");
+    $(this).css("color", "white");
+});
 
 /*Add Keywords*/
 var x = 0;
@@ -84,7 +71,7 @@ function add_element_to_array()
     else{
         key_words.push(key); 
         alert("Keyword: " + key + " added");
-        console.log(key+ "added");
+        console.log(key+ " added");
         x++;
         document.getElementById("text1").value = "";
         chrome.storage.sync.set({
