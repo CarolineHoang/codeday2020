@@ -58,18 +58,99 @@ var display = function(block_name, title) {
 /*Add Keywords*/
 var x = 0;
 var key_words = new Array();
+
 chrome.storage.sync.get(['words'], function (val) {
     if (val.words.length > 0){
         key_words = val.words;
         x = val.words.length
+        show_list()
     }
-        
     
     console.log("val.words :" + val.words);
     //displaying the old items
-    display_array()
+    // display_array()
 })
 
+function add_element_to_array()
+{
+    
+    var key = document.getElementById("text1").value;
+
+    if(key == "")
+    {
+        alert("No text entered!");
+
+    }
+    else{
+        key_words.push(key); 
+        alert("Keyword: " + key + " added");
+        console.log(key+ "added");
+        x++;
+        document.getElementById("text1").value = "";
+        chrome.storage.sync.set({
+            'words': key_words
+        })
+        var list = document.getElementById("keys-list");
+
+        addUI(list, key)    
+    }
+
+}
+function show_list(){
+    for (var i = 0; i < key_words.length;i++){
+        document.getElementById("text1").value = "";
+        var old_list = document.getElementById("keys-list");
+        addUI(old_list, key_words[i])  
+    } 
+    
+}
+function addUI(ul, value) {
+    var li = document.createElement("li");
+    $("li").addClass("list-group-item");
+    li.appendChild(document.createTextNode(value));
+
+    if (value === '') {
+        //do nothing
+        //alert("You must write something!");
+    } else {
+        ul.appendChild(li);
+    }
+    var span = document.createElement("SPAN");
+    var txt = document.createTextNode("\u00D7");
+    
+        span.className = "close";
+        span.appendChild(txt);
+        li.appendChild(span);
+
+        $(".close").click(function () {
+            var index = $(this).index(".close");
+
+            console.log(index);
+            var div = this.parentElement;
+            div.style.display = "none";
+            removeItem(index);
+            $(".close").eq(index).remove();
+
+        })
+    }
+
+    function removeItem(itemIndex) {
+        console.log("Removed word");
+        chrome.storage.sync.get(['words'], function (val) {
+            key_words = val.words;
+            key_words.splice(itemIndex, 1);
+            console.log("updated list", key_words)
+
+            chrome.storage.sync.set({
+                'words': key_words
+            })
+
+        })
+
+    }
+
+/* 
+WORKING
 function add_element_to_array()
 {
     key_words[x] = document.getElementById("text1").value;
@@ -99,35 +180,14 @@ function display_array()
      e += "" + (y+1) + ". " + key_words[y] + "<br/>";
    }
    document.getElementById("Result").innerHTML = e;
-}
+} */
 document.addEventListener('keypress', function (e) {
     if (e.key === 'Enter') {
         add_element_to_array();
-        display_array();
+        // display_array();
       }
 })
 
 document.getElementById("add").addEventListener("click", add_element_to_array);
-document.getElementById("add").addEventListener("click", display_array);
+// document.getElementById("add").addEventListener("click", display_array);
 
-/* chrome.storage.local.get({keyWords: []}, function (result) {
-    // the input argument is ALWAYS an object containing the queried keys
-    // so we select the key we need
-    var userKeyIds = result.keyWords;
-    userKeyIds.push({keyPairId: keyPairId, HasBeenUploadedYet: false});
-    // set the new array value to the same key
-    chrome.storage.local.set({userKeyIds: userKeyIds}, function () {
-        // you can use strings instead of objects
-        // if you don't  want to define default values
-        chrome.storage.local.get('userKeyIds', function (result) {
-            console.log(result.userKeyIds)
-        });
-    });
-}); */
-
-
-// document.getElementById("button2").addEventListener("click", display_array);
-/* 
-function myFunction(){
-  console.log('asd');
-} */

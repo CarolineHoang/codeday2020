@@ -97,12 +97,56 @@ input[type=text2] {
   background-repeat: no-repeat;
   padding-left: 2rem;  
 }
-button[type=submit] {
+#add {
+  cursor: pointer;
   background-color: #c4302b;
   border: none;
   color: white;
   padding: 0.1rem 0.2rem;
   text-decoration: none;
   margin: 0.5rem 0.4rem; 
+}
+ /* Style the list items */
+ ul li {
+  cursor: pointer;
+  position: relative;
+  margin: .12rem .12rem .12rem .12rem;
+  padding: 0.8rem 1.6rem 1.2rem 2.0rem;
+  list-style-type: none;
+  background: #fff;
+  font-size: 1.0 rem;
+  transition: 0.2s;
+
+
+  /* make the list items unselectable */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+ /* Darker background-color on hover */
+ ul li:hover {
+  background: #d451e6;
+  color:#fff;
+}
+
+/* When clicked on, add a background color and strike out text */
+/* ul li.checked {
+  background: #464788;
+  color: #fff;
+  text-decoration: line-through;
+} */
+
+/* Style the close button */
+.close {
+  position: absolute;
+  right: 0;
+  top: 0;
+  padding: 0.8rem 1.6rem 1.2rem 1.6rem;
+}
+
+.close:hover {
+  background-color: #f44336;
+  color: white;
 }
 
