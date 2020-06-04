@@ -8,25 +8,29 @@
   }
 
 .topnav {
-  background-color: #B9F9F9;
+  background-color: #ffe5e5;
   overflow: hidden;
 }
+
 
 /* Style the links inside the navigation bar */
 .topnav a {
   float: left;
   color: #000202;
   text-align: center;
-  padding: 0.5rem 1.5rem;
+  padding: 0.45rem 1.36rem;
   text-decoration: none;
   font-size: 0.55rem;
+  text-transform: uppercase;
 }
 
 /* Change the color of links on hover */
 .topnav a:hover {
-  background-color: #b9d9f9;
+  background-color: #ff6666;
   color: black;
 }
+
+
 
 .sectionHeader{
   background: none repeat scroll 0 0 #f10000;
@@ -35,7 +39,7 @@
   margin: 0 auto;
   position: relative;
   text-align: center;
-  text-transform: uppercase;
+  /* text-transform: uppercase; */
 }
 
 .middleBlock {
@@ -44,7 +48,7 @@
   flex-direction: column;
   height: 10.0rem;
   padding: 0.05rem 0.05rem;
-  background: #f9b9b9;
+  
 }
 .middleBlock h3 {
   font: small-caps bold .8 rem sans-serif;
@@ -52,7 +56,7 @@
   line-height:0px;
 }
 .middleBlock p {
-  font: .5rem sans-serif;
+  font: .8 rem sans-serif;
   text-align: left;
 }
 /* .middleBlock .Description{
@@ -66,6 +70,9 @@
   font-size: 0.5rem;
   background-color: #133A5D;
 } */
+#listBlock{
+  overflow-y:auto;
+} 
 
 label {
   display: block;

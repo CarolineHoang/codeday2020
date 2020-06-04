@@ -8,7 +8,7 @@
     </head>
     <body>
         <script type="text/javascript" src = "https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-        
+        <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script> -->
 
         <div class = "popup">
         <div class="sectionHeader">ProducTube</div>
@@ -16,27 +16,23 @@
         <div class="topnav">
             
             <div id ="timer"><a href="#home">Timer</a></div>
-            <div id ="list" ><a href="#news">Nono Keywords</a></div>
-            <div id ="freq" ><a href="#contact">Frequent Keywords</a></div>
+            <div id ="list"><a href="#news">Nono Keywords</a></div>
+            <div id ="freq"><a href="#contact">Frequent Keywords</a></div>
         
         </div>
         <div class="midSection sections" >
             
             <div id="timeBlock" class="middleBlock" style = "display:none;">
                 <h3 >Focus Mode Timer</h3> <p>When active, videos tagged with your NoNo Keywords will be shamed</p> 
-                <!-- <input type="text" id="text1"></input>
-                <button id="button1">Add</button>
-                <button id="button2">Display</button>
-               
-                <div id="Result"></div>  -->
+                
             </div>
             
-            <div id="listBlock" class="middleBlock" style="background:#e8fdfd; display:none;">
+            <div id="listBlock" class="middleBlock" style="display:none;">
                 <h3>Nono Keywords List</h3>
                 <p>Shame alert if you watch videos with these keywords</p>
                 Add here:
                 <input type="text2" id="text1"></input>
-                <button id="button1">Add</button>
+                <button id="add">Add</button>
                 <!-- <button id="button2">Display</button> -->
                 <h3>Keywords List</h3>
                 <div id="Result"></div> 
@@ -47,7 +43,7 @@
                 <div id="Result"></div> --> 
             </div>
           
-            <div id="freqBlock" class="middleBlock" style="background:#b9f9b9; display:none;">
+            <div id="freqBlock" class="middleBlock" style="display:none;">
               
                 <h3>Most Frequent Keywords</h3>
                 <p>These are your most frequented video keywords both in focus and out of focus mode. Consider adding some to your Nono list!</p>
