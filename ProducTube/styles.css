@@ -27,7 +27,7 @@
 /* Change the color of links on hover */
 .topnav a:hover {
   background-color: #ff6666;
-  color: black;
+  color: white;
 }
 .color_change{
   background-color: #ffe5e5
@@ -67,13 +67,13 @@
 } 
 
 input[type=text2] {
-  background-image: url('plus.png');
+  background-image: url('rplus.png');
   background-size: 1rem;
-  background-position: .3rem .1rem;
+  background-position: .1rem .1rem;
   background-repeat: no-repeat;
-  padding-left: 2rem;  
+  padding-left: 1.5rem;  
 }
-#add {
+/* #add {
   cursor: pointer;
   background-color: #c4302b;
   border: none;
@@ -81,7 +81,7 @@ input[type=text2] {
   padding: 0.1rem 0.2rem;
   text-decoration: none;
   margin: 0.5rem 0.4rem; 
-}
+} */
  /* Style the list items */
  ul li {
   

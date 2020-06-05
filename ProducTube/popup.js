@@ -103,6 +103,7 @@ function addUI(ul, value) {
         ul.appendChild(li);
     }
     var span = document.createElement("SPAN");
+    // span.style.fontSize = "0.75rem";
     var txt = document.createTextNode("\u00D7");
     
         span.className = "close";
@@ -117,9 +118,12 @@ function addUI(ul, value) {
             div.style.display = "none";
             removeItem(index);
             $(".close").eq(index).remove();
+            //CALL OTHER FUNCTION
 
         })
     }
+    
+
 
     function removeItem(itemIndex) {
         console.log("Removed word");
