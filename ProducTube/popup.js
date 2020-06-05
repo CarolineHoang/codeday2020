@@ -44,16 +44,33 @@ var display = function(block_name, title) {
 
 /*Add Keywords*/
 var x = 0;
-var key_words = new Array();
+var block_words = new Array();
+var visited = {}; 
 
-chrome.storage.sync.get(['words'], function (val) {
-    if (val.words.length > 0){
-        key_words = val.words;
-        x = val.words.length
+var visited = {   "Musical":{
+    "total_freq": 1,
+    "session_freq": 0,
+    "first_occur": Date.now(),
+    "lastest_occur": null,
+    "wordID":0
+    },
+"really":{
+    "total_freq": 1,
+    "session_freq": 0,
+    "first_occur": Date.now(),
+    "lastest_occur": null,
+    "wordID":1
+    }
+}; 
+
+chrome.storage.sync.get(['session_block'], function (val) {
+    if (val.session_block.length > 0){
+        block_words = val.session_block;
+        x = val.session_block.length
         show_list()
     }
     
-    console.log("val.words :" + val.words);
+    console.log("val.words :" + val.session_block);
     //displaying the old items
     // display_array()
 })
@@ -69,13 +86,13 @@ function add_element_to_array()
 
     }
     else{
-        key_words.push(key); 
+        block_words.push(key); 
         alert("Keyword: " + key + " added");
         console.log(key+ " added");
         x++;
         document.getElementById("text1").value = "";
         chrome.storage.sync.set({
-            'words': key_words
+            'session_block': block_words
         })
         var list = document.getElementById("keys-list");
 
@@ -84,10 +101,10 @@ function add_element_to_array()
 
 }
 function show_list(){
-    for (var i = 0; i < key_words.length;i++){
+    for (var i = 0; i < block_words.length;i++){
         document.getElementById("text1").value = "";
         var old_list = document.getElementById("keys-list");
-        addUI(old_list, key_words[i])  
+        addUI(old_list, block_words[i])  
     } 
     
 }
@@ -127,13 +144,13 @@ function addUI(ul, value) {
 
     function removeItem(itemIndex) {
         console.log("Removed word");
-        chrome.storage.sync.get(['words'], function (val) {
-            key_words = val.words;
-            key_words.splice(itemIndex, 1);
-            console.log("updated list", key_words)
+        chrome.storage.sync.get(['session_block'], function (val) {
+            block_words = val.words;
+            block_words.splice(itemIndex, 1);
+            console.log("updated list", block_words)
 
             chrome.storage.sync.set({
-                'words': key_words
+                'session_block': block_words
             })
 
         })
@@ -182,3 +199,121 @@ document.addEventListener('keypress', function (e) {
 document.getElementById("add").addEventListener("click", add_element_to_array);
 // document.getElementById("add").addEventListener("click", display_array);
 
+/*Building out Frequency List*/ 
+chrome.storage.sync.set({
+    "keywords": {   "Musical":{
+        "total_freq": 1,
+        "session_freq": 0,
+        "first_occur": Date.now(),
+        "lastest_occur": null,
+        "wordID":0
+        },
+    "really":{
+        "total_freq": 1,
+        "session_freq": 0,
+        "first_occur": Date.now(),
+        "lastest_occur": null,
+        "wordID":1
+        }
+    },
+
+}, function() {
+    console.log('Filler');
+  });
+  /* console.log(allwords)
+  console.log("testing") */
+  chrome.storage.sync.get(['keywords'], function (val) {
+    if (val.keywords.length > 0){
+        visited = val.keywords;
+        show_freqlist()
+        consolee.log("Values are set")
+    }
+    
+    console.log("val.freqwords :" + val.keywords);
+    //displaying the old items
+    // display_array()
+})
+show_freqlist()
+
+  function show_freqlist(){
+    var freq_list = document.getElementById("freq-list");
+
+    for(let key in visited){
+
+        if(visited.hasOwnProperty(key))
+        {
+            var li = document.createElement("li");
+            $("li").addClass("flist-group");
+            info = visited[key];
+            // console.log(key,info);
+            let word_info = "<" +key + ">"
+            for(let key in info){
+                if(info.hasOwnProperty(key)){
+                    value = info[key];
+                    word_info += "" +key + ": " + value + " | ";
+                    //console.log(key,value);
+                }
+                
+            }
+            li.appendChild(document.createTextNode(word_info));
+
+            if (word_info === '') {
+                //do nothing
+                //alert("You must write something!");
+            } else {
+                freq_list.appendChild(li);
+            }
+
+            
+
+        }
+    }
+
+    // for(int i =0; i<keys.lengt(); ++i){
+    //     var freq_list = document.getElementById("freq-list");
+    //     addfreqUI(freq_list, allwords.getString(keys))
+    //     console.log("In here")
+    // }
+    
+}
+  
+
+/* function show_list(){
+    for (var i = 0; i < key_words.length;i++){
+        document.getElementById("text1").value = "";
+        var old_list = document.getElementById("keys-list");
+        addUI(old_list, key_words[i])  
+    } 
+    
+}
+function addUI(ul, value) {
+    var li = document.createElement("li");
+    $("li").addClass("list-group-item");
+    li.appendChild(document.createTextNode(value));
+
+    if (value === '') {
+        //do nothing
+        //alert("You must write something!");
+    } else {
+        ul.appendChild(li);
+    }
+    var span = document.createElement("SPAN");
+    // span.style.fontSize = "0.75rem";
+    var txt = document.createTextNode("\u00D7");
+    
+        span.className = "close";
+        span.appendChild(txt);
+        li.appendChild(span);
+
+        $(".close").click(function () {
+            var index = $(this).index(".close");
+
+            console.log(index);
+            var div = this.parentElement;
+            div.style.display = "none";
+            removeItem(index);
+            $(".close").eq(index).remove();
+            //CALL OTHER FUNCTION
+
+        })
+    } */

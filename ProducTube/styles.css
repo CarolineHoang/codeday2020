@@ -65,7 +65,9 @@
 #listBlock{
   overflow-y:auto;
 } 
-
+#freqBlock{
+  overflow-y:auto;
+} 
 input[type=text2] {
   background-image: url('rplus.png');
   background-size: 1rem;
