@@ -171,30 +171,10 @@ function add_block()
 
 }
 
-/* for(let key in sessionStorageKeys){
-
-    if(sessionStorageKeys.hasOwnProperty(key))
-    {
-        info = sessionStorageKeys[key];
-        // console.log(key,info);
-        let word_info = "<" +key + ">"
-        for(let key in info){
-            if(info.hasOwnProperty(key)){
-                value = info[key];
-                word_info += "" +key + ": " + value + " | ";
-                //console.log(key,value);
-            }
-            
-        }        
-
-    }
-} */
-
-
 function show_list(){
     var list = document.getElementById("keys-list");
         for(let key in storageKeys){
-            console.log("Keyword: " + key)
+            //console.log("Keyword: " + key)
             if(storageKeys.hasOwnProperty(key))
             {
                 
@@ -205,7 +185,7 @@ function show_list(){
                     if(info.hasOwnProperty(key)){
                         value = info[key];
                         word_info += "" +key + ": " + value + " | ";
-                        console.log("Property: "+ key,value);
+                        //console.log("Property: "+ key,value);
                     }
                     
                 }
@@ -214,34 +194,7 @@ function show_list(){
             addUI(list, key)
             
         }
-    /* for(let key in storageKeys){
-        document.getElementById("text1").value = "";
-        var old_list = document.getElementById("keys-list");
-        if(storageKeys.hasOwnProperty(key))
-        {
-            info = storageKeys[key];
-            // console.log(key,info);
-            let word_info = "<" +key + ">"
-            for(let key in info){
-                if(info.hasOwnProperty(key)){
-                    value = info[key];
-                    word_info += "" +key + ": " + value + " | ";
-                    console.log(key,value);
-                }
-                
-            }        
     
-        }
-        addUI(old_list, key)
-
-     for (var i = 0; i < storageKeys.length;i++){
-        document.getElementById("text1").value = "";
-        var old_list = document.getElementById("keys-list");
-        console.log("Showing List index "+ storageKeys[i] )
-        addUI(old_list, storageKeys[i])  
-    }  
-    
-} */
 }
 function addUI(ul, value) {
     var li = document.createElement("li");
@@ -265,85 +218,47 @@ function addUI(ul, value) {
         $(".close").click(function () {
             var index = $(this).index(".close");
 
-            console.log(index);
+            //console.log(index);
             var div = this.parentElement;
             div.style.display = "none";
-            removeItem(index);
+            //console.log("Value here" + value);
+            removeItem(value)
             $(".close").eq(index).remove();
             //CALL OTHER FUNCTION
 
         })
     }
     
-    function removeItem(itemIndex) {
-        console.log("Attempt to work");
-        chrome.storage.sync.get(['keywords'], function (val) {
+    function removeItem(key) {
+        
+        //console.log("Attempt to remove");
+        chrome.storage.sync.get(['keywords','session_keywords','max_wordID'], function (val) {
             storageKeys = val.keywords;
-            var rmvkey = Object.keys(storageKeys)[itemIndex]; 
-            delete storageKeys.rmvkey; 
-            console.log("updated list", storageKeys)
-
-            chrome.storage.sync.set({
-                'keywords': storageKeys
-            })
-            /* storageKeys = val.keywords;
-            storageKeys.splice(itemIndex, 1);
-            console.log("updated list", storageKeys)
-
-            chrome.storage.sync.set({
-                'keywords': storageKeys
-            }) */
+            sessionStorageKeys = val.session_keywords
+            var new_max_wordID = val.max_wordID 
+            if(key in storageKeys){
+                delete storageKeys[key]; 
+                //console.log("Deleted", storageKeys)
+                chrome.storage.sync.set({'keywords': storageKeys, 'max_wordID': new_max_wordID})
+                //console.log("Key is here")
+            }
+            else{
+                //console.log("key is not here")
+            }
 
         })
 
     }
 
-/* 
-WORKING
-function add_block()
-{
-    key_words[x] = document.getElementById("text1").value;
-    if(document.getElementById("text1").value == "")
-    {
-        alert("No text entered!");
-
-    }
-    else{
-        alert("Keyword: " + key_words[x] + " added");
-        x++;
-        document.getElementById("text1").value = "";
-        chrome.storage.sync.set({
-            'words': key_words
-        })
-
-    }
-    
-}
-
-function display_array()
-{
-   var e = "<hr/>";   
-    
-   for (var y=0; y<key_words.length; y++)
-   {
-     e += "" + (y+1) + ". " + key_words[y] + "<br/>";
-   }
-   document.getElementById("Result").innerHTML = e;
-} */
 document.addEventListener('keypress', function (e) {
     if (e.key === 'Enter') {
         add_block();
-        // display_array();
       }
 })
 
 document.getElementById("add").addEventListener("click", add_block);
-// document.getElementById("add").addEventListener("click", display_array);
 
 /*Building out Frequency List*/ 
-
-  /* console.log(allwords)
-  console.log("testing") */
 
   function show_freqlist(){
     var freq_list = document.getElementById("freq-list");
@@ -371,13 +286,13 @@ document.getElementById("add").addEventListener("click", add_block);
             var li = document.createElement("li");
             $("li").addClass("flist-group");
             info = sessionStorageKeys[key];
-            console.log(key,info);
+            //console.log(key,info);
             let word_info = "<" +key + ">"
             for(let key in info){
                 if(info.hasOwnProperty(key)){
                     value = info[key];
                     word_info += "" +key + ": " + value + " | ";
-                    console.log(key,value);
+                    //console.log(key,value);
                 }
                 
             }
@@ -395,51 +310,7 @@ document.getElementById("add").addEventListener("click", add_block);
         }
     }
 
-    // for(int i =0; i<keys.lengt(); ++i){
-    //     var freq_list = document.getElementById("freq-list");
-    //     addfreqUI(freq_list, allwords.getString(keys))
-    //     console.log("In here")
-    // }
-    
+   
 }
   
 
-/* function show_list(){
-    for (var i = 0; i < key_words.length;i++){
-        document.getElementById("text1").value = "";
-        var old_list = document.getElementById("keys-list");
-        addUI(old_list, key_words[i])  
-    } 
-    
-}
-function addUI(ul, value) {
-    var li = document.createElement("li");
-    $("li").addClass("list-group-item");
-    li.appendChild(document.createTextNode(value));
-
-    if (value === '') {
-        //do nothing
-        //alert("You must write something!");
-    } else {
-        ul.appendChild(li);
-    }
-    var span = document.createElement("SPAN");
-    // span.style.fontSize = "0.75rem";
-    var txt = document.createTextNode("\u00D7");
-    
-        span.className = "close";
-        span.appendChild(txt);
-        li.appendChild(span);
-
-        $(".close").click(function () {
-            var index = $(this).index(".close");
-
-            console.log(index);
-            var div = this.parentElement;
-            div.style.display = "none";
-            removeItem(index);
-            $(".close").eq(index).remove();
-            //CALL OTHER FUNCTION
-
-        })
-    } */
