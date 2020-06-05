@@ -251,7 +251,9 @@ function addUI(ul, value) {
     }
 
 document.addEventListener('keypress', function (e) {
+
     if (e.key === 'Enter') {
+       
         add_block();
       }
 })
@@ -312,5 +314,83 @@ document.getElementById("add").addEventListener("click", add_block);
 
    
 }
+  /*TIMER FUNCTIONALITY*/ 
+  var paused = false; 
+  var time_left; 
+  document.getElementById("start_timer").addEventListener("click",
   
+  function startTimer() {
+    let start =  document.querySelector("#start_timer")
+    let starter =  document.querySelector("#time_setup")
+    start.style.display = "none"
+    starter.style.display = "none"
+  //$('.start_timer').css('display', 'none');
+    if(!paused){
+        
+    }
+        
+    var min = document.getElementById("min_time").value;
+    if(min == "")
+    {
+        min = parseInt("0")
+    }
+    var sec = document.getElementById("sec_time").value;
+    if(sec == "")
+    {
+        sec = parseInt("0")
+    }
+    
+    var duration = (60*parseInt(min)) + parseInt(sec) 
+    time_left =duration
+    var currInterval; 
+    console.log(duration)
+    
+    // remtime =  document.querySelector('#time');
+    clearInterval(currInterval);
+    currInterval = setInterval(function () {
+        console.log("Interval set")
+        minute = Math.floor(duration/60)
+        second =  Math.floor(duration%60)
+        minutes = minute < 10 ? "0" + minute.toFixed(0) : minute.toFixed(0);
+        seconds = second < 10 ? "0" + second.toFixed(0) : second.toFixed(0);
+        document.getElementById("focus_text").innerHTML = "Let's get this bread!"
+        document.getElementById("time").innerHTML = minutes + ": " +seconds;
+        //--duration
+        time_left =duration  
+        if(parseInt(--duration)<=0){
+            clearInterval(currInterval)
+            document.getElementById("time").innerHTML = "00 : 00";
+            alert("Productive time over, huzzah!")
+        }
+    }, 1000);
+
+    
+    //alert("Time needs to be set")
+  }
+    
+  )
+      
+
+
+ 
+  
+  function pause_clock(){
+      if(!paused){
+        
+          paused = true;
+          clearInterval(timeinterval); // stop the clock
+      }
+  }
+  
+  function resume_clock(){
+      if(paused){
+          paused = false;
+          document.getElementById("min_time").value =Math.floor(time_left/60)
+          document.getElementById("sec_time").value =Math.floor(time_left%60)
+            startTimer()
+      }
+  }
+  
+document.getElementById("pause_timer").addEventListener("click",pause_clock());
+document.getElementById("resume_timer").addEventListener("click",resume_clock());
 

@@ -75,6 +75,9 @@ input[type=text2] {
   background-repeat: no-repeat;
   padding-left: 1.5rem;  
 }
+input[type=number] {
+  width:3rem
+}
 /* #add {
   cursor: pointer;
   background-color: #c4302b;
