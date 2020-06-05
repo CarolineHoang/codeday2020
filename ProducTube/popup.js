@@ -60,15 +60,16 @@ chrome.storage.sync.get(['keywords', 'session_keywords' , 'max_wordID', 'session
     x = val.keywords.length; 
     var new_max_wordID = val.max_wordID
     var block_sites = val.session_block
+    show_list()
     
    
 
-console.log("Current Stored Keywords :" + val.keywords);
+console.log("Beginning Synced Value:" + val.keywords);
 //displaying the old items
 // display_array()
 });
 console.log('Current values stored in sync' , storageKeys);
-show_list()
+console.log('CHECK IF STORED');
 
 function add_block()
 {
@@ -143,6 +144,7 @@ function add_block()
             addUI(list, key)
             
         } */
+        alert("You added "+ key);
         addUI(list, key)
         
 
