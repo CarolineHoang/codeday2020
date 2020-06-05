@@ -145,7 +145,7 @@ function addUI(ul, value) {
     function removeItem(itemIndex) {
         console.log("Removed word");
         chrome.storage.sync.get(['session_block'], function (val) {
-            block_words = val.words;
+            block_words = val.session_block;
             block_words.splice(itemIndex, 1);
             console.log("updated list", block_words)
 
