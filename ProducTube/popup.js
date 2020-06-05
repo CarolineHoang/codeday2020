@@ -52,7 +52,7 @@ console.log("testest")
 
 var x = 0;
 var storageKeys = {};
-var sessionStorageKeys = {}; 
+var sessionStorageKeys =  {}; 
 
 chrome.storage.sync.get(['keywords', 'session_keywords' , 'max_wordID', 'session_block'], function(val) {
     storageKeys = val.keywords; 
@@ -61,15 +61,19 @@ chrome.storage.sync.get(['keywords', 'session_keywords' , 'max_wordID', 'session
     var new_max_wordID = val.max_wordID
     var block_sites = val.session_block
     show_list()
+    show_freqlist()
     
    
 
 console.log("Beginning Synced Value:" + val.keywords);
+console.log("Chrome Sync Stored Frequency :" + val.session_keywords);
 //displaying the old items
 // display_array()
 });
 console.log('Current values stored in sync' , storageKeys);
 console.log('CHECK IF STORED');
+
+console.log("Local Stored Frequency :" + sessionStorageKeys);
 
 function add_block()
 {
@@ -340,21 +344,25 @@ document.getElementById("add").addEventListener("click", add_block);
 
   /* console.log(allwords)
   console.log("testing") */
-  chrome.storage.sync.get(['session_keywords'], function (val) {
-    if (val.session_keywords.length > 0){
-        sessionStorageKeys = val.session_keywords;
-        show_freqlist()
-        consolee.log("Values are set")
-    }
-    
-    console.log("val.freqwords :" + val.session_keywords);
-    //displaying the old items
-    // display_array()
-})
-show_freqlist()
 
   function show_freqlist(){
     var freq_list = document.getElementById("freq-list");
+    //TO DO: NEED TO CHANGE OR AFTER FREQUENCY IS SET, IT GETS/UPDATES show-freqlist()
+    sessionStorageKeys = {   "Musical":{
+        "total_freq": 1,
+        "session_freq": 0,
+        "first_occur": Date.now(),
+        "lastest_occur": null,
+        "wordID":0
+        },
+"really":{
+        "total_freq": 1,
+        "session_freq": 0,
+        "first_occur": Date.now(),
+        "lastest_occur": null,
+        "wordID":1
+        },
+}
 
     for(let key in sessionStorageKeys){
 
