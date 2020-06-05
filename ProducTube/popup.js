@@ -26,6 +26,50 @@ document.addEventListener('DOMContentLoaded', function(){
                 case "add_new_keyword":
                     chrome.runtime.sendMessage({"message": "ADD_KEYWORD", "keyword": "cats"} , tester2 ) //sends keyword to background.js to add to the keyword list
                     //this might be able to be accomplished right here actually
+
+                    var string = "HELLO HAPPY DAY"; //STRING FROM INPUT FIELD
+                    var strArr =  string.toUpperCase().split(" ").filter(Boolean);
+                    chrome.storage.sync.get(['keywords', 'session_keywords', 'max_wordID' ], function(result) {
+                        var storageKeys = result.keywords
+                        var sessionStorageKeys = result.session_keywords
+                        var new_max_wordID = result.max_wordID
+                        strArr.forEach(function(term){
+                            var currDateTime = Date.now()
+                            if(!(term in storageKeys)){
+                                // console.log("STORAGEKEY freq:", term, storageKeys[term])
+                                
+                                if(!(term in sessionStorageKeys)){
+                                    storageKeys[term].total_freq = 1
+                                    storageKeys[term].session_freq = 0
+                                    storageKeys[term].first_occur = currDateTime
+                                    storageKeys[term].lastest_occur = null
+                                    storageKeys[term].wordID = new_max_wordID++
+                                }
+                                else{
+                                    storageKeys[term].total_freq = sessionStorageKeys[term].total_freq
+                                    storageKeys[term].session_freq = sessionStorageKeys[term].session_freq
+                                    storageKeys[term].first_occur = sessionStorageKeys[term].first_occur
+                                    storageKeys[term].lastest_occur = sessionStorageKeys[term].lastest_occur
+                                    storageKeys[term].wordID = sessionStorageKeys[term].wordID
+
+                                }
+
+                            }
+        
+                        });
+                        chrome.storage.sync.set({ 'keywords': storageKeys, 'max_wordID': new_max_wordID }, function() {
+                            // console.log('Values changed to 1: ' , storageKeys);
+                            // console.log('Values changed to 2: ' , sessionStorageKeys);
+                            // console.log('Values changed to 3: ' , new_max_wordID);
+                            // console.log('Values changed to 4: ' , currUrl);
+                            // console.log('Values changed to 5: ' , block_sites);
+                        });
+        
+        
+                        // pauseVideo(tabID, currUrl)
+                    });
+
+
                     chrome.storage.sync.set({keywords: [["cat".toUpperCase , Date.now(), 1 ]] }, function() {
                         console.log('Value is set to ' + value);
                       });
@@ -41,12 +85,19 @@ document.addEventListener('DOMContentLoaded', function(){
                     });
                     window.close();
                     chrome.tabs.sendMessage(tabs[0].id, {"message": "print_test", "printMsg": "set the alarm2"}  )
+                    chrome.storage.sync.set({'mode':'PRODUCTIVITY'}, function() {
+                        // console.log('Value is set to ' + value);
+                    });
+                    
                     //this 1) sets the alarm and 2) changes the storage value for whether we're in productivity mode or not to true (value used for reference if we will pause video )
                     break;
                 case "stop_timer":
                     chrome.runtime.sendMessage({"message": "STOP_TIMER" } , tester2 ) 
                     chrome.alarms.clear("PRODUCTIVITY_MODE");
                     window.close();
+                    chrome.storage.sync.set({'mode':'LEISURE'}, function() {
+                        // console.log('Value is set to ' + value);
+                    });
                     //this 1) clears ALL alarms (not refined further rn) and 2) changes the storage value for whether we're in productivity mode or not to false (value used for reference if we will pause video )
                     break;
             }
