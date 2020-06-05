@@ -1,0 +1,123 @@
+  .popup {
+    padding:0px;
+    margin:0px;
+    background-color: #FFF;
+    height: 15rem;
+    width:20rem;
+    overflow: hidden;
+  }
+
+.topnav {
+  background-color: #ffe5e5;
+  overflow: hidden;
+}
+
+/* Style the links inside the navigation bar */
+.topnav a {
+  cursor: pointer;
+  float: left;
+  color: #000202;
+  text-align: center;
+  padding: 0.45rem 1.5rem;
+  text-decoration: none;
+  font-size: 0.55rem;
+  text-transform: uppercase;
+}
+
+/* Change the color of links on hover */
+.topnav a:hover {
+  background-color: #ff6666;
+  color: white;
+}
+.color_change{
+  background-color: #ffe5e5
+}
+
+.sectionHeader{
+  background: none repeat scroll 0 0 #f10000;
+  color: white;
+  font: bold 0.8rem courier;
+  margin: 0 auto;
+  position: relative;
+  text-align: center;
+  
+}
+
+.middleBlock {
+  display:flex;
+  margin: 0 auto;
+  flex-direction: column;
+  height: 10.0rem;
+  padding: 0.05rem 0.05rem;
+  
+}
+.middleBlock h3 {
+  font: small-caps bold .8 rem sans-serif;
+  text-align: center;
+  line-height:0rem;
+}
+.middleBlock p {
+  font: .8 rem sans-serif;
+  line-height: 1rem;
+  text-align: left;
+}
+
+#listBlock{
+  overflow-y:auto;
+} 
+#freqBlock{
+  overflow-y:auto;
+} 
+input[type=text2] {
+  background-image: url('rplus.png');
+  background-size: 1rem;
+  background-position: .1rem .1rem;
+  background-repeat: no-repeat;
+  padding-left: 1.5rem;  
+}
+/* #add {
+  cursor: pointer;
+  background-color: #c4302b;
+  border: none;
+  color: white;
+  padding: 0.1rem 0.2rem;
+  text-decoration: none;
+  margin: 0.5rem 0.4rem; 
+} */
+ /* Style the list items */
+ ul li {
+  position: relative;
+  margin: .12rem .12rem .12rem .12rem; /*  0rem 0rem 0rem 0rem; */
+  padding: 0.8rem 1.6rem 0.5rem 2.0rem; /* top right bottom left */
+  list-style-type: none;
+  background: #fff;
+  font-size: 1.0 rem;
+  transition: 0.2s;
+  list-style-position:inside;
+  border: 1px solid gray;
+}
+ /* Lighter background-color on hover */
+ ul li:hover {
+  background: #ff9b9b;
+  color:#fff;
+}
+
+/* Style the close button */
+.close {
+  border-left: .065rem solid rgb(0, 0, 0);
+  position: absolute;
+  right: 0;
+  top: 0;
+  padding: 0.8rem 1.6rem 0.5rem 1.6rem;
+  background-color: #f44336;
+  color: white;
+  cursor: pointer;
+
+
+}
+
+.close:hover {
+  background-color: #f44336;
+  color: white;
+}
+

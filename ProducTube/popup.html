@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html lang = "en" >
     <head>
+       
+        <link rel="stylesheet" href="styles.css">
         <meta charset="UTF-8">
+        
         <title>Popup</title>
     </head>
     <body>
@@ -13,5 +16,55 @@
 
         <script src="popup.js" charset="utf-8"  ></script>
         <!-- <script src="alarms.js" charset="utf-8"  ></script> -->
+        <script type="text/javascript" src = "https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+        <div class = "popup">
+        <div class="sectionHeader">ProducTube</div>
+
+        <div class="topnav">
+            <div id ="timer"><a class="color_change">Focus Mode</a></div>
+            <div id ="list"><a class="color_change">Nono Words</a></div>
+            <div id ="freq"><a class="color_change">Frequent List</a></div>
+        </div>
+        <div class="midSection sections" >
+            <div id="introBlock" class="middleBlock" >
+                <p>Welcome! <b>ProducTube</b> is here to help you stay focused when using Youtube's educational resources. <br><br> We'll remind you to stay focused if you watch a video with one of your nono words in the title.<br> <br>Get started in Focus Mode or start adding your Nono words!</p> 
+                <p></p>
+                
+            </div>
+            <div id="timeBlock" class="middleBlock" style = "display:none;">
+                <h3 >Focus Mode Timer</h3> <p>When active, videos tagged with your NoNo Keywords will be shamed</p> 
+                
+            </div>
+            
+            <div id="listBlock" class="middleBlock" style="display:none;">
+                <h3>Nono Keywords List</h3>
+                <p>Shame alert if you watch videos with these keywords</p>
+                Add New:
+                <input type="text2" id="text1"></input>
+                <button id="add">Add</button>
+                <h3>Keywords List</h3>
+                <ul id="keys-list" class="list-group"></ul>
+
+
+                <!-- <div id="Result"></div>  -->
+                
+            </div>
+          
+            <div id="freqBlock" class="middleBlock" style="display:none;">
+              
+                <h3>Most Frequent Keywords</h3>
+                <p>These are your most frequented video keywords both in focus and out of focus mode. Consider adding some to your Nono list!</p>
+                <h3>Visited Keys List</h3>
+                <ul id="freq-list" class="flist-group"></ul>
+
+
+            </div>
+          
+        </div> 
+        <button>Show Videos</button>
+        <script src="popup.js" charset="utf-8"  ></script>
+    </div>
+    </div>
     </body>
 </html>
