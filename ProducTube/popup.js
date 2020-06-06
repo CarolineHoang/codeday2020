@@ -492,6 +492,7 @@ document.addEventListener('keypress', function (e) {
                 } else {
                     freq_list.appendChild(li);
                 }
+                
             // }
         }
 
