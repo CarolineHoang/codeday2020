@@ -23,8 +23,8 @@
     // "browser_action": {
     //   "default_title": "Bear"
     // },
-    // "background": {
-    //   "scripts": ["background.js"]
-    // },
+    "background": {
+       "scripts": ["background.js"]
+     },
     "permissions": ["storage","tabs"]
   }

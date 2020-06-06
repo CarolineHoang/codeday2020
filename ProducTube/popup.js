@@ -320,7 +320,13 @@ document.getElementById("add").addEventListener("click", add_block);
   var reset = false; 
   document.getElementById("start_timer").addEventListener("click",
   function startTimer() {
-    
+    var deadline; 
+    /* chrome.storage.sync.get(['timer_deadline'], function(val) {
+        if(val.timer_deadline!=NaN){
+            deadline = val.timer_deadline; 
+        }
+        
+    }); */
     let start =  document.querySelector("#start_timer")
     let starter =  document.querySelector("#time_setup")
     var interval 
@@ -350,10 +356,11 @@ document.getElementById("add").addEventListener("click", add_block);
         sec = parseInt("0")
     }
     total_minutes = (60*parseInt(hr)) + parseInt(min) + ((1/60)*parseInt(sec)) 
-    var deadline = new Date();
+    deadline = new Date();
     deadline.setHours(deadline.getHours()+parseInt(hr));
     deadline.setMinutes(deadline.getMinutes()+parseInt(min))
     deadline.setSeconds(deadline.getSeconds()+parseInt(sec))
+    // chrome.storage.sync.set({'timer_deadline': deadline})
 
     interval = setInterval(function(){
     if(reset){
@@ -376,11 +383,7 @@ document.getElementById("add").addEventListener("click", add_block);
         document.getElementById("time").innerHTML = "0d 0h 0m 0s";
         alert("Productive time over, huzzah!")
     }
-        
     }
-
-    
-
 
 }, 1000);
 
