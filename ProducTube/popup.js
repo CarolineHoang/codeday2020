@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', function(){
                     chrome.tabs.sendMessage(tabs[0].id, {"message": "print_test", "printMsg": "set the alarm1"}  )
                     chrome.alarms.create( "PRODUCTIVITY_MODE", { delayInMinutes: 0.25 //, periodInMinutes: 0.1 
                     });
-                    window.close();
+                    //window.close();
                     chrome.tabs.sendMessage(tabs[0].id, {"message": "print_test", "printMsg": "set the alarm2"}  )
                     chrome.storage.sync.set({'mode':'PRODUCTIVITY'}, function() {
                         // console.log('Value is set to ' + value);
@@ -563,3 +563,131 @@ $('.switch3 input').on('change', function(){
         });
     }
   });
+
+  /*TIMER FUNCTIONALITY*/ 
+  //ATTEMPT 2
+  var pause = false; 
+  var reset = false; 
+  document.getElementById("start_timer").addEventListener("click",
+  function startTimer() {
+    var deadline; 
+    /* chrome.storage.sync.get(['timer_deadline'], function(val) {
+        if(val.timer_deadline!=NaN){
+            deadline = val.timer_deadline; 
+        }
+        
+    }); */
+    let start =  document.querySelector("#start_timer")
+    let starter =  document.querySelector("#time_setup")
+    var interval 
+    /* let pause=  document.querySelector("#pause_timer")
+    let res=  document.querySelector("#resume_timer")
+    pause.style.display ="block"
+    res.style.display ="block" */
+    start.classList.add('hidden')
+    starter.classList.add('hidden')
+    //start.style.display = "none"
+    //starter.style.display = "none"
+    var now = new Date().getTime(); 
+    //upon submit 
+    var hr = document.getElementById("hour_time").value;
+    if(hr == "")
+    {
+        hr = parseInt("0")
+    }
+
+    var min = document.getElementById("min_time").value;
+    if(min == "")
+    {
+        min = parseInt("0")
+    }
+    var sec = document.getElementById("sec_time").value;
+    if(sec == "")
+    {
+        sec = parseInt("0")
+    }
+    total_minutes = (60*parseInt(hr)) + parseInt(min) + ((1/60)*parseInt(sec)) 
+    deadline = new Date();
+    deadline.setHours(deadline.getHours()+parseInt(hr));
+    deadline.setMinutes(deadline.getMinutes()+parseInt(min))
+    deadline.setSeconds(deadline.getSeconds()+parseInt(sec))
+    // chrome.storage.sync.set({'timer_deadline': deadline})
+
+    interval = setInterval(function(){
+    if(reset){
+        document.getElementById("hour_time").value = ""
+        document.getElementById("min_time").value = ""
+        document.getElementById("sec_time").value =""
+        document.getElementById("focus_text").innerHTML = "When active, videos tagged with your NoNo Keywords will be alerted"
+        start.classList.remove('hidden')
+        starter.classList.remove('hidden')
+        clearInterval(interval);
+        console.log("reset pressed")
+        reset = false
+        document.getElementById("time").innerHTML = "Focus Time Remaining"
+        //This is not working 
+    }
+    if(!pause && !reset ){
+        now = new Date().getTime(); 
+        var difference = deadline - now; 
+        console.log("NOW: " + now + "DEADLINE: " + deadline + "Difference: " + difference)
+        // Time calculations for days, hours, minutes and seconds
+        var days = Math.floor(difference / (1000 * 60 * 60 * 24));
+        var hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        var minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+        var seconds = Math.floor((difference % (1000 * 60)) / 1000);
+        document.getElementById("focus_text").innerHTML = "Let's get this bread!"
+
+            var dad = $('.switch3 input').parent();
+            //$('.switch3 input').attr("checked",true)
+            dad.addClass('switch3-checked');
+            chrome.storage.sync.set({'mode':'PRODUCTIVITY', "session_keywords": {}, "session_block": {} }, function() {
+                    //console.log("PRODUCTIVE TIME NEW SESSION")
+                  // console.log('Value is set to ' + value);
+            });
+          
+        document.getElementById("time").innerHTML =days + "d " + hours + "h "+ minutes + "m " + seconds + "s ";    
+        // If the count down is over, write some text 
+    if (difference <= 0) {
+        clearInterval(interval);
+        document.getElementById("time").innerHTML = "0d 0h 0m 0s. Congrats, Productive time over! Huzzah!!";
+        //alert("Productive time over, huzzah!")
+    }
+    }
+    else{
+        var dad = $('.switch3 input').parent();
+        //$('.switch3 input').attr("checked",false)
+        dad.removeClass('switch3-checked');
+                chrome.storage.sync.set({'mode':'LEISURE'}, function() {
+                    //console.log("LEISURE TIME")
+                  // console.log('Value is set to ' + value);
+                });
+
+
+    }
+
+
+}, 1000);
+
+    }
+
+
+    )
+
+    document.getElementById('pause_timer').addEventListener('click', function () {
+        pause = true;
+    });
+    
+    document.getElementById('resume_timer').addEventListener('click', function () {
+        pause = false;
+    });
+    document.getElementById('reset_timer').addEventListener('click', function () {
+        reset = true;
+    });
+    
+    
+  
+
+    function addMinutes(date, minutes) {
+        return new Date(date.getTime() + minutes*60000);
+    }

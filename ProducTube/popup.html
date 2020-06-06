@@ -36,21 +36,28 @@
                 
             </div>
             <div id="timeBlock" class="middleBlock" style = "display:none;">
-                <h3 >Focus Mode</h3> <p>When active, videos tagged with your NoNo Keywords will be shamed</p> 
+                <h3 >Focus Mode</h3> <p id =focus_text>When active, videos tagged with your NoNo Keywords will be alerted</p> 
                 <div class="buttonContainer">
                     <div class="switchLabel">Activate Productivity </br> Mode: </div>
                     <label class="switch3" >
                         <input id="focusSwitch"  type="checkbox" />
                         <div></div>
-                      </label>
-
                 </div>
+                      </label>
+                <br>
+                <div id ="time_setup"><b>Time</b> <input type ="number" id ="hour_time" min="0" >hours:<input type ="number" id ="min_time" min="0" ></input>mins:<input type ="number" id ="sec_time" min="0" max="59">secs</input> <button id="start_timer">Start</button></div>
+                
+                <br> <span id ="time">          </span> Focus Time Remaining
+                <br><button id="pause_timer" >Pause</button>
+                <button id="resume_timer" >Resume</button>
+                <button id="reset_timer">Reset</button>
+                    
                 
             </div>
             
             <div id="listBlock" class="middleBlock" style="display:none;">
                 <h3>Nono Keywords List</h3>
-                <p>Shame alert if you watch videos with these keywords</p>
+                <p>We'll send you a reminder if you try to watch videos with these keywords</p>
                 Add New:
                 <input type="text2" id="text1"></input>
                 <button id="add_new_keyword">Add</button>
