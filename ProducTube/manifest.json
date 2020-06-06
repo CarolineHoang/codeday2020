@@ -4,14 +4,30 @@
     "manifest_version": 2,
     "content_scripts": [
       {
-        "matches": ["<all_urls>"],
-        "js": ["content.js"]
+        "matches": ["*://*.youtube.com/*"],
+        "js": ["content.js"],
+        "css": ["contentStyles.css"],
+        "run_at": "document_idle"
       }
     ],
+    
     "browser_action": {
       "default_popup": "popup.html",
-      "default_title": "vidCount"
-    }
+      "default_title": "ProducTube",
+      "default_icon": "ProducTube_logo.png"
+    },
+    "background": {
+      "scripts": ["background.js"]
+    },
+    "web_accessible_resources": ["embedded_warning.html"],
+    "permissions": [
+      "*://*.youtube.com/*",
+      "tabs",
+      "storage",
+      "alarms",
+      "webNavigation"
+    ],
+    "content_security_policy": "script-src 'self' https://ajax.googleapis.com; object-src 'self'"
 
     // "content_scripts": [
     //   {
@@ -25,5 +41,5 @@
     // "background": {
     //   "scripts": ["background.js"]
     // },
-    // "permissions": ["tabs"]
+
   }
