@@ -7,7 +7,7 @@ chrome.runtime.onInstalled.addListener(function(details){
     //     console.log('Value is set to ' + value);
     //   });
     chrome.storage.sync.set({
-        "mode": "PRODUCTIVITY", 
+        "mode": "LEISURE", 
         "keywords": {   "MUSICAL":{
                                     "total_freq": 1,
                                     "session_freq": 0,

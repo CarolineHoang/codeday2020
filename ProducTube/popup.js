@@ -1,6 +1,25 @@
 /*Chrome Extension Tutorial Code*/
 document.addEventListener('DOMContentLoaded', function(){
-
+    
+    //flip the check box depending on the current mode // default initialization should be leisure
+    chrome.storage.sync.get( ['mode'], function(val) {
+        
+        var currMode = val.mode
+        console.log("WHAT IS THE CURRENT STATE? ", currMode )
+        if (currMode == "PRODUCTIVITY"){
+            $("#focusSwitch").prop( "checked", true );
+            var dad = $("#focusSwitch").parent()
+            dad.addClass('switch3-checked');
+        }
+        else{
+            $("#focusSwitch").prop( "checked", false);
+            var dad = $("#focusSwitch").parent()
+            dad.removeClass('switch3-checked');
+        }
+        // show_list()
+        // show_freqlist()
+        
+    });
     
     show_list()
     show_freqlist()
@@ -79,11 +98,11 @@ document.addEventListener('DOMContentLoaded', function(){
                         });
                     });
                     break;
-                case "delete_keyword":
+                case "delete_keyword": //changed to not need to be based off one button (obviously) do it's found in a function below
                     chrome.runtime.sendMessage({"message": "DELETE_KEYWORD", "keyword": "cats" } , tester2 ) //sends keyword to background.js to delete from the keyword list
                     //this might be able to be accomplished right here actually
                     break;
-                case "start_timer":
+                case "start_timer": //timer UI is not implmented at the moment 
                     chrome.runtime.sendMessage({"message": "START_TIMER", "duration": 1, "alarm_name": "PRODUCTIVE_MODE" } , tester2 ) 
                     chrome.tabs.sendMessage(tabs[0].id, {"message": "print_test", "printMsg": "set the alarm1"}  )
                     chrome.alarms.create( "PRODUCTIVITY_MODE", { delayInMinutes: 0.25 //, periodInMinutes: 0.1 
@@ -96,7 +115,7 @@ document.addEventListener('DOMContentLoaded', function(){
                     
                     //this 1) sets the alarm and 2) changes the storage value for whether we're in productivity mode or not to true (value used for reference if we will pause video )
                     break;
-                case "stop_timer":
+                case "stop_timer": //timer UI is not implmented at the moment 
                     chrome.runtime.sendMessage({"message": "STOP_TIMER" } , tester2 ) 
                     chrome.alarms.clear("PRODUCTIVITY_MODE");
                     window.close();
@@ -428,15 +447,35 @@ document.addEventListener('keypress', function (e) {
         var new_max_wordID = val.max_wordID
         var block_sites = val.session_block
 
-        for(let key in sessionStorageKeys){
 
-            if(sessionStorageKeys.hasOwnProperty(key))
-            {
+        var sortable = [];
+
+
+        for (var term in sessionStorageKeys) {
+            if(sessionStorageKeys.hasOwnProperty(term)){
+                sortable.push([term, sessionStorageKeys[term]["session_freq"]]);
+            } 
+        }
+
+        sortable.sort(function(a, b) {
+            return parseInt(b[1])-parseInt(a[1]);
+        });
+        console.log("New array: ",sortable )
+
+
+        for (index = 0; index < sortable.length; index++) { 
+            console.log(sortable[index]); 
+        // } 
+
+        // for(let key in sessionStorageKeys){
+
+            // if(sessionStorageKeys.hasOwnProperty(key))
+            // {
                 var li = document.createElement("li");
                 $("li").addClass("flist-group");
-                info = sessionStorageKeys[key];
-                console.log(key,info);
-                let word_info = "<" +key + ">"
+                info = sessionStorageKeys[sortable[index][0]];
+                console.log(sortable[index],info);
+                let word_info = "<" +sortable[index] + ">"
                 for(let key in info){
                     if(info.hasOwnProperty(key)){
                         value = info[key];
@@ -453,8 +492,36 @@ document.addEventListener('keypress', function (e) {
                 } else {
                     freq_list.appendChild(li);
                 }
-            }
+            // }
         }
+
+        // for(let key in sessionStorageKeys){
+
+        //     if(sessionStorageKeys.hasOwnProperty(key))
+        //     {
+        //         var li = document.createElement("li");
+        //         $("li").addClass("flist-group");
+        //         info = sessionStorageKeys[key];
+        //         console.log(key,info);
+        //         let word_info = "<" +key + ">"
+        //         for(let key in info){
+        //             if(info.hasOwnProperty(key)){
+        //                 value = info[key];
+        //                 word_info += "" +key + ": " + value + " | ";
+        //                 console.log(key,value);
+        //             }
+                    
+        //         }
+        //         li.appendChild(document.createTextNode(word_info));
+    
+        //         if (word_info === '') {
+        //             //do nothing
+        //             //alert("You must write something!");
+        //         } else {
+        //             freq_list.appendChild(li);
+        //         }
+        //     }
+        // }
         // show_list()
         // show_freqlist()
         
@@ -478,4 +545,21 @@ document.addEventListener('keypress', function (e) {
 
    
 }
-  
+// found on a Codepen by Joel César (sweet switch!)
+$('.switch3 input').on('change', function(){
+    var dad = $(this).parent();
+    if($(this).is(':checked')){
+        dad.addClass('switch3-checked');
+        chrome.storage.sync.set({'mode':'PRODUCTIVITY', "session_keywords": {}, "session_block": {} }, function() {
+            console.log("PRODUCTIVE TIME NEW SESSION")
+          // console.log('Value is set to ' + value);
+        });
+    }
+    else{
+        dad.removeClass('switch3-checked');
+        chrome.storage.sync.set({'mode':'LEISURE'}, function() {
+            console.log("LEISURE TIME")
+          // console.log('Value is set to ' + value);
+        });
+    }
+  });
