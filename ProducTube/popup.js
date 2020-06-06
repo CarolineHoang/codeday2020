@@ -315,7 +315,101 @@ document.getElementById("add").addEventListener("click", add_block);
    
 }
   /*TIMER FUNCTIONALITY*/ 
-  var paused = false; 
+  //ATTEMPT 2
+  var pause = false; 
+  var reset = false; 
+  document.getElementById("start_timer").addEventListener("click",
+  function startTimer() {
+    
+    let start =  document.querySelector("#start_timer")
+    let starter =  document.querySelector("#time_setup")
+    var interval 
+    /* let pause=  document.querySelector("#pause_timer")
+    let res=  document.querySelector("#resume_timer")
+    pause.style.display ="block"
+    res.style.display ="block" */
+
+    start.style.display = "none"
+    starter.style.display = "none"
+    var now = new Date().getTime(); 
+    //upon submit 
+    var hr = document.getElementById("hour_time").value;
+    if(hr == "")
+    {
+        hr = parseInt("0")
+    }
+
+    var min = document.getElementById("min_time").value;
+    if(min == "")
+    {
+        min = parseInt("0")
+    }
+    var sec = document.getElementById("sec_time").value;
+    if(sec == "")
+    {
+        sec = parseInt("0")
+    }
+    total_minutes = (60*parseInt(hr)) + parseInt(min) + ((1/60)*parseInt(sec)) 
+    var deadline = new Date();
+    deadline.setHours(deadline.getHours()+parseInt(hr));
+    deadline.setMinutes(deadline.getMinutes()+parseInt(min))
+    deadline.setSeconds(deadline.getSeconds()+parseInt(sec))
+
+    interval = setInterval(function(){
+    if(reset){
+        //This is not working 
+    }
+    if(!pause && !reset ){
+        now = new Date().getTime(); 
+        var difference = deadline - now; 
+        console.log("NOW: " + now + "DEADLINE: " + deadline + "Difference: " + difference)
+        // Time calculations for days, hours, minutes and seconds
+        var days = Math.floor(difference / (1000 * 60 * 60 * 24));
+        var hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        var minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+        var seconds = Math.floor((difference % (1000 * 60)) / 1000);
+        document.getElementById("focus_text").innerHTML = "Let's get this bread!"
+        document.getElementById("time").innerHTML =days + "d " + hours + "h "+ minutes + "m " + seconds + "s ";    
+        // If the count down is over, write some text 
+    if (difference <= 0) {
+        clearInterval(interval);
+        document.getElementById("time").innerHTML = "0d 0h 0m 0s";
+        alert("Productive time over, huzzah!")
+    }
+        
+    }
+
+    
+
+
+}, 1000);
+
+    }
+
+
+    )
+
+    document.getElementById('pause_timer').addEventListener('click', function () {
+        pause = true;
+    });
+    
+    document.getElementById('resume_timer').addEventListener('click', function () {
+        pause = false;
+    });
+    document.getElementById('reset_timer').addEventListener('click', function () {
+        reset = true;
+    });
+    
+    
+  
+
+    function addMinutes(date, minutes) {
+        return new Date(date.getTime() + minutes*60000);
+    }
+
+
+  //ATTEMPT 1
+  /* var paused = false; 
   var time_left; 
   document.getElementById("start_timer").addEventListener("click",
   
@@ -325,9 +419,7 @@ document.getElementById("add").addEventListener("click", add_block);
     start.style.display = "none"
     starter.style.display = "none"
   //$('.start_timer').css('display', 'none');
-    if(!paused){
-        
-    }
+    
         
     var min = document.getElementById("min_time").value;
     if(min == "")
@@ -343,10 +435,19 @@ document.getElementById("add").addEventListener("click", add_block);
     var duration = (60*parseInt(min)) + parseInt(sec) 
     time_left =duration
     var currInterval; 
+    document.getElementById('pause_timer').onclick = pause_clock(currInterval)
+    
     console.log(duration)
     
     // remtime =  document.querySelector('#time');
     clearInterval(currInterval);
+    if(paused==true){
+        console.log("Paused")
+        clearInterval(currInterval);
+    }
+    else{
+        console.log("Not paused")
+    }
     currInterval = setInterval(function () {
         console.log("Interval set")
         minute = Math.floor(duration/60)
@@ -362,35 +463,37 @@ document.getElementById("add").addEventListener("click", add_block);
             document.getElementById("time").innerHTML = "00 : 00";
             alert("Productive time over, huzzah!")
         }
+        
     }, 1000);
-
     
     //alert("Time needs to be set")
+    
   }
+  
+
+
     
   )
-      
-
-
- 
-  
-  function pause_clock(){
-      if(!paused){
-        
-          paused = true;
-          clearInterval(timeinterval); // stop the clock
-      }
-  }
-  
-  function resume_clock(){
-      if(paused){
-          paused = false;
-          document.getElementById("min_time").value =Math.floor(time_left/60)
-          document.getElementById("sec_time").value =Math.floor(time_left%60)
-            startTimer()
-      }
-  }
-  
+  function pause_clock(currInterval){
+    if(!paused){
+        paused = true;
+        clearInterval(currInterval); // stop the clock
+        console.log("Trying to pause")
+    }
+}
+function resume_clock(){
+    if(paused){
+        paused = false;
+        document.getElementById("min_time").value =Math.floor(time_left/60)
+        document.getElementById("sec_time").value =Math.floor(time_left%60)
+        startTimer()
+        console.log("Trying to resume")
+    }
+    console.log("Resume click recognized")
+}
 document.getElementById("pause_timer").addEventListener("click",pause_clock());
-document.getElementById("resume_timer").addEventListener("click",resume_clock());
+
+document.getElementById("resume_timer").addEventListener("click",resume_clock()); */
+
+
 
