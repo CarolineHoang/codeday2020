@@ -569,8 +569,60 @@ $('.switch3 input').on('change', function(){
   //ATTEMPT 2
   var pause = false; 
   var reset = false; 
+  function timer_pre_vis(){
+
+    let start =  document.querySelector("#start_timer")
+    let starter =  document.querySelector("#time_setup")
+    start.classList.remove('hidden')
+    starter.classList.remove('hidden')
+
+    let timeinput = document.querySelector('#time')
+    timeinput.classList.add('hidden')
+    let pause_button = document.querySelector('#pause_timer')
+    pause_button.classList.add('hidden')
+
+    let time_text = document.querySelector('#time_text')
+    time_text.classList.add('hidden')
+
+    let resume_button = document.querySelector('#resume_timer')
+    resume_button.classList.add('hidden')
+    let reset_button = document.querySelector('#reset_timer')
+    reset_button.classList.add('hidden')
+
+  } 
+
+   function timer_start_vis(){
+
+    let start =  document.querySelector("#start_timer")
+    let starter =  document.querySelector("#time_setup")
+    start.classList.add('hidden')
+    starter.classList.add('hidden')
+
+    let timeinput = document.querySelector('#time')
+    timeinput.classList.remove('hidden')
+    let pause_button = document.querySelector('#pause_timer')
+    pause_button.classList.remove('hidden')
+
+    let time_text = document.querySelector('#time_text')
+    time_text.classList.remove('hidden')
+
+    let resume_button = document.querySelector('#resume_timer')
+    resume_button.classList.remove('hidden')
+    let reset_button = document.querySelector('#reset_timer')
+    reset_button.classList.remove('hidden')
+
+  } 
+
   document.getElementById("start_timer").addEventListener("click",
   function startTimer() {
+
+    //RAW AESTHETICS THAT SHOULD BE MOVED ELSEWHERE --> Clean code up 
+    let start =  document.querySelector("#start_timer")
+    let starter =  document.querySelector("#time_setup")
+    start.classList.add('hidden')
+    starter.classList.add('hidden')
+    timer_start_vis()
+
     var deadline; 
     /* chrome.storage.sync.get(['timer_deadline'], function(val) {
         if(val.timer_deadline!=NaN){
@@ -578,16 +630,13 @@ $('.switch3 input').on('change', function(){
         }
         
     }); */
-    let start =  document.querySelector("#start_timer")
-    let starter =  document.querySelector("#time_setup")
+    
     var interval 
     /* let pause=  document.querySelector("#pause_timer")
     let res=  document.querySelector("#resume_timer")
     pause.style.display ="block"
     res.style.display ="block" */
-    start.classList.add('hidden')
-    starter.classList.add('hidden')
-    //start.style.display = "none"
+        //start.style.display = "none"
     //starter.style.display = "none"
     var now = new Date().getTime(); 
     //upon submit 
@@ -616,6 +665,7 @@ $('.switch3 input').on('change', function(){
 
     interval = setInterval(function(){
     if(reset){
+        timer_pre_vis()
         document.getElementById("hour_time").value = ""
         document.getElementById("min_time").value = ""
         document.getElementById("sec_time").value =""
