@@ -262,7 +262,7 @@ function checkTitle( tabID, currUrl, callback ){
                     // checkTitle(res.vidTitle, currUrl)
 
 
-    var string = res.vidTitle;
+    var string = res.vidTitle.substring(0, res.vidTitle.length-10) //res.vidTitle;
     var strArr =  string.toUpperCase().split(" ").filter(Boolean);
     var nonoVideo = false;
     // chrome.storage.sync.get(['hello', "hello2"], function(result) {
@@ -368,12 +368,12 @@ chrome.runtime.onMessage.addListener( function (request, sender, sendResponse ){
         // chrome.tabs.sendMessage(activeTab.id, {"message": "pause_video"});
         // video.pause();
     }
-    if (request.message == "test"){
-        console.log("todalidooh")//get from storage
-        sendResponse({testVal: `hidiho` , divContent: `wowowo`}) //send storage info
-        // chrome.tabs.sendMessage(activeTab.id, {"message": "pause_video"});
-        // video.pause();
-    }
+    // if (request.message == "test"){
+    //     console.log("todalidooh")//get from storage
+    //     sendResponse({testVal: `hidiho` , divContent: `wowowo`}) //send storage info
+    //     // chrome.tabs.sendMessage(activeTab.id, {"message": "pause_video"});
+    //     // video.pause();
+    // }
 
     switch(request.message){
         case "GO_BACK":

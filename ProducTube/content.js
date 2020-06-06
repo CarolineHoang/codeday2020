@@ -77,15 +77,15 @@ chrome.runtime.onMessage.addListener( function (request, sender, sendResponse ){
 
 
 
-    
-    console.log(request)
-    if (request.message == "send_matches"){
-        const re = new RegExp('<h1 class=', 'gi')
-        const matches = document.documentElement.innerHTML.match(re) //|| []
-        document.documentElement.innerHTML.match(re)
+    //THE FUNCTION TO SEARCH A PAGE FOR INSTANCES
+    // console.log(request)
+    // if (request.message == "send_matches"){
+    //     const re = new RegExp('<h1 class=', 'gi')
+    //     const matches = document.documentElement.innerHTML.match(re) //|| []
+    //     document.documentElement.innerHTML.match(re)
         
-        sendResponse({count: matches , divContent: `wowowo`})
-    }
+    //     sendResponse({count: matches , divContent: `wowowo`})
+    // }
     if (request.message == "pause_video"){
         var video = document.querySelector("video");
         // var title = document.querySelector("title") ;
