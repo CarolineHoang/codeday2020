@@ -6,8 +6,8 @@ chrome.runtime.onInstalled.addListener(function(details){
     // chrome.storage.sync.set({"hello": value, "hello2": value+"2"}, function() {
     //     console.log('Value is set to ' + value);
     //   });
-    chrome.storage.sync.set({
-        "mode": "LEISURE", 
+    chrome.storage.sync.set({//default to PRODUCTIVITY for testing
+        "mode": "PRODUCTIVITY", //"LEISURE", 
         "keywords": {   "MUSICAL":{
                                     "total_freq": 1,
                                     "session_freq": 0,
@@ -16,6 +16,20 @@ chrome.runtime.onInstalled.addListener(function(details){
                                     "wordID":0
                                     },
                         "REALLY":{
+                                    "total_freq": 1,
+                                    "session_freq": 0,
+                                    "first_occur": Date.now(),
+                                    "lastest_occur": null,
+                                    "wordID":1
+                                    },
+                        "ICONIC":{
+                                    "total_freq": 1,
+                                    "session_freq": 0,
+                                    "first_occur": Date.now(),
+                                    "lastest_occur": null,
+                                    "wordID":1
+                                    },
+                        "TO":{
                                     "total_freq": 1,
                                     "session_freq": 0,
                                     "first_occur": Date.now(),
@@ -40,31 +54,25 @@ console.log("testest")
 
 
 var newKeys = []
-var oldUrl = null;
+// var oldUrl = null;
 
 const PAUSE_DELAY = 2000 //miliseconds
 const notVideoRegex = /.*\/\/.*youtube.com\/(?!watch).*/
 const notVideoRegexString = ".*\/\/.*youtube.com\/(?!watch).*" //"^(.*)$"//
 
-// chrome.tabs.onActivated.addListener(function(info) {
-chrome.tabs.onActivated.addListener(function(request, sender, sendResponse) {
-    // var tab = chrome.tabs.get(info.tabId, function(tab) {
-    //     localStorage["current_url"] = tab.url;
-    // });
-    console.log("helllloooo1")
-    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-        var activeTab = tabs[0];
-        // chrome.tabs.sendMessage(activeTab.id, {"message": "clicked_browser_action"});
-        chrome.tabs.sendMessage(activeTab.id, {"message": "pause_video"});
-      });
-    var video = document.querySelector("video");
-    console.log("video ", video)
-    newKeys.push("grdg")
-    console.log("newKeys array: ", newKeys)
 
-    // video.pause();
-    // if (video.paused){video.play();} else {video.pause();}
-});
+// chrome.tabs.onActivated.addListener(function(request, sender, sendResponse) {
+//     // console.log("helllloooo1")
+//     chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+//         var activeTab = tabs[0];
+//         // chrome.tabs.sendMessage(activeTab.id, {"message": "clicked_browser_action"});
+//         // chrome.tabs.sendMessage(activeTab.id, {"message": "pause_video"});
+//       });
+//     // var video = document.querySelector("video");
+//     // console.log("video ", video)
+//     // newKeys.push("grdg")
+//     // console.log("newKeys array: ", newKeys)
+// });
 
 
 
@@ -99,6 +107,11 @@ chrome.webNavigation.onHistoryStateUpdated.addListener(function(details) {
 // chrome.webNavigation.onCommitted.addListener(function(details) {
         // chrome.tabs.executeScript(null,{file:"content.js"});
         // alert(details.frameId)
+
+        //if there is a old styled title, delete it
+
+
+
         console.log("hngcgcj", window.location.href, details.url, details.transitionType, details.parentFrameId)
         // var tab = chrome.tabs.get(info.tabId, function(tab) {
         //     localStorage["current_url"] = tab.url;
@@ -111,6 +124,18 @@ chrome.webNavigation.onHistoryStateUpdated.addListener(function(details) {
             var url = details.url;
             console.log("active vs details: ", activeTab.url,  details.url)
             const found = url.match(notVideoRegex);
+
+            
+            chrome.tabs.sendMessage(
+                // details.tabId,
+                activeTab.id,
+                {"message": "remove_old_title"}, function(res){
+                    alert("DELETED")
+                })
+
+
+
+
             // chrome.tabs.sendMessage(activeTab.id, {"message": "clicked_browser_action"});
             if (activeTab && found == url ){
                 chrome.tabs.sendMessage(activeTab.id, {"message": "hide_popup"});
@@ -212,7 +237,7 @@ chrome.webNavigation.onCompleted.addListener(function(details) {
 
 
 // async 
-function pauseVideo(tabID, url){
+function pauseVideo( tabID, url, instigatorKeyword = [] ){
     // var nonoVideo = await checkTitle( tabID, url )
     // alert("finished awaiting") //, nonoVideo)
     // if (nonoVideo ){
@@ -235,7 +260,7 @@ function pauseVideo(tabID, url){
                     chrome.tabs.sendMessage(
                         // details.tabId,
                         tabID, 
-                        {"message": "show_popup"}, function(res){
+                        {"message": "show_popup" , 'instigatorKeyword': instigatorKeyword }, function(res){
                         console.log("popup! 1")
                         chrome.storage.sync.set({'popup_activated': true}, function() {
                         });
@@ -256,13 +281,52 @@ function checkTitle( tabID, currUrl, callback ){
         tabID, 
         {"message": "get_video_info"}, function(res){
         if (res && res.vidTitle){
-            console.log(res.vidTitle.substring(0, res.vidTitle.length-10), res.channelName) //minus 10 to get rid of "- Youtube" (9+1)
+            // console.log(res.vidTitle.substring(4, res.vidTitle.length-10), res.channelName) //minus 10 to get rid of "- Youtube" (9+1)
+            
+            
+            
             // chrome.storage.sync.get(['last_video'], function(result) {
                 // if (currUrl != result.last_video){
                     // checkTitle(res.vidTitle, currUrl)
 
+                                    // var string = ''
+                                    // var re = /(^\(\d*\)\s(.*)\s-\sYouTube$|^\(\d*\)\s(.*)$|^(.*)\s-\sYouTube$|^(.*)$)/
+                                    // //this regEx checks for a string that begins with a number in parenthesis or ends with ' - YouTube' and cuts out the string inbetween
+                                    // //the text inbetween can be any group between 2 and 5 inclusive
+                                    // //group 1 happens to contain the whole string
+                                    // //group number curresponds to the index in the returned array by .match()
+                                    // //the 0 index is the whole string
+                                    // const foundRE = res.vidTitle.match(re);
+                                    // console.log("REGEX RESULTS:", foundRE)
+                                    // console.log("GROUP 2: prefix+suffix",   "(234) This is(?s)432 (.*sdf - YouTube".match(re))
+                                    // console.log("GROUP 3: prefix",          "(234) This is(?s)432 (.*sdf - YouTub".match(re))
+                                    // console.log("GROUP 4: suffix",          "(234)This is(?s)432 (.*sdf - YouTube".match(re))
+                                    // console.log("GROUP 5: neither",         "(234)This is(?s)432 (.*sdf - YouTub".match(re))
+                                    // console.log("whole string: ", foundRE[0])
+                                    // var idx = 2;
+                                    // while (idx < 6 && string == ''){
+                                    //     console.log(foundRE[idx])
+                                    //     if (foundRE[idx] != undefined){
+                                    //         string = foundRE[idx]
+                                    //     }
+                                    //     idx++
+                                    // }
+                                    // if (string == ''){
+                                    //     string = res.vidTitle
+                                    // }
 
-    var string = res.vidTitle.substring(0, res.vidTitle.length-10) //res.vidTitle;
+    var string = res.vidTitle
+    
+    //The below code only works for strings that may or may not begin with "(1) " but not any other number
+    // var string = res.vidTitle
+    // if(res.vidTitle.substring(0,4)=="(1) "){
+    //     string = string.substring(4, string.length) 
+    // }
+    // if(res.vidTitle.substring(res.vidTitle.length-10,res.vidTitle.length)==" - YouTube"){
+    //     string = string.substring(0, string.length-10) 
+    // }
+
+    // console.log("["+string+"]", "["+res.channelName+"]", "["+res.vidTitle.substring(res.vidTitle.length-10,res.vidTitle.length)+"]" )
     var strArr =  string.toUpperCase().split(" ").filter(Boolean);
     var nonoVideo = false;
     // chrome.storage.sync.get(['hello', "hello2"], function(result) {
@@ -271,12 +335,14 @@ function checkTitle( tabID, currUrl, callback ){
     chrome.storage.sync.get(['keywords', 'session_keywords' , 'max_wordID', 'session_block', 'last_video', 'mode' ], function(result) {
         if (result.mode == "PRODUCTIVITY"){
             // alert( currUrl ) //result.last_video)
+            var instigatorKeywordsArr = []
+
+            var storageKeys = result.keywords
+            var sessionStorageKeys = result.session_keywords
+            var new_max_wordID = result.max_wordID
+            var block_sites = result.session_block
             if (currUrl != result.last_video){
                 console.log('Value currently is ' + result.keywords + " || " + result.session_keywords );
-                var storageKeys = result.keywords
-                var sessionStorageKeys = result.session_keywords
-                var new_max_wordID = result.max_wordID
-                var block_sites = result.session_block
                 strArr.forEach(function(term){
                     var currDateTime = Date.now()
                     if(term in storageKeys){
@@ -284,11 +350,30 @@ function checkTitle( tabID, currUrl, callback ){
                         storageKeys[term].total_freq++
                         storageKeys[term].session_freq++
                         storageKeys[term].lastest_occur = currDateTime
-                        block_sites[currUrl] = true
+                        if (!(currUrl in block_sites)){
+                            
+                            block_sites[currUrl]={
+                                "keywords": {}
+                            }
+                            block_sites[currUrl]["keywords"][term] = true
+                            // block_sites[currUrl]["keywords"][term] = true
+                                // "keywords" : {term: true}
+                            // }
+                        }
+                        else if (!(term in block_sites[currUrl].keywords)){
+                            block_sites[currUrl].keywords[term] = true
+                            // block_sites[currUrl].keywords.push(term)
+                        }
+                        console.log("BLOCKED SITES: ", block_sites)
+
+
 
                         console.log("STORAGEKEY freq incr:", term, storageKeys[term])
                         //pause the video
                         nonoVideo = true
+                        if (!instigatorKeywordsArr.includes(term)){
+                            instigatorKeywordsArr.push(term)
+                        }
                     }
                     if (term in sessionStorageKeys){
                         console.log("SESSIONSTORAGEKEY freq:", term, sessionStorageKeys[term])
@@ -321,9 +406,14 @@ function checkTitle( tabID, currUrl, callback ){
 
                 // pauseVideo(tabID, currUrl)
             }
-            
+
+            var instigatorKeywordsArr2 = []
+            if (currUrl in block_sites){
+                instigatorKeywordsArr = Object.keys(block_sites[currUrl]["keywords"])
+            }
+            console.log("instigatorKeywordsArr:", instigatorKeywordsArr, currUrl )
         
-            pauseVideo(tabID, currUrl)
+            pauseVideo( tabID, currUrl, instigatorKeywordsArr ) //instigatorKeywordsArr != [] ? instigatorKeywordsArr[0] : '' )
         }
         
     })

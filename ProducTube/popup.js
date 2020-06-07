@@ -372,7 +372,23 @@ function addUI(ul, value) {
                 delete storageKeys[kw]
             }
 
-            chrome.storage.sync.set({ 'keywords': storageKeys }, function() {
+            //removing the keyword from the list attached to every blocked url it was in
+            for (url in block_sites){
+                console.log("URL: ", block_sites[url] )
+                if (kw in block_sites[url]["keywords"]){
+                    delete block_sites[url]["keywords"][kw]
+                    console.log("DELETED KEYWORD: "+ kw+ "    from: "+ url )
+                }
+                if (Object.keys(block_sites[url]["keywords"])<1){
+                    delete block_sites[url]
+                    console.log("DELETED: "+ url)
+                }
+                console.log("URL: ", block_sites[url] )
+            }
+            
+
+
+            chrome.storage.sync.set({ 'keywords': storageKeys, 'session_block': block_sites }, function() {
                 console.log("VALS LEFT AFTER DELETION: " , storageKeys)
             });
     
