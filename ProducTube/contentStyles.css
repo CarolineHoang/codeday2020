@@ -102,3 +102,7 @@
     color:red;
   }
   
+/* necessary so that guide appears on top of the blox page without locating the div so that a miniplayer can appear before it */
+#guide{
+    z-index: 1000000;
+}
