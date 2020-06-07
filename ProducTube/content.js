@@ -86,6 +86,11 @@ chrome.runtime.onMessage.addListener( function (request, sender, sendResponse ){
         
     //     sendResponse({count: matches , divContent: `wowowo`})
     // }
+
+    if (request.message == "remove_old_title"){
+        alert(document.getElementById("ext-styled-text").innerHTML)
+        document.getElementById("ext-styled-text").remove()
+    }
     if (request.message == "pause_video"){
         var video = document.querySelector("video");
         // var title = document.querySelector("title") ;
@@ -122,7 +127,9 @@ chrome.runtime.onMessage.addListener( function (request, sender, sendResponse ){
         // background.c
         var channelName = document.getElementById("channel-name").querySelector("a").innerHTML//alternatively: .querySelector("#text").getElementsByTagName("a")         //.getElementsByTagName("div")//.getElementById("text")//.getElementsByTagName("a").innerHTML;
         var title = document.querySelector("title") ;
-        var titleString = document.querySelector("title").innerHTML ;
+        // var titleString = document.querySelector("title").innerHTML ;
+        var titleString = document.getElementById("info-contents").querySelector("h1").firstChild.innerHTML
+        
         console.log("testingtesting123 ")
         console.log(/*"video ", video,*/ "title", title, "titleString", titleString, "channelName:", channelName)
         
@@ -131,15 +138,39 @@ chrome.runtime.onMessage.addListener( function (request, sender, sendResponse ){
         // video.pause();
     }
     if (request.message == "show_popup"){
+        alert(request.instigatorKeyword)
+
+        var titleVal = document.getElementById("info-contents").querySelector("h1").firstChild.innerHTML
+        console.log("TITLE INFO", titleVal)
+        document.getElementById("info-contents").querySelector("h1").firstChild.innerHTML = styleSearchString( titleVal , request.instigatorKeyword )
         
+
+        var titleString = document.querySelector("title").innerHTML ;
+        // alert(titleString)
+        console.log(document.querySelector("title"))
+        document.querySelector("title").innerHTML = "asdfsdg"//styleSearchString( channelName )
+
         var div=document.createElement("div"); 
         document.body.appendChild(div); 
         div.setAttribute("id", "ext-popup")
+        
+        var keywords = request.instigatorKeyword 
+        var keywordsStr = ''
+        if (keywords.length > 2){
+            keywords[keywords.length-1]= " <span class='ext-array-and-styles'>and</span> "+keywords[keywords.length-1]
+            keywordsStr = keywords.join(', ')
+        }
+        else{
+            keywordsStr = keywords.join(" <span class='ext-array-and-styles'>and</span> ")
+        }
+        
+        
         // div.innerHTML= "<div class='ext-popup-button-container'><button id='ext-return-button' class='ext-popup-button' >Return to Safety</button><button id='ext-proceed-button' class='ext-popup-button'>Proceed to Video</button></div>"
         div.innerHTML=      "<div class='ext-title-container'>"+
                                 "Whoops, looks like this video's on your  NoNoList!"+
                             "</div>"+
                             "<div class='ext-subtitle-container'>"+
+                                "<span>This video contains the word(s): "+keywordsStr+"</span><br>"+
                                 "What would you like to do?"+
                             "</div>"+
                             "<div class='ext-popup-button-container'>"+
@@ -166,6 +197,41 @@ chrome.runtime.onMessage.addListener( function (request, sender, sendResponse ){
     // alert(request)
     return Promise.resolve("Dummy response to keep the console quiet");
 })
+
+
+function styleSearchString( string , query = []){
+    // alert(string)
+    var querystr = '' 
+    var result = string;
+    var reg = null;
+    final_str =  result
+
+   
+    
+    for (var idx = 0; idx< query.length ; idx++ ){
+        querystr = query[idx]
+        reg = new RegExp(querystr, 'gi');
+        final_str =  "" + final_str.replace(reg, function(str) {return '<span class="ext-searchIndication">'+str+'</span>'});
+    }
+    final_str = "<span id='ext-styled-text'>"+final_str+"</span>"
+    alert(query)
+    // var querystr = query
+    // var result = string;
+    // var reg = new RegExp(querystr, 'gi');
+    // var final_str =  " " + result.replace(reg, function(str) {return '<span class="ext-searchIndication">'+str+'</span>'});
+    // console.log("REPLACEMENT STRING:", final_str)
+    return final_str
+}
+//if I wanted it to work specifically for function/class, replace Array for something else //correction: it didn't work
+// Array.toString() = function() {
+//     if (this.length > 0){
+//         this[this.length-1]= "and "+this[this.length-1]
+//         return this.join(',')
+//     }
+    
+    // keywords[keywords.length-1]= "and "+keywords[keywords.length-1]
+    // return keywords.join(',')
+// }   
 
 
 
