@@ -31,18 +31,18 @@
 // console.log("only when page loads")
 
 
-function afterNavigate() {
-    if ('/watch' === location.pathname) {
-        alert('Watch page!');
-        // var channelName = document.getElementById("channel-name").querySelector("a").innerHTML//alternatively: .querySelector("#text").getElementsByTagName("a")         //.getElementsByTagName("div")//.getElementById("text")//.getElementsByTagName("a").innerHTML;
-        // var title = document.querySelector("title") ;
-        // var titleString = document.querySelector("title").innerHTML ;
-        // console.log("testingtesting123 ")
-        // console.log(/*"video ", video,*/ "title", title, "titleString", titleString, "channelName:", channelName)
-        // alert('Watch page!',"title", title, "titleString", titleString, "channelName:", channelName);
+// function afterNavigate() {
+//     if ('/watch' === location.pathname) {
         // alert('Watch page!');
-    }
-}
+//         // var channelName = document.getElementById("channel-name").querySelector("a").innerHTML//alternatively: .querySelector("#text").getElementsByTagName("a")         //.getElementsByTagName("div")//.getElementById("text")//.getElementsByTagName("a").innerHTML;
+//         // var title = document.querySelector("title") ;
+//         // var titleString = document.querySelector("title").innerHTML ;
+//         // console.log("testingtesting123 ")
+//         // console.log(/*"video ", video,*/ "title", title, "titleString", titleString, "channelName:", channelName)
+//         // alert('Watch page!',"title", title, "titleString", titleString, "channelName:", channelName);
+//         // alert('Watch page!');
+//     }
+// }
 (document.body || document.documentElement).addEventListener('DOMContentLoaded',
   function(/*TransitionEvent*/ event) {
     // afterNavigate();
@@ -88,7 +88,7 @@ chrome.runtime.onMessage.addListener( function (request, sender, sendResponse ){
     // }
 
     if (request.message == "remove_old_title"){
-        alert(document.getElementById("ext-styled-text").innerHTML)
+        // alert(document.getElementById("ext-styled-text").innerHTML)
         document.getElementById("ext-styled-text").remove()
     }
     if (request.message == "pause_video"){
@@ -138,7 +138,7 @@ chrome.runtime.onMessage.addListener( function (request, sender, sendResponse ){
         // video.pause();
     }
     if (request.message == "show_popup"){
-        alert(request.instigatorKeyword)
+        // alert(request.instigatorKeyword)
 
         var titleVal = document.getElementById("info-contents").querySelector("h1").firstChild.innerHTML
         console.log("TITLE INFO", titleVal)
@@ -214,7 +214,7 @@ function styleSearchString( string , query = []){
         final_str =  "" + final_str.replace(reg, function(str) {return '<span class="ext-searchIndication">'+str+'</span>'});
     }
     final_str = "<span id='ext-styled-text'>"+final_str+"</span>"
-    alert(query)
+    // alert(query)
     // var querystr = query
     // var result = string;
     // var reg = new RegExp(querystr, 'gi');

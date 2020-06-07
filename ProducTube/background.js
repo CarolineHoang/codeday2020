@@ -126,11 +126,14 @@ chrome.webNavigation.onHistoryStateUpdated.addListener(function(details) {
             const found = url.match(notVideoRegex);
 
             
+            //to make sure that the old title is deleted while internally navigating
+            //Reason:   after applying styles, the default youtube system seems to be unable to get 
+            //          rid of the title by itself unless the page is just reloaded
             chrome.tabs.sendMessage(
                 // details.tabId,
                 activeTab.id,
                 {"message": "remove_old_title"}, function(res){
-                    alert("DELETED")
+                    // alert("DELETED")
                 })
 
 
