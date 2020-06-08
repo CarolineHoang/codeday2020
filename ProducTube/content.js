@@ -87,7 +87,7 @@ chrome.runtime.onMessage.addListener( function (request, sender, sendResponse ){
     //     sendResponse({count: matches , divContent: `wowowo`})
     // }
 
-    if (request.message == "remove_old_title"){
+    if (request.message == "remove_old_title" && document.getElementById("ext-styled-text") != null){
         // alert(document.getElementById("ext-styled-text").innerHTML)
         document.getElementById("ext-styled-text").remove()
     }
@@ -195,7 +195,7 @@ chrome.runtime.onMessage.addListener( function (request, sender, sendResponse ){
         console.log("PRINTF: " , request.printMsg)
     }
     // alert(request)
-    return Promise.resolve("Dummy response to keep the console quiet");
+    // return Promise.resolve("Dummy response to keep the console quiet");
 })
 
 
@@ -257,8 +257,9 @@ document.addEventListener('click',function(e){
  function deletePopup(){
     var popup= document.getElementById("ext-popup")
                 console.log("clicking")
-            
-                popup.parentNode.removeChild( popup);
+                if (popup!= null && popup.parentNode != null){
+                    popup.parentNode.removeChild( popup );
+                }      
  }
 
  function resetPopup(){

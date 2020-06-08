@@ -133,56 +133,63 @@ chrome.webNavigation.onHistoryStateUpdated.addListener(function(details) {
                 // details.tabId,
                 activeTab.id,
                 {"message": "remove_old_title"}, function(res){
+
+
+
+                    // chrome.tabs.sendMessage(activeTab.id, {"message": "clicked_browser_action"});
+                    if (activeTab && found == url ){
+                        chrome.tabs.sendMessage(activeTab.id, {"message": "hide_popup"});
+                        resetPopup()
+                    }
+                    else{
+                        // checkTitle( activeTab.id, url )
+                        
+
+
+                        setTimeout(function(){ checkTitle( activeTab.id, url , pauseVideo); }, PAUSE_DELAY); //to avoid taking the information from the last page
+                        // checkTitle( activeTab.id, url , pauseVideo)
+
+                        // chrome.tabs.sendMessage(
+                        //     // details.tabId,
+                        //     activeTab.id, 
+                        //     {"message": "get_video_info"}, function(res){
+                        //     if (res && res.vidTitle){
+                        //         console.log(res.vidTitle.substring(0, res.vidTitle.length-10), res.channelName) //minus 10 to get rid of "- Youtube" (9+1)
+                        //         chrome.storage.sync.get(['last_video'], function(result) {
+                        //             if (url != result.last_video){
+                        //                 checkTitle(res.vidTitle, url)
+                        //             }
+                        //         })
+                        //     }
+                        // });
+
+                        // pauseVideo(activeTab.id, url)
+                        
+                        // chrome.storage.sync.get(['session_block'], function(result) {
+                        //     console.log("BLOCKED SITES1:",result.session_block )
+                            
+                        //     if (url in result.session_block){
+                        //         console.log("BLOCKED SITES2:",result.session_block )
+                        //         chrome.tabs.sendMessage(
+                        //             // details.tabId,
+                        //             activeTab.id, 
+                        //             {"message": "pause_video"}, function(res){
+                        //             console.log("video paused! 1",res.video )
+                        //         });
+                        //         console.log("video paused! 2")
+                        //     }
+                        // })
+                    }
+
+
+
+
                     // alert("DELETED")
                 })
 
 
 
 
-            // chrome.tabs.sendMessage(activeTab.id, {"message": "clicked_browser_action"});
-            if (activeTab && found == url ){
-                chrome.tabs.sendMessage(activeTab.id, {"message": "hide_popup"});
-                resetPopup()
-            }
-            else{
-                // checkTitle( activeTab.id, url )
-                
-
-
-                setTimeout(function(){ checkTitle( activeTab.id, url , pauseVideo); }, PAUSE_DELAY); //to avoid taking the information from the last page
-                // checkTitle( activeTab.id, url , pauseVideo)
-
-                // chrome.tabs.sendMessage(
-                //     // details.tabId,
-                //     activeTab.id, 
-                //     {"message": "get_video_info"}, function(res){
-                //     if (res && res.vidTitle){
-                //         console.log(res.vidTitle.substring(0, res.vidTitle.length-10), res.channelName) //minus 10 to get rid of "- Youtube" (9+1)
-                //         chrome.storage.sync.get(['last_video'], function(result) {
-                //             if (url != result.last_video){
-                //                 checkTitle(res.vidTitle, url)
-                //             }
-                //         })
-                //     }
-                // });
-
-                // pauseVideo(activeTab.id, url)
-                
-                // chrome.storage.sync.get(['session_block'], function(result) {
-                //     console.log("BLOCKED SITES1:",result.session_block )
-                    
-                //     if (url in result.session_block){
-                //         console.log("BLOCKED SITES2:",result.session_block )
-                //         chrome.tabs.sendMessage(
-                //             // details.tabId,
-                //             activeTab.id, 
-                //             {"message": "pause_video"}, function(res){
-                //             console.log("video paused! 1",res.video )
-                //         });
-                //         console.log("video paused! 2")
-                //     }
-                // })
-            }
             
         });
         // var video = document.querySelector("video");
@@ -216,19 +223,28 @@ chrome.webNavigation.onCompleted.addListener(function(details) {
                 var url = details.url;
                 console.log("active vs details: ", activeTab.url,  details.url)
 
-                const found = url.match(notVideoRegex);
-                // chrome.tabs.sendMessage(activeTab.id, {"message": "clicked_browser_action"});
-                if (activeTab && found == url ){
-                    chrome.tabs.sendMessage(activeTab.id, {"message": "hide_popup"});
-                    resetPopup()
-                }
-                else{
-                
+                chrome.tabs.sendMessage(
+                    // details.tabId,
+                    activeTab.id,
+                    {"message": "remove_old_title"}, function(res){
+    
+    
 
-                    // checkTitle( activeTab.id, url , pauseVideo)
-                    setTimeout(function(){ checkTitle( activeTab.id, url , pauseVideo); }, PAUSE_DELAY); //to avoid calling content when it's not available
-                    resetPopup()
-                }
+                    const found = url.match(notVideoRegex);
+                    // chrome.tabs.sendMessage(activeTab.id, {"message": "clicked_browser_action"});
+                    if (activeTab && found == url ){
+                        chrome.tabs.sendMessage(activeTab.id, {"message": "hide_popup"});
+                        resetPopup()
+                    }
+                    else{
+                    
+
+                        // checkTitle( activeTab.id, url , pauseVideo)
+                        setTimeout(function(){ checkTitle( activeTab.id, url , pauseVideo); }, PAUSE_DELAY); //to avoid calling content when it's not available
+                        resetPopup()
+                    }
+
+                })
                 
             });
         // }        
@@ -319,6 +335,10 @@ function checkTitle( tabID, currUrl, callback ){
                                     // }
 
     var string = res.vidTitle
+    if( string.substring(0, 27) == "<span id='ext-styled-text'>"){
+        console.log("THE TITLE IS STYLED", string = '')
+        string = ''
+    }
     
     //The below code only works for strings that may or may not begin with "(1) " but not any other number
     // var string = res.vidTitle
@@ -346,13 +366,28 @@ function checkTitle( tabID, currUrl, callback ){
             var block_sites = result.session_block
             if (currUrl != result.last_video){
                 console.log('Value currently is ' + result.keywords + " || " + result.session_keywords );
+                var isFirstSessionOccur =false
                 strArr.forEach(function(term){
+                    isFirstSessionOccur =false
+                    
                     var currDateTime = Date.now()
                     if(term in storageKeys){
                         console.log("STORAGEKEY freq:", term, storageKeys[term])
                         storageKeys[term].total_freq++
                         storageKeys[term].session_freq++
                         storageKeys[term].lastest_occur = currDateTime
+                        if (!(term in sessionStorageKeys)){
+                            console.log("THIS TERM IS NOT IN SSKEYS:", term, sessionStorageKeys[term])
+                            sessionStorageKeys[term] = {
+                                "total_freq": storageKeys[term].total_freq,
+                                "session_freq": storageKeys[term].session_freq,
+                                "first_occur": storageKeys[term].first_occur,
+                                "lastest_occur": currDateTime,
+                                "wordID": storageKeys[term].max_wordID
+                            }
+                            isFirstSessionOccur =true
+                            console.log("THIS TERM IS NOT IN SSKEYS1:", term, sessionStorageKeys[term])
+                        }
                         if (!(currUrl in block_sites)){
                             
                             block_sites[currUrl]={
@@ -378,7 +413,7 @@ function checkTitle( tabID, currUrl, callback ){
                             instigatorKeywordsArr.push(term)
                         }
                     }
-                    if (term in sessionStorageKeys){
+                    if ((term in sessionStorageKeys) && !isFirstSessionOccur){
                         console.log("SESSIONSTORAGEKEY freq:", term, sessionStorageKeys[term])
                         sessionStorageKeys[term].total_freq++
                         sessionStorageKeys[term].session_freq++
@@ -386,8 +421,9 @@ function checkTitle( tabID, currUrl, callback ){
 
                         console.log("SESSIONSTORAGEKEY freq incr:", term, sessionStorageKeys[term])
                     }
-                    else{
-                        console.log("NEW SESSIONSTORAGEKEY freq:", term)
+                    // else if (!term.replace(/\s/g, '').length){
+                    else if (!(term in sessionStorageKeys) && !(term in storageKeys)){
+                        console.log("NEW SESSIONSTORAGEKEY freq:", term, sessionStorageKeys, sessionStorageKeys[term])
                         sessionStorageKeys[term] = {
                                 "total_freq": 1,
                                 "session_freq": 1,

@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function(){
     });
     
     show_list()
-    show_freqlist()
+    // show_freqlist()
     articles = document.getElementsByTagName('button');
     for (var i = 0; i < articles.length; i++) {
         articles[i].addEventListener('click',onclick,false);
@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', function(){
                                     // storageKeys[term].wordID = new_max_wordID++
                                     var list = document.getElementById("keys-list");
                                     // alert("You added 1", term, storageKeys);
-                                    addUI(list, term)
+                                    addUI(list, term, storageKeys[term], "NoNoWord")
                                 }
                                 else{
                                     storageKeys[term] ={
@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', function(){
                                     }
                                     var list = document.getElementById("keys-list");
                                     // alert("You added 2"+ term);
-                                    addUI(list, term)
+                                    addUI(list, term, storageKeys[term], "NoNoWord")
                                 }
                             }
                         });
@@ -145,6 +145,67 @@ document.addEventListener('DOMContentLoaded', function(){
         console.log("adding new keyword.......")
     }
 }, false)
+
+
+document.getElementById("closingButton").addEventListener('click',function(){
+    console.log("CLICKIE")
+    var footerMenu = document.getElementById("keywordSummaryWrapper")
+    var footerMenuSpacer = document.getElementById("blankFooterSpace")
+    // $('#delete').click(function (e) {
+        // .classList.contains(class);
+        // $("#keywordSummaryWrapper").removeClass('animateIn');
+        // $("#keywordSummaryWrapper").addClass('animateOut');
+        if (document.getElementById("cheveron").classList.contains("cheveronFlip")){
+            document.getElementById("cheveron").classList.remove("cheveronFlip")
+        }
+        else{
+            document.getElementById("cheveron").classList.add("cheveronFlip")
+        }
+        // document.getElementById("cheveron").classList.remove("cheveronFlip")
+        // document.getElementById("cheveron").classList.remove("cheveronFlip")
+        // document.getElementById("cheveron").classList.add("cheveåronFlipLeft")
+        if ($("#keywordSummaryWrapper").hasClass('animateOut')){
+            $("#keywordSummaryWrapper").removeClass('animateOut');
+            $("#keywordSummaryWrapper").addClass('animateIn');
+        }
+        else if ($("#keywordSummaryWrapper").hasClass('animateIn')){
+            $("#keywordSummaryWrapper").addClass('animateOut');
+            $("#keywordSummaryWrapper").removeClass('animateIn');
+        }
+        // else if ($("#keywordSummaryWrapper").hasClass('animateInFirstEntrance')){
+        //     $("#keywordSummaryWrapper").removeClass('animateInFirstEntrance')
+        //     $("#keywordSummaryWrapper").removeClass('animateOut');
+        // }
+        // else{
+        //     $("#keywordSummaryWrapper").addClass('animateOut');
+        // }
+        // $("#keywordSummaryWrapper").addClass('animateOut');
+    // });
+
+    // if (footerMenu!= null && (footerMenu.style.display == "" || footerMenu.style.display == "block")){
+    //     // console.log("IT'S NONE!!!")
+    //     footerMenu.style.display = "none"   
+    // }
+    // if (footerMenuSpacer!= null && (footerMenuSpacer.style.display == "" || footerMenuSpacer.style.display == "block")){
+    //     // console.log("IT'S NONE!!!")
+    //     footerMenuSpacer.style.display = "none"   
+    // }
+
+
+    // if (document.getElementById("keywordSummaryWrapper")!= null && document.getElementById("keywordSummaryWrapper").style.display == "block"){
+    //     // console.log("IT'S NONE!!!")
+    //     document.getElementById("keywordSummaryWrapper").style.display = "none"
+    // }
+
+},false);
+
+
+// $('#keywordSummaryWrapper').on('transitionend', function(e){
+//     $("#keywordSummaryWrapper").css('display', 'none');
+//     $("#keywordSummaryWrapper").removeClass('animate');
+//     // $(e.target).remove()
+// });
+
 
 
 
@@ -288,10 +349,9 @@ var keyStoreVals = ['keywords', 'session_keywords' , 'max_wordID', 'session_bloc
 
 // }
 
-
-
 function show_list(){
     var list = document.getElementById("keys-list");
+    var freq_list = document.getElementById("freq-list");
     chrome.storage.sync.get( keyStoreVals, function(val) {
         var storageKeys = val.keywords; 
         var sessionStorageKeys = val.session_keywords;
@@ -299,25 +359,21 @@ function show_list(){
         var new_max_wordID = val.max_wordID
         var block_sites = val.session_block
 
-        for(let key in storageKeys){
-            console.log("Keyword: " + key)
-            if(storageKeys.hasOwnProperty(key))
-            {
-                
-                info = storageKeys[key];
-                // console.log(key,info);
-                let word_info = "<" +key + ">"
-                for(let key in info){
-                    if(info.hasOwnProperty(key)){
-                        value = info[key];
-                        word_info += "" +key + ": " + value + " | ";
-                        console.log("Property: "+ key,value);
-                    }
-                    
-                }
-                
-            }
-            addUI(list, key)
+        var sortedStorageKeysArr = sortByNonDecreasingFreq(storageKeys)
+        var sortedSessionStorageKeysArr = sortByNonDecreasingFreq(sessionStorageKeys)
+        for (index = 0; index < sortedStorageKeysArr.length; index++) { 
+        // for(let term in storageKeys){
+            term = sortedStorageKeysArr[index][0]
+            console.log("Keyword: " + term)
+            addUI(list, term, storageKeys[term], "NoNoWord")
+            // addUI(freq_list, term, sessionStorageKeys[term], "FrequentWord")
+            
+        }
+        for (index = 0; index < sortedSessionStorageKeysArr.length; index++) { 
+        // for(let term in sessionStorageKeys){
+            term = sortedSessionStorageKeysArr[index][0]
+            console.log("Keyword: " + term)
+            addUI(freq_list, term, sessionStorageKeys[term], "FrequentWord")
             
         }
         // show_list()
@@ -326,41 +382,193 @@ function show_list(){
     });
   
 }
-function addUI(ul, value) {
-    var li = document.createElement("li");
-    $("li").addClass("list-group-item");
-    li.appendChild(document.createTextNode(value));
 
-    if (value === '') {
-        //do nothing
-        //alert("You must write something!");
-    } else {
+// function show_list1(){
+//     var list = document.getElementById("keys-list");
+//     chrome.storage.sync.get( keyStoreVals, function(val) {
+//         var storageKeys = val.keywords; 
+//         var sessionStorageKeys = val.session_keywords;
+//         var x = val.keywords.length; 
+//         var new_max_wordID = val.max_wordID
+//         var block_sites = val.session_block
+
+//         for(let key in storageKeys){
+//             console.log("Keyword: " + key)
+//             // if(storageKeys.hasOwnProperty(key))
+//             // {
+                
+//             //     info = storageKeys[key];
+//             //     // console.log(key,info);
+//             //     let word_info = "<" +key + ">"
+//             //     for(let key in info){
+//             //         if(info.hasOwnProperty(key)){
+//             //             value = info[key];
+//             //             word_info += "" +key + ": " + value + " | ";
+//             //             console.log("Property: "+ key,value);
+//             //         }
+                    
+//             //     }
+                
+//             // }
+//             addUI(list, key)
+            
+//         }
+//         // show_list()
+//         // show_freqlist()
+        
+//     });
+  
+// }
+
+
+
+
+
+
+
+function addUI(ul, value, keywordInfo, keywordType ) {
+
+
+if (keywordInfo!= undefined){
+    var freqType = null;
+    if ( keywordType=="NoNoWord" ){
+        freqType="total_freq"
+    }
+    else if ( keywordType=="FrequentWord" ){
+        freqType="session_freq"
+    }
+
+    var li = document.createElement("li");
+    li.classList.add("list-group-item")
+
+    var infoDiv = document.createElement("div");
+    infoDiv.classList.add("info-container")
+    li.appendChild(infoDiv);
+    // $("li").addClass("list-group-item");
+
+    // li.appendChild(document.createTextNode(value));
+
+    if (freqType in keywordInfo){
+        infoDiv.innerHTML =     "<div class='list-item-name' >"+
+                                    value+
+                                "</div>"+
+                                "<div class='list-item-freq' >"+
+                                    "("+keywordInfo[freqType]+")"
+                                "</div>"
+        }
+
+    if (value != '') {
         ul.appendChild(li);
     }
     var span = document.createElement("SPAN");
     // span.style.fontSize = "0.75rem";
     var txt = document.createTextNode("\u00D7");
     
-        span.className = "close";
-        span.appendChild(txt);
-        li.appendChild(span);
+    span.className = "close";
+    span.appendChild(txt);
+    li.appendChild(span);
 
-        $(".close").click(function () {
-            var index = $(this).index(".close");
+    // $(".close").click(function () {
 
-            console.log(index);
-            var div = this.parentElement;
-            console.log("PARENT DIV: ", div , "CHILD:" ,this)
-            this.remove()
-            if (div){
-                console.log( "PARENT VAL", div.innerHTML )
-                removeKeyword(div.innerHTML)
-                div.remove()
-            }
-        })
-    }
+    span.addEventListener('click', function(event){
+        // var index = $(this).index(".close");
+        // console.log(index);
+        var div = this.parentElement;
+        console.log("PARENT DIV: ", div , "CHILD:" ,this)
+        this.remove()
+        if (div){
+            console.log( "PARENT VAL", div.firstChild.firstChild.innerHTML )
+            removeKeyword(div.firstChild.firstChild.innerHTML, keywordType)
+            div.remove()
+        }
+    },false);
     
-    function removeKeyword(kw) {
+    infoDiv.addEventListener('click', function(event){
+        console.log(event.currentTarget.firstChild)
+        fillKeywordInfo(event.currentTarget.firstChild, keywordType)
+        console.log("CLICK!!!", document.getElementById("keywordSummaryWrapper"),document.getElementById("keywordSummaryWrapper").style )
+        var footerMenu = document.getElementById("keywordSummaryWrapper")
+        var footerMenuSpacer = document.getElementById("blankFooterSpace")
+
+        // document.getElementById("cheveron").classList.remove("cheveronFlip")
+        // document.getElementById("cheveron").classList.add("cheveronFlipLeft")
+        if (footerMenu!= null && (footerMenu.style.display == "" || footerMenu.style.display == "none")){
+            console.log("IT'S NONE!!!")
+            // footerMenu.style.display = "block" 
+            footerMenu.classList.add("animateIn") 
+            document.getElementById("cheveron").classList.add("cheveronFlip")
+            
+            // footerMenu.classList.add("animateInFirstEntrance")   
+        }
+        if (footerMenuSpacer!= null && (footerMenuSpacer.style.display == "" || footerMenuSpacer.style.display == "none")){
+            console.log("IT'S NONE!!!")
+            footerMenuSpacer.style.display = "block"   
+        }
+    },false);
+    // li.addEventListener('click', function(event){
+    //     console.log(event.currentTarget.firstChild)
+    //     fillKeywordInfo(event.currentTarget.firstChild, keywordType)
+    // },false);
+    // document.getElementById("list-item-name").addEventListener('click', function(event){
+    //     console.log(event.currentTarget.firstChild)
+    //     fillKeywordInfo(event.currentTarget.firstChild, keywordType)
+    // },false);
+    // document.getElementById("list-item-freq").addEventListener('click', function(event){
+    //     console.log(event.currentTarget.firstChild)
+    //     fillKeywordInfo(event.currentTarget.firstChild, keywordType)
+    // },false);
+}
+    // })
+}
+    
+function fillKeywordInfo(clickedKeyword, keywordType) {
+
+    chrome.storage.sync.get( keyStoreVals, function(val) {
+        var storageKeys = val.keywords; 
+        var sessionStorageKeys = val.session_keywords;
+        var x = val.keywords.length; 
+        var new_max_wordID = val.max_wordID
+        var block_sites = val.session_block
+
+        var keys = null;
+        if ( keywordType=="NoNoWord" ){
+            keys=storageKeys
+        }
+        else if ( keywordType=="FrequentWord" ){
+            keys=sessionStorageKeys
+        }
+
+        var currKeyword = clickedKeyword.innerHTML 
+        var currKeywordDate = null;
+        if (currKeyword in keys){
+            if (keys[currKeyword]["lastest_occur"] != null){
+                currKeywordDate = keys[currKeyword]["lastest_occur"]
+            }   
+            else{
+                currKeywordDate = keys[currKeyword]["first_occur"]
+            }
+            // const date = new Date('2010-08-05')
+            const dateTimeFormat = new Intl.DateTimeFormat('en', { year: 'numeric', month: 'short', day: '2-digit', hour: 'numeric', minute: 'numeric', second: 'numeric' }) 
+            const [{ value: month },,{ value: day },,{ value: year },,{ value: hour },,{ value: minute },,{ value: second }] = dateTimeFormat.formatToParts(currKeywordDate ) 
+
+            // console.log(`${day}-${month}-${year }`)
+            console.log(day+"-"+month+"-"+year)
+            // console.log(`${day}👠${month}👢${year}`) // just for fun
+
+
+            document.getElementById("keywordSummary-keyword").innerHTML= currKeyword
+            document.getElementById("keywordSummary-date").innerHTML= day+"-"+month+"-"+year+"-"+hour+":"+minute+":"+second
+            document.getElementById("keywordSummary-freq-total-value").innerHTML = keys[currKeyword]["total_freq"]
+            document.getElementById("keywordSummary-freq-last-value").innerHTML = keys[currKeyword]["session_freq"] 
+        }
+    })
+
+
+
+
+}
+
+    function removeKeyword(kw, keywordType) {
         chrome.storage.sync.get( keyStoreVals, function(val) {
             var storageKeys = val.keywords; 
             var sessionStorageKeys = val.session_keywords;
@@ -368,8 +576,11 @@ function addUI(ul, value) {
             var new_max_wordID = val.max_wordID
             var block_sites = val.session_block
 
-            if (kw in storageKeys ){
+            if ( keywordType== "NoNoWord" && kw in storageKeys ){
                 delete storageKeys[kw]
+            }
+            else if (keywordType== "FrequentWord" && kw in sessionStorageKeys){
+                delete sessionStorageKeys[kw]
             }
 
             //removing the keyword from the list attached to every blocked url it was in
@@ -388,7 +599,7 @@ function addUI(ul, value) {
             
 
 
-            chrome.storage.sync.set({ 'keywords': storageKeys, 'session_block': block_sites }, function() {
+            chrome.storage.sync.set({ 'keywords': storageKeys, 'session_keywords': sessionStorageKeys, 'session_block': block_sites }, function() {
                 console.log("VALS LEFT AFTER DELETION: " , storageKeys)
             });
     
@@ -452,6 +663,94 @@ document.addEventListener('keypress', function (e) {
 
   /* console.log(allwords)
   console.log("testing") */
+
+
+  function sortByNonDecreasingFreq(keysObject){
+      console.log("in sorting function: " , keysObject)
+    // chrome.storage.sync.get( keyStoreVals, function(val) {
+        // var storageKeys = val.keywords; 
+        // var sessionStorageKeys = val.session_keywords;
+        // var x = val.keywords.length; 
+        // var new_max_wordID = val.max_wordID
+        // var block_sites = val.session_block
+
+        var keys = keysObject;
+        // var keys = null;
+        // if ( keywordType=="NoNoWord" ){
+        //     keys=storageKeys
+        // }
+        // else if ( keywordType=="FrequentWord" ){
+        //     keys=sessionStorageKeys
+        // }
+
+
+        var sortable = [];
+
+
+        for (var term in keys) {
+            if(keys.hasOwnProperty(term)){
+                sortable.push([term, keys[term]["session_freq"]]);
+            } 
+        }
+
+        sortable.sort(function(a, b) {
+            return parseInt(b[1])-parseInt(a[1]);
+        });
+        console.log("New array: ",sortable )
+
+
+        // for (index = 0; index < sortable.length; index++) { 
+        //     console.log(sortable[index]); 
+
+        // }
+        console.log("exitingsorting function: " , sortable)
+        return sortable
+        
+    // });
+
+  }
+
+//   function sortByNonDecreasingFreq(keywordType){
+//     chrome.storage.sync.get( keyStoreVals, function(val) {
+//         var storageKeys = val.keywords; 
+//         var sessionStorageKeys = val.session_keywords;
+//         var x = val.keywords.length; 
+//         var new_max_wordID = val.max_wordID
+//         var block_sites = val.session_block
+
+//         var keys = null;
+//         if ( keywordType=="NoNoWord" ){
+//             keys=storageKeys
+//         }
+//         else if ( keywordType=="FrequentWord" ){
+//             keys=sessionStorageKeys
+//         }
+
+
+//         var sortable = [];
+
+
+//         for (var term in keys) {
+//             if(keys.hasOwnProperty(term)){
+//                 sortable.push([term, keys[term]["session_freq"]]);
+//             } 
+//         }
+
+//         sortable.sort(function(a, b) {
+//             return parseInt(b[1])-parseInt(a[1]);
+//         });
+//         console.log("New array: ",sortable )
+
+
+//         // for (index = 0; index < sortable.length; index++) { 
+//         //     console.log(sortable[index]); 
+
+//         // }
+//         return sortable
+        
+//     });
+
+//   }
 
   function show_freqlist(){
     var freq_list = document.getElementById("freq-list");
@@ -561,6 +860,8 @@ document.addEventListener('keypress', function (e) {
 
    
 }
+
+
 // found on a Codepen by Joel César (sweet switch!)
 $('.switch3 input').on('change', function(){
     var dad = $(this).parent();
