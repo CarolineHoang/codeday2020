@@ -127,8 +127,8 @@ chrome.runtime.onMessage.addListener( function (request, sender, sendResponse ){
         // background.c
         var channelName = document.getElementById("channel-name").querySelector("a").innerHTML//alternatively: .querySelector("#text").getElementsByTagName("a")         //.getElementsByTagName("div")//.getElementById("text")//.getElementsByTagName("a").innerHTML;
         var title = document.querySelector("title") ;
-        // var titleString = document.querySelector("title").innerHTML ;
-        var titleString = document.getElementById("info-contents").querySelector("h1").firstChild.innerHTML
+        var titleString = document.querySelector("title").innerHTML ;
+        // var titleString = document.getElementById("info-contents").querySelector("h1").firstChild.innerHTML
         
         console.log("testingtesting123 ")
         console.log(/*"video ", video,*/ "title", title, "titleString", titleString, "channelName:", channelName)
@@ -148,7 +148,7 @@ chrome.runtime.onMessage.addListener( function (request, sender, sendResponse ){
         var titleString = document.querySelector("title").innerHTML ;
         // alert(titleString)
         console.log(document.querySelector("title"))
-        document.querySelector("title").innerHTML = "asdfsdg"//styleSearchString( channelName )
+        // document.querySelector("title").innerHTML = "asdfsdg"//styleSearchString( channelName )
 
         var div=document.createElement("div"); 
         document.body.appendChild(div); 

@@ -155,23 +155,66 @@ document.getElementById("closingButton").addEventListener('click',function(){
         // .classList.contains(class);
         // $("#keywordSummaryWrapper").removeClass('animateIn');
         // $("#keywordSummaryWrapper").addClass('animateOut');
-        if (document.getElementById("cheveron").classList.contains("cheveronFlip")){
-            document.getElementById("cheveron").classList.remove("cheveronFlip")
-        }
-        else{
-            document.getElementById("cheveron").classList.add("cheveronFlip")
-        }
+
+
+
+
+        // if (document.getElementById("cheveron").classList.contains("cheveronFlip")){
+        //     document.getElementById("cheveron").classList.remove("cheveronFlip")
+        // }
+        // else{
+        //     document.getElementById("cheveron").classList.add("cheveronFlip")
+        // }
+
+
+
+        // document.getElementById("cheveron").classList.remove("cheveronFlip")
+
         // document.getElementById("cheveron").classList.remove("cheveronFlip")
         // document.getElementById("cheveron").classList.remove("cheveronFlip")
         // document.getElementById("cheveron").classList.add("cheveåronFlipLeft")
+
+
+        var footerMenuSpacer = document.getElementById("blankFooterSpace")
+
         if ($("#keywordSummaryWrapper").hasClass('animateOut')){
             $("#keywordSummaryWrapper").removeClass('animateOut');
             $("#keywordSummaryWrapper").addClass('animateIn');
+            console.log("ANIMATE IN")
+
+            if (footerMenuSpacer!= null && (footerMenuSpacer.style.display == "" || footerMenuSpacer.style.display == "none")){
+                console.log("IT'S NONE!!!")
+                footerMenuSpacer.style.display = "block"   
+            }
+            if (document.getElementById("cheveron").classList.contains("cheveronFlip")){
+                document.getElementById("cheveron").classList.remove("cheveronFlip")
+                console.log("REMOVING CHEVERON")
+            }
+            else{
+                document.getElementById("cheveron").classList.add("cheveronFlip")
+                console.log("ADDING CHEVERON")
+            }
         }
         else if ($("#keywordSummaryWrapper").hasClass('animateIn')){
-            $("#keywordSummaryWrapper").addClass('animateOut');
             $("#keywordSummaryWrapper").removeClass('animateIn');
+            $("#keywordSummaryWrapper").addClass('animateOut');
+            console.log("ANIMATE OUT")
+
+            if (footerMenuSpacer!= null && ( footerMenuSpacer.style.display == "block")){
+                console.log("IT'S NONE!!!")
+                footerMenuSpacer.style.display = "none"   
+            }
+            if (document.getElementById("cheveron").classList.contains("cheveronFlip")){
+                document.getElementById("cheveron").classList.remove("cheveronFlip")
+                console.log("REMOVING CHEVERON")
+            }
+            else{
+                document.getElementById("cheveron").classList.add("cheveronFlip")
+                console.log("ADDING CHEVERON")
+            }
         }
+
+
         // else if ($("#keywordSummaryWrapper").hasClass('animateInFirstEntrance')){
         //     $("#keywordSummaryWrapper").removeClass('animateInFirstEntrance')
         //     $("#keywordSummaryWrapper").removeClass('animateOut');
@@ -198,6 +241,9 @@ document.getElementById("closingButton").addEventListener('click',function(){
     // }
 
 },false);
+
+
+
 
 
 // $('#keywordSummaryWrapper').on('transitionend', function(e){
@@ -492,18 +538,46 @@ if (keywordInfo!= undefined){
 
         // document.getElementById("cheveron").classList.remove("cheveronFlip")
         // document.getElementById("cheveron").classList.add("cheveronFlipLeft")
-        if (footerMenu!= null && (footerMenu.style.display == "" || footerMenu.style.display == "none")){
+
+
+        if (footerMenu!= null && (footerMenu.style.visibility == "" || footerMenu.style.visibility == "hidden")){
             console.log("IT'S NONE!!!")
-            // footerMenu.style.display = "block" 
-            footerMenu.classList.add("animateIn") 
-            document.getElementById("cheveron").classList.add("cheveronFlip")
-            
+            // footerMenu.style.display = "auto"
+            footerMenu.style.visibility = "visible"
+
+
+            //need to put a condition here such that this listerner only fires this animation one time at the start
+            if (footerMenu!= null && !(footerMenu.classList.contains("animateIn"))){
+                footerMenu.classList.add("animateIn") 
+                if (!(document.getElementById("cheveron").classList.contains("cheveronFlip"))){
+                    document.getElementById("cheveron").classList.add("cheveronFlip")
+                    console.log("ADDING CHEVERON FROM VAL")
+                }
+                if (footerMenuSpacer!= null && (footerMenuSpacer.style.display == "" || footerMenuSpacer.style.display == "none")){
+                    console.log("IT'S NONE!!!")
+                    footerMenuSpacer.style.display = "block"   
+                } 
+            }
             // footerMenu.classList.add("animateInFirstEntrance")   
         }
-        if (footerMenuSpacer!= null && (footerMenuSpacer.style.display == "" || footerMenuSpacer.style.display == "none")){
-            console.log("IT'S NONE!!!")
-            footerMenuSpacer.style.display = "block"   
+        else if (footerMenu!= null && (footerMenu.style.visibility == "visible")){
+            if (footerMenu!= null && (footerMenu.classList.contains("animateOut"))){
+                footerMenu.classList.remove("animateOut") 
+                footerMenu.classList.add("animateIn") 
+                if (!(document.getElementById("cheveron").classList.contains("cheveronFlip"))){
+                    document.getElementById("cheveron").classList.add("cheveronFlip")
+                    console.log("ADDING CHEVERON FROM VAL")
+                }
+                if (footerMenuSpacer!= null && (footerMenuSpacer.style.display == "" || footerMenuSpacer.style.display == "none")){
+                    console.log("IT'S NONE!!!")
+                    footerMenuSpacer.style.display = "block"   
+                } 
+            }
         }
+        // else{
+
+        // }
+
     },false);
     // li.addEventListener('click', function(event){
     //     console.log(event.currentTarget.firstChild)

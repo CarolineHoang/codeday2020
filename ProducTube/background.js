@@ -7,7 +7,7 @@ chrome.runtime.onInstalled.addListener(function(details){
     //     console.log('Value is set to ' + value);
     //   });
     chrome.storage.sync.set({//default to PRODUCTIVITY for testing
-        "mode": "PRODUCTIVITY", //"LEISURE", 
+        "mode": "LEISURE", //"PRODUCTIVITY", //"LEISURE", 
         "keywords": {   "MUSICAL":{
                                     "total_freq": 1,
                                     "session_freq": 0,
@@ -15,27 +15,34 @@ chrome.runtime.onInstalled.addListener(function(details){
                                     "lastest_occur": null,
                                     "wordID":0
                                     },
-                        "REALLY":{
-                                    "total_freq": 1,
-                                    "session_freq": 0,
-                                    "first_occur": Date.now(),
-                                    "lastest_occur": null,
-                                    "wordID":1
-                                    },
-                        "ICONIC":{
-                                    "total_freq": 1,
-                                    "session_freq": 0,
-                                    "first_occur": Date.now(),
-                                    "lastest_occur": null,
-                                    "wordID":1
-                                    },
-                        "TO":{
-                                    "total_freq": 1,
-                                    "session_freq": 0,
-                                    "first_occur": Date.now(),
-                                    "lastest_occur": null,
-                                    "wordID":1
-                                    },
+                        // "HAMILTON":{
+                        //             "total_freq": 1,
+                        //             "session_freq": 0,
+                        //             "first_occur": Date.now(),
+                        //             "lastest_occur": null,
+                        //             "wordID":0
+                        // },
+                        // "REALLY":{
+                        //             "total_freq": 1,
+                        //             "session_freq": 0,
+                        //             "first_occur": Date.now(),
+                        //             "lastest_occur": null,
+                        //             "wordID":1
+                        //             },
+                        // "ICONIC":{
+                        //             "total_freq": 1,
+                        //             "session_freq": 0,
+                        //             "first_occur": Date.now(),
+                        //             "lastest_occur": null,
+                        //             "wordID":1
+                        //             },
+                        // "TO":{
+                        //             "total_freq": 1,
+                        //             "session_freq": 0,
+                        //             "first_occur": Date.now(),
+                        //             "lastest_occur": null,
+                        //             "wordID":1
+                        //             },
                     },
         "session_keywords": {},
         "session_block": {},
@@ -308,37 +315,37 @@ function checkTitle( tabID, currUrl, callback ){
                 // if (currUrl != result.last_video){
                     // checkTitle(res.vidTitle, currUrl)
 
-                                    // var string = ''
-                                    // var re = /(^\(\d*\)\s(.*)\s-\sYouTube$|^\(\d*\)\s(.*)$|^(.*)\s-\sYouTube$|^(.*)$)/
-                                    // //this regEx checks for a string that begins with a number in parenthesis or ends with ' - YouTube' and cuts out the string inbetween
-                                    // //the text inbetween can be any group between 2 and 5 inclusive
-                                    // //group 1 happens to contain the whole string
-                                    // //group number curresponds to the index in the returned array by .match()
-                                    // //the 0 index is the whole string
-                                    // const foundRE = res.vidTitle.match(re);
-                                    // console.log("REGEX RESULTS:", foundRE)
-                                    // console.log("GROUP 2: prefix+suffix",   "(234) This is(?s)432 (.*sdf - YouTube".match(re))
-                                    // console.log("GROUP 3: prefix",          "(234) This is(?s)432 (.*sdf - YouTub".match(re))
-                                    // console.log("GROUP 4: suffix",          "(234)This is(?s)432 (.*sdf - YouTube".match(re))
-                                    // console.log("GROUP 5: neither",         "(234)This is(?s)432 (.*sdf - YouTub".match(re))
-                                    // console.log("whole string: ", foundRE[0])
-                                    // var idx = 2;
-                                    // while (idx < 6 && string == ''){
-                                    //     console.log(foundRE[idx])
-                                    //     if (foundRE[idx] != undefined){
-                                    //         string = foundRE[idx]
-                                    //     }
-                                    //     idx++
-                                    // }
-                                    // if (string == ''){
-                                    //     string = res.vidTitle
-                                    // }
+                                    var string = ''
+                                    var re = /(^\(\d*\)\s(.*)\s-\sYouTube$|^\(\d*\)\s(.*)$|^(.*)\s-\sYouTube$|^(.*)$)/
+                                    //this regEx checks for a string that begins with a number in parenthesis or ends with ' - YouTube' and cuts out the string inbetween
+                                    //the text inbetween can be any group between 2 and 5 inclusive
+                                    //group 1 happens to contain the whole string
+                                    //group number curresponds to the index in the returned array by .match()
+                                    //the 0 index is the whole string
+                                    const foundRE = res.vidTitle.match(re);
+                                    console.log("REGEX RESULTS:", foundRE)
+                                    console.log("GROUP 2: prefix+suffix",   "(234) This is(?s)432 (.*sdf - YouTube".match(re))
+                                    console.log("GROUP 3: prefix",          "(234) This is(?s)432 (.*sdf - YouTub".match(re))
+                                    console.log("GROUP 4: suffix",          "(234)This is(?s)432 (.*sdf - YouTube".match(re))
+                                    console.log("GROUP 5: neither",         "(234)This is(?s)432 (.*sdf - YouTub".match(re))
+                                    console.log("whole string: ", foundRE[0])
+                                    var idx = 2;
+                                    while (idx < 6 && string == ''){
+                                        console.log(foundRE[idx])
+                                        if (foundRE[idx] != undefined){
+                                            string = foundRE[idx]
+                                        }
+                                        idx++
+                                    }
+                                    if (string == ''){
+                                        string = res.vidTitle
+                                    }
 
-    var string = res.vidTitle
-    if( string.substring(0, 27) == "<span id='ext-styled-text'>"){
-        console.log("THE TITLE IS STYLED", string = '')
-        string = ''
-    }
+    // var string = res.vidTitle
+    // if( string.substring(0, 27) == "<span id='ext-styled-text'>"){
+    //     console.log("THE TITLE IS STYLED", string = '')
+    //     string = ''
+    // }
     
     //The below code only works for strings that may or may not begin with "(1) " but not any other number
     // var string = res.vidTitle
@@ -380,13 +387,18 @@ function checkTitle( tabID, currUrl, callback ){
                             console.log("THIS TERM IS NOT IN SSKEYS:", term, sessionStorageKeys[term])
                             sessionStorageKeys[term] = {
                                 "total_freq": storageKeys[term].total_freq,
-                                "session_freq": storageKeys[term].session_freq,
+                                "session_freq": 1,
                                 "first_occur": storageKeys[term].first_occur,
                                 "lastest_occur": currDateTime,
                                 "wordID": storageKeys[term].max_wordID
                             }
                             isFirstSessionOccur =true
                             console.log("THIS TERM IS NOT IN SSKEYS1:", term, sessionStorageKeys[term])
+                        }
+                        else{
+                            if (sessionStorageKeys[term].session_freq < (storageKeys[term].session_freq -1)){
+                                storageKeys[term].session_freq = sessionStorageKeys[term].session_freq +1
+                            }
                         }
                         if (!(currUrl in block_sites)){
                             
