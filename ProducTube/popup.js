@@ -656,11 +656,12 @@ $('.switch3 input').on('change', function(){
     {
         sec = parseInt("0")
     }
-    total_minutes = (60*parseInt(hr)) + parseInt(min) + ((1/60)*parseInt(sec)) 
+
     deadline = new Date();
     deadline.setHours(deadline.getHours()+parseInt(hr));
     deadline.setMinutes(deadline.getMinutes()+parseInt(min))
     deadline.setSeconds(deadline.getSeconds()+parseInt(sec))
+    
     // chrome.storage.sync.set({'timer_deadline': deadline})
 
     interval = setInterval(function(){
@@ -679,6 +680,8 @@ $('.switch3 input').on('change', function(){
         //This is not working 
     }
     if(!pause && !reset ){
+        
+        // chrome.storage.sync.set({'timer_deadline': deadline})
         now = new Date().getTime(); 
         var difference = deadline - now; 
         console.log("NOW: " + now + "DEADLINE: " + deadline + "Difference: " + difference)
@@ -706,6 +709,7 @@ $('.switch3 input').on('change', function(){
     }
     }
     else{
+        
         var dad = $('.switch3 input').parent();
         //$('.switch3 input').attr("checked",false)
         dad.removeClass('switch3-checked');
