@@ -569,6 +569,7 @@ $('.switch3 input').on('change', function(){
   //ATTEMPT 2
   var pause = false; 
   var reset = false; 
+  var time_left
   function timer_pre_vis(){
 
     let start =  document.querySelector("#start_timer")
@@ -612,11 +613,19 @@ $('.switch3 input').on('change', function(){
     reset_button.classList.remove('hidden')
 
   } 
+  function time_rem(end_time){
+    var t = Date.parse(end_time) - Date.parse(new Date());
+    var seconds = Math.floor( (t/1000) % 60 );
+    var minutes = Math.floor( (t/1000/60) % 60 );
+    var hours = Math.floor( (t/(1000*60*60)) % 24 );
+    var days = Math.floor( t/(1000*60*60*24) );
+    return {'total':t, 'days':days, 'hours':hours, 'minutes':minutes, 'seconds':seconds};
+
+}
+
 
   document.getElementById("start_timer").addEventListener("click",
   function startTimer() {
-
-    //RAW AESTHETICS THAT SHOULD BE MOVED ELSEWHERE --> Clean code up 
     let start =  document.querySelector("#start_timer")
     let starter =  document.querySelector("#time_setup")
     start.classList.add('hidden')
@@ -632,12 +641,7 @@ $('.switch3 input').on('change', function(){
     }); */
     
     var interval 
-    /* let pause=  document.querySelector("#pause_timer")
-    let res=  document.querySelector("#resume_timer")
-    pause.style.display ="block"
-    res.style.display ="block" */
-        //start.style.display = "none"
-    //starter.style.display = "none"
+     // NEW VARIABLE 
     var now = new Date().getTime(); 
     //upon submit 
     var hr = document.getElementById("hour_time").value;
@@ -683,13 +687,20 @@ $('.switch3 input').on('change', function(){
         
         // chrome.storage.sync.set({'timer_deadline': deadline})
         now = new Date().getTime(); 
-        var difference = deadline - now; 
+        //console.log("CHECKING TO SEE OUTPUT HERE" + time_rem(deadline))
+        //console.log("CHECKING TO SEE Days HERE" + time_rem(deadline).days)
+        //console.log("CHECKING TO SEE Days HERE" + time_rem(deadline).hours)
+        //console.log("CHECKING TO SEE Days HERE" + time_rem(deadline).minutes)
+        //console.log("CHECKING TO SEE Days HERE" + time_rem(deadline).seconds)
+
+        var difference = time_rem(deadline).total
+        time_left = difference
         console.log("NOW: " + now + "DEADLINE: " + deadline + "Difference: " + difference)
         // Time calculations for days, hours, minutes and seconds
-        var days = Math.floor(difference / (1000 * 60 * 60 * 24));
-        var hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        var minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-        var seconds = Math.floor((difference % (1000 * 60)) / 1000);
+        var days = time_rem(deadline).days
+        var hours = time_rem(deadline).hours
+        var minutes = time_rem(deadline).minutes
+        var seconds = time_rem(deadline).seconds
         document.getElementById("focus_text").innerHTML = "Let's get this bread!"
 
             var dad = $('.switch3 input').parent();
@@ -709,17 +720,33 @@ $('.switch3 input').on('change', function(){
     }
     }
     else{
+        if(pause){
+            pause_clock()
+        }
         
+        /* var dad = $('.switch3 input').parent();
+        dad.removeClass('switch3-checked');
+                chrome.storage.sync.set({'mode':'LEISURE'}, function() {
+                    //console.log("LEISURE TIME")
+                  // console.log('Value is set to ' + value);
+                }); */
+
+
+    }
+    function pause_clock(){
+        pause = true;
+        clearInterval(interval)
+        time_left = time_rem(deadline).total
+        //console.log("TIME LEFT from pause_clock" + time_left)
         var dad = $('.switch3 input').parent();
-        //$('.switch3 input').attr("checked",false)
         dad.removeClass('switch3-checked');
                 chrome.storage.sync.set({'mode':'LEISURE'}, function() {
                     //console.log("LEISURE TIME")
                   // console.log('Value is set to ' + value);
                 });
 
-
     }
+    
 
 
 }, 1000);
@@ -728,21 +755,33 @@ $('.switch3 input').on('change', function(){
 
 
     )
+    function resume_clock(){
+        if(pause){
+            console.log("Clock being resumed")
+            console.log("TIME LEFT from resume_clock" + time_left)
+            pause=false
+            var deadline = new Date(Date.parse(new Date()) + time_left);
+            document.getElementById("hour_time").value = time_rem(deadline).hours
+
+            var min = document.getElementById("min_time").value =  time_rem(deadline).minutes
+            
+            var sec = document.getElementById("sec_time").value =  time_rem(deadline).seconds
+           
+            document.getElementById("start_timer").click();
+
+            
+        }
+    }
 
     document.getElementById('pause_timer').addEventListener('click', function () {
-        pause = true;
+        pause=true;
     });
     
     document.getElementById('resume_timer').addEventListener('click', function () {
-        pause = false;
+        resume_clock()
     });
     document.getElementById('reset_timer').addEventListener('click', function () {
         reset = true;
     });
     
     
-  
-
-    function addMinutes(date, minutes) {
-        return new Date(date.getTime() + minutes*60000);
-    }
