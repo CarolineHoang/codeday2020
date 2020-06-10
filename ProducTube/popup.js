@@ -626,6 +626,7 @@ $('.switch3 input').on('change', function(){
 
   document.getElementById("start_timer").addEventListener("click",
   function startTimer() {
+    console.log("Start timer called")
     let start =  document.querySelector("#start_timer")
     let starter =  document.querySelector("#time_setup")
     start.classList.add('hidden')
@@ -704,11 +705,20 @@ $('.switch3 input').on('change', function(){
         clearInterval(interval);
         document.getElementById("time").innerHTML = "0d 0h 0m 0s. Congrats, Productive time over! Huzzah!!";
         //alert("Productive time over, huzzah!")
+        var dad = $('.switch3 input').parent();
+        dad.removeClass('switch3-checked');
+        chrome.storage.sync.set({'mode':'LEISURE'}, function() {
+            //console.log("LEISURE TIME")
+          // console.log('Value is set to ' + value);
+        });
+        
     }
     }
     else{
         if(pause){
             pause_clock()
+            document.getElementById("focus_text").innerHTML = "Are you ready to get back to work? Press resume to continue!"
+            document.getElementById("time").innerHTML = "<span style='text-align: center'> Paused: " + document.getElementById("time").innerHTML +"</span>"
         }
         
         /* var dad = $('.switch3 input').parent();
@@ -734,10 +744,15 @@ $('.switch3 input').on('change', function(){
         
         reset = false
         document.getElementById("time").innerHTML = "Focus Time Remaining"
+        chrome.storage.sync.set({'mode':'LEISURE'}, function() {
+            //console.log("LEISURE TIME")
+          // console.log('Value is set to ' + value);
+        });
         //This is not working 
     }
-    
+
     function pause_clock(){
+        //document.getElementById("focus_text").innerHTML = "Are you ready to get back to work? Press resume to continue!"
         pause = true;
         clearInterval(interval)
         time_left = time_rem(deadline).total
@@ -772,6 +787,11 @@ $('.switch3 input').on('change', function(){
             var sec = document.getElementById("sec_time").value =  time_rem(deadline).seconds
            
             document.getElementById("start_timer").click();
+            chrome.storage.sync.set({'mode':'PRODUCTIVITY'}, function() {
+                //console.log("LEISURE TIME")
+              // console.log('Value is set to ' + value);
+            });
+
 
             
         }
@@ -790,7 +810,7 @@ $('.switch3 input').on('change', function(){
         reset = false
         document.getElementById("time").innerHTML = "Focus Time Remaining"
 
-    }
+    } 
 
     document.getElementById('pause_timer').addEventListener('click', function () {
         pause=true;
@@ -801,6 +821,7 @@ $('.switch3 input').on('change', function(){
     });
     document.getElementById('reset_timer').addEventListener('click', function () {
         reset = true;
+        console.log("Reset Pressed")
         //reset_clock()
     });
     
