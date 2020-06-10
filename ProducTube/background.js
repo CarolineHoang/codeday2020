@@ -73,7 +73,73 @@ chrome.runtime.onInstalled.addListener(function(details){
                                     "wordID":1
                                     },
                     },
-        "session_keywords": {},
+        "session_keywords": {
+                        "MUSICAL":{
+                                    "total_freq": 10000000,
+                                    "session_freq": 0,
+                                    "first_occur": Date.now(),
+                                    "lastest_occur": null,
+                                    "wordID":0
+                                    },
+                        "HAMILTON":{
+                                    "total_freq": 7,
+                                    "session_freq": 0,
+                                    "first_occur": Date.now(),
+                                    "lastest_occur": null,
+                                    "wordID":0
+                                    },
+                        "IUBLOIYBLIBYLIYBIYLI;UTBILTUBI7LRTVFILRTBIVTIKVTLTIUBLOIYBLIBYLIYBIYLI;UTBILTUBI7LRTVFILRTBIVTIKVTLT":{
+                                    "total_freq": 60,
+                                    "session_freq": 0,
+                                    "first_occur": Date.now(),
+                                    "lastest_occur": null,
+                                    "wordID":1
+                                    },
+                        "SUPERCALIFRAGILISTICEXPIALIDOCIOUS":{
+                                    "total_freq": 50,
+                                    "session_freq": 0,
+                                    "first_occur": Date.now(),
+                                    "lastest_occur": null,
+                                    "wordID":1
+                                    },
+                        "PNEUMONOULTRAMICROSCOPICSILICOVOLCANOCONIOSIS":{
+                                    "total_freq": 55,
+                                    "session_freq": 0,
+                                    "first_occur": Date.now(),
+                                    "lastest_occur": null,
+                                    "wordID":1
+                                    },
+                        "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW":{
+                                    "total_freq": 100,
+                                    "session_freq": 0,
+                                    "first_occur": Date.now(),
+                                    "lastest_occur": null,
+                                    "wordID":1
+                                    },
+
+                        "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM":{
+                                    "total_freq": 1,
+                                    "session_freq": 0,
+                                    "first_occur": Date.now(),
+                                    "lastest_occur": null,
+                                    "wordID":1
+                                    },
+                        "POP":{
+                                    "total_freq": 1,
+                                    "session_freq": 0,
+                                    "first_occur": Date.now(),
+                                    "lastest_occur": null,
+                                    "wordID":1
+                                    },
+                        "TO":{
+                                    "total_freq": 1,
+                                    "session_freq": 0,
+                                    "first_occur": Date.now(),
+                                    "lastest_occur": null,
+                                    "wordID":1
+                                    },
+
+        },
         "session_block": {},
         "last_video": {'url': null, 'toggle-cleared': false},
         "max_wordID":1,

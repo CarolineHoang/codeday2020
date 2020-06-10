@@ -422,8 +422,8 @@ function show_list(){
         var new_max_wordID = val.max_wordID
         var block_sites = val.session_block
 
-        var sortedStorageKeysArr = sortByNonDecreasingFreq(storageKeys)
-        var sortedSessionStorageKeysArr = sortByNonDecreasingFreq(sessionStorageKeys)
+        var sortedStorageKeysArr = sortByNonDecreasingFreq(storageKeys, "TOTAL")
+        var sortedSessionStorageKeysArr = sortByNonDecreasingFreq(sessionStorageKeys, "SESSION")
         for (index = 0; index < sortedStorageKeysArr.length; index++) { 
         // for(let term in storageKeys){
             term = sortedStorageKeysArr[index][0]
@@ -1098,7 +1098,7 @@ document.addEventListener('keypress', function (e) {
   console.log("testing") */
 
 
-  function sortByNonDecreasingFreq(keysObject){
+  function sortByNonDecreasingFreq(keysObject, freqType ){
       console.log("in sorting function: " , keysObject)
     // chrome.storage.sync.get( keyStoreVals, function(val) {
         // var storageKeys = val.keywords; 
@@ -1106,6 +1106,11 @@ document.addEventListener('keypress', function (e) {
         // var x = val.keywords.length; 
         // var new_max_wordID = val.max_wordID
         // var block_sites = val.session_block
+        var fType = "total_freq" // defaults to total_freq sorting if nothing is given
+        if (freqType == "SESSION"){
+            fType = "session_freq"
+        }
+
 
         var keys = keysObject;
         // var keys = null;
@@ -1122,12 +1127,14 @@ document.addEventListener('keypress', function (e) {
 
         for (var term in keys) {
             if(keys.hasOwnProperty(term)){
-                sortable.push([term, keys[term]["session_freq"]]);
+                sortable.push([term, keys[term][fType]]);
             } 
         }
 
         sortable.sort(function(a, b) {
-            return parseInt(b[1])-parseInt(a[1]);
+            console.log("SORTING: b=",b, "a=", a)
+            // return b[1]-a[1]
+            return parseInt(b[1], 10 )-parseInt(a[1], 10 ); //parseInt does not default to base 10/ decimal so we must set the radix
         });
         console.log("New array: ",sortable )
 
