@@ -124,7 +124,8 @@ const notVideoRegexString = ".*\/\/.*youtube.com\/(?!watch).*" //"^(.*)$"//
 //     // alert("the page has loaded", "title", title, "titleString", titleString, "channelName:", channelName)
     
 // })
-chrome.webNavigation.onHistoryStateUpdated.addListener(function(details) {  
+chrome.webNavigation.onHistoryStateUpdated.addListener(function(details) { 
+    alert("History Nav") 
 
 
 // chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {   
@@ -174,8 +175,9 @@ chrome.webNavigation.onHistoryStateUpdated.addListener(function(details) {
 
                     // chrome.tabs.sendMessage(activeTab.id, {"message": "clicked_browser_action"});
                     if (activeTab && found == url ){
-                        chrome.tabs.sendMessage(activeTab.id, {"message": "hide_popup"});
-                        resetPopup()
+                        chrome.tabs.sendMessage(activeTab.id, {"message": "hide_popup"} , function(resp){
+                            resetPopup()
+                        });   
                     }
                     else{
                         // checkTitle( activeTab.id, url )
@@ -248,7 +250,8 @@ chrome.webNavigation.onHistoryStateUpdated.addListener(function(details) {
     // if ( changeInfo.status == 'complete'  && tab.active) { //make sure to do this after processing if it's in the tag //undefined might go forever and call when the page is not laoded, but it's necessary for internal navigation (that goes in history without sending a "completed" status. But, putting a listener on the history changing fires before the page changes.)
 
 
-chrome.webNavigation.onCompleted.addListener(function(details) {  
+chrome.webNavigation.onCompleted.addListener(function(details) { 
+    alert("Page Completed")  
 
             // console.log("hngcgcj", window.location.href, details.url, details.transitionType, details.parentFrameId)
 

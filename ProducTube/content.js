@@ -49,6 +49,7 @@
     // if (event.propertyName === 'width' && event.target.id === 'progress') {
     //     afterNavigate();
     // }
+    alert("page loaded")
     console.log("EVENT: ", event.propertyName)
     // if (event.propertyName === 'width' && event.target.id === 'progress') {
     //     afterNavigate();
@@ -282,14 +283,39 @@ document.addEventListener('click',function(e){
     }
  });
  function deletePopup(){
-    var popup= document.getElementById("ext-popup")
-                console.log("clicking")
-                if (popup!= null && popup.parentNode != null){
-                    popup.parentNode.removeChild( popup );
-                }      
+    var popupArr = document.getElementsByClassName("ext-popupDiv")
+    // var popup =null
+    while(popupArr.length > 0){
+        popupArr[0].parentNode.removeChild(popupArr[0]);
+        // console.log("div to delete:", popupArr[i])
+        // var popup= popupArr[i]
+        // console.log("clicking")
+        // if (popup!= null && popup.parentNode != null){
+        //     popup.parentNode.removeChild( popup );
+        // }    
+        // elements[0].parentNode.removeChild(elements[0]);
+    }
+    // for ( var i = 0 ; i< popupArr.length ; i++){
+    //     console.log("div to delete:", popupArr[i])
+    //     var popup= popupArr[i]
+    //     console.log("clicking")
+    //     if (popup!= null && popup.parentNode != null){
+    //         popup.parentNode.removeChild( popup );
+    //     }    
+    // }
+    // var popup= document.getElementById("ext-popup")
+    //             console.log("clicking")
+    //             if (popup!= null && popup.parentNode != null){
+    //                 popup.parentNode.removeChild( popup );
+    //             }      
  }
 
  function resetPopup(){
+    // chrome.runtime.sendMessage({"message": "save_keys", "user_changes": {'popup_activated': false} } , function(){
+    //     console.log("PRODUCTIVE TIME NEW SESSION")
+    //     // alert("success")
+    // } )
+
     chrome.storage.sync.set({'popup_activated': false}, function() {
     });
  }
