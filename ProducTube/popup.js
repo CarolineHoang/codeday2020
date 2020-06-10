@@ -690,15 +690,17 @@ if (keywordInfo!= undefined){
         //     ul.appendChild(li);
         // }
         var closeButton = document.createElement("SPAN");
-        // closeButton.style.fontSize = "0.75rem";
+        closeButton.title = "Delete \""+value+"\"";
         var x_txt = document.createTextNode("\u00D7");
         var plus_txt = document.createTextNode("+");
         
         closeButton.classList.add(closeClassType);
+        // closeButton.classList.add(closeClassType);
         closeButton.appendChild(x_txt);
         li.appendChild(closeButton);
         if ( closeClassType == "close-freq" ){
             var addButton = document.createElement("SPAN");
+            addButton.title = "Add to NoNoList"
             addButton.classList.add("add-freq");
             addButton.appendChild(plus_txt);
             li.appendChild(addButton);

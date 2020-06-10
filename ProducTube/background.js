@@ -76,35 +76,35 @@ chrome.runtime.onInstalled.addListener(function(details){
         "session_keywords": {
                         "MUSICAL":{
                                     "total_freq": 10000000,
-                                    "session_freq": 0,
+                                    "session_freq": 10000000,
                                     "first_occur": Date.now(),
                                     "lastest_occur": null,
                                     "wordID":0
                                     },
                         "HAMILTON":{
                                     "total_freq": 7,
-                                    "session_freq": 0,
+                                    "session_freq": 7,
                                     "first_occur": Date.now(),
                                     "lastest_occur": null,
                                     "wordID":0
                                     },
                         "IUBLOIYBLIBYLIYBIYLI;UTBILTUBI7LRTVFILRTBIVTIKVTLTIUBLOIYBLIBYLIYBIYLI;UTBILTUBI7LRTVFILRTBIVTIKVTLT":{
                                     "total_freq": 60,
-                                    "session_freq": 0,
+                                    "session_freq": 60,
                                     "first_occur": Date.now(),
                                     "lastest_occur": null,
                                     "wordID":1
                                     },
                         "SUPERCALIFRAGILISTICEXPIALIDOCIOUS":{
                                     "total_freq": 50,
-                                    "session_freq": 0,
+                                    "session_freq": 50,
                                     "first_occur": Date.now(),
                                     "lastest_occur": null,
                                     "wordID":1
                                     },
                         "PNEUMONOULTRAMICROSCOPICSILICOVOLCANOCONIOSIS":{
                                     "total_freq": 55,
-                                    "session_freq": 0,
+                                    "session_freq": 55,
                                     "first_occur": Date.now(),
                                     "lastest_occur": null,
                                     "wordID":1
@@ -119,21 +119,21 @@ chrome.runtime.onInstalled.addListener(function(details){
 
                         "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM":{
                                     "total_freq": 1,
-                                    "session_freq": 0,
+                                    "session_freq": 1,
                                     "first_occur": Date.now(),
                                     "lastest_occur": null,
                                     "wordID":1
                                     },
                         "POP":{
                                     "total_freq": 1,
-                                    "session_freq": 0,
+                                    "session_freq": 1,
                                     "first_occur": Date.now(),
                                     "lastest_occur": null,
                                     "wordID":1
                                     },
                         "TO":{
                                     "total_freq": 1,
-                                    "session_freq": 0,
+                                    "session_freq": 1,
                                     "first_occur": Date.now(),
                                     "lastest_occur": null,
                                     "wordID":1
@@ -267,7 +267,7 @@ chrome.webNavigation.onHistoryStateUpdated.addListener(function(details) {
 
 
 chrome.webNavigation.onCompleted.addListener(function(details) { 
-    alert("Page Completed")  
+    // alert("Page Completed")  
 
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
         var activeTab = tabs[0];
@@ -675,7 +675,7 @@ chrome.runtime.onMessage.addListener( function (request, sender, sendResponse ){
             break;
     }
 
-    return Promise.resolve("Dummy response to keep the console quiet");
+    // return Promise.resolve("Dummy response to keep the console quiet");
 })
 
 
