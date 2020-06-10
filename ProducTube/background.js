@@ -7,46 +7,75 @@ chrome.runtime.onInstalled.addListener(function(details){
     //     console.log('Value is set to ' + value);
     //   });
     chrome.storage.sync.set({//default to PRODUCTIVITY for testing
-        "mode": "LEISURE", //"PRODUCTIVITY", //"LEISURE", 
+        "mode": "PRODUCTIVITY", //"LEISURE", 
         "keywords": {   "MUSICAL":{
+                                    "total_freq": 10000000,
+                                    "session_freq": 0,
+                                    "first_occur": Date.now(),
+                                    "lastest_occur": null,
+                                    "wordID":0
+                                    },
+                        "HAMILTON":{
                                     "total_freq": 1,
                                     "session_freq": 0,
                                     "first_occur": Date.now(),
                                     "lastest_occur": null,
                                     "wordID":0
                                     },
-                        // "HAMILTON":{
-                        //             "total_freq": 1,
-                        //             "session_freq": 0,
-                        //             "first_occur": Date.now(),
-                        //             "lastest_occur": null,
-                        //             "wordID":0
-                        // },
-                        // "REALLY":{
-                        //             "total_freq": 1,
-                        //             "session_freq": 0,
-                        //             "first_occur": Date.now(),
-                        //             "lastest_occur": null,
-                        //             "wordID":1
-                        //             },
-                        // "ICONIC":{
-                        //             "total_freq": 1,
-                        //             "session_freq": 0,
-                        //             "first_occur": Date.now(),
-                        //             "lastest_occur": null,
-                        //             "wordID":1
-                        //             },
-                        // "TO":{
-                        //             "total_freq": 1,
-                        //             "session_freq": 0,
-                        //             "first_occur": Date.now(),
-                        //             "lastest_occur": null,
-                        //             "wordID":1
-                        //             },
+                        "IUBLOIYBLIBYLIYBIYLI;UTBILTUBI7LRTVFILRTBIVTIKVTLTIUBLOIYBLIBYLIYBIYLI;UTBILTUBI7LRTVFILRTBIVTIKVTLT":{
+                                    "total_freq": 1,
+                                    "session_freq": 0,
+                                    "first_occur": Date.now(),
+                                    "lastest_occur": null,
+                                    "wordID":1
+                                    },
+                        "SUPERCALIFRAGILISTICEXPIALIDOCIOUS":{
+                                    "total_freq": 1,
+                                    "session_freq": 0,
+                                    "first_occur": Date.now(),
+                                    "lastest_occur": null,
+                                    "wordID":1
+                                    },
+                        "PNEUMONOULTRAMICROSCOPICSILICOVOLCANOCONIOSIS":{
+                                    "total_freq": 1,
+                                    "session_freq": 0,
+                                    "first_occur": Date.now(),
+                                    "lastest_occur": null,
+                                    "wordID":1
+                                    },
+                        "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW":{
+                                    "total_freq": 1,
+                                    "session_freq": 0,
+                                    "first_occur": Date.now(),
+                                    "lastest_occur": null,
+                                    "wordID":1
+                                    },
+
+                        "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM":{
+                                    "total_freq": 1,
+                                    "session_freq": 0,
+                                    "first_occur": Date.now(),
+                                    "lastest_occur": null,
+                                    "wordID":1
+                                    },
+                        "POP":{
+                                    "total_freq": 1,
+                                    "session_freq": 0,
+                                    "first_occur": Date.now(),
+                                    "lastest_occur": null,
+                                    "wordID":1
+                                    },
+                        "TO":{
+                                    "total_freq": 1,
+                                    "session_freq": 0,
+                                    "first_occur": Date.now(),
+                                    "lastest_occur": null,
+                                    "wordID":1
+                                    },
                     },
         "session_keywords": {},
         "session_block": {},
-        "last_video": null,
+        "last_video": {'url': null, 'toggle-cleared': false},
         "max_wordID":1,
         "freq_channels": [],
         "word_ignore":["a", "or", "if", "it's", "it", "is", "the"],
@@ -228,7 +257,7 @@ chrome.webNavigation.onCompleted.addListener(function(details) {
                 var activeTab = tabs[0];
                 // var url = tab.url;
                 var url = details.url;
-                console.log("active vs details: ", activeTab.url,  details.url)
+                // console.log("active vs details: ", activeTab.url,  details.url)
 
                 chrome.tabs.sendMessage(
                     // details.tabId,
@@ -267,7 +296,7 @@ function pauseVideo( tabID, url, instigatorKeyword = [] ){
     // var nonoVideo = await checkTitle( tabID, url )
     // alert("finished awaiting") //, nonoVideo)
     // if (nonoVideo ){
-        chrome.storage.sync.get(['session_block', 'popup_activated'], function(result) {
+        chrome.storage.sync.get(['session_block', 'popup_activated','keywords'], function(result) {
             console.log("returned True!", url, result.session_block)
             // console.log(url, result.session_block)
             // console.log("returned True!", url, result.session_block)
@@ -288,6 +317,7 @@ function pauseVideo( tabID, url, instigatorKeyword = [] ){
                         tabID, 
                         {"message": "show_popup" , 'instigatorKeyword': instigatorKeyword }, function(res){
                         console.log("popup! 1")
+                        console.log("THESE ARE THE PARTIALLY AVAILABLE KEYWORDS:",result.keywords )
                         chrome.storage.sync.set({'popup_activated': true}, function() {
                         });
                         // alert("video is paused")
@@ -371,33 +401,56 @@ function checkTitle( tabID, currUrl, callback ){
             var sessionStorageKeys = result.session_keywords
             var new_max_wordID = result.max_wordID
             var block_sites = result.session_block
-            if (currUrl != result.last_video){
+            // if (currUrl != result.last_video){
                 console.log('Value currently is ' + result.keywords + " || " + result.session_keywords );
                 var isFirstSessionOccur =false
-                strArr.forEach(function(term){
+                var term = ""
+                strArr.forEach(function(t){
+                    term = t
+                    // termRE1 = term.match(/\w(.*\s\w?)\w/);
+                    // termRE1 = term.match(/([\w#@](.*\s?)[\w])|([\w])/);  //  this accepts hashtags and @something
+                                                                            //  in order to accept more than letters and 
+                                                                            //  numbers for starters, all you need to do 
+                                                                            //  is add the symbol between the [], the one 
+                                                                            //  exception is the hyphen (-) because it is 
+                                                                            //  special and must be the first thing between 
+                                                                            //  the brackets if you want to use it
+                    termRE1 = term.match(/([\w](.*\s?)[\w])|([\w])/);
+                    
+                    console.log("TERM:", termRE1)
+                    if (termRE1){
+                        term=termRE1[0]
+                    }
+                    else{
+                        term =''
+                    }
+                    // term=termRE1[0]
+
                     isFirstSessionOccur =false
                     
                     var currDateTime = Date.now()
                     if(term in storageKeys){
-                        console.log("STORAGEKEY freq:", term, storageKeys[term])
-                        storageKeys[term].total_freq++
-                        storageKeys[term].session_freq++
-                        storageKeys[term].lastest_occur = currDateTime
-                        if (!(term in sessionStorageKeys)){
-                            console.log("THIS TERM IS NOT IN SSKEYS:", term, sessionStorageKeys[term])
-                            sessionStorageKeys[term] = {
-                                "total_freq": storageKeys[term].total_freq,
-                                "session_freq": 1,
-                                "first_occur": storageKeys[term].first_occur,
-                                "lastest_occur": currDateTime,
-                                "wordID": storageKeys[term].max_wordID
+                        if (currUrl != result.last_video.url || result.last_video["toggle-cleared"] == true){
+                            console.log("STORAGEKEY freq:", term, storageKeys[term])
+                            storageKeys[term].total_freq++
+                            storageKeys[term].session_freq++
+                            storageKeys[term].lastest_occur = currDateTime
+                            if (!(term in sessionStorageKeys)){
+                                console.log("THIS TERM IS NOT IN SSKEYS:", term, sessionStorageKeys[term])
+                                sessionStorageKeys[term] = {
+                                    "total_freq": storageKeys[term].total_freq,
+                                    "session_freq": 1,
+                                    "first_occur": storageKeys[term].first_occur,
+                                    "lastest_occur": currDateTime,
+                                    "wordID": storageKeys[term].max_wordID
+                                }
+                                isFirstSessionOccur =true
+                                console.log("THIS TERM IS NOT IN SSKEYS1:", term, sessionStorageKeys[term])
                             }
-                            isFirstSessionOccur =true
-                            console.log("THIS TERM IS NOT IN SSKEYS1:", term, sessionStorageKeys[term])
-                        }
-                        else{
-                            if (sessionStorageKeys[term].session_freq < (storageKeys[term].session_freq -1)){
-                                storageKeys[term].session_freq = sessionStorageKeys[term].session_freq +1
+                            else{
+                                if (sessionStorageKeys[term].session_freq < (storageKeys[term].session_freq -1)){
+                                    storageKeys[term].session_freq = sessionStorageKeys[term].session_freq +1
+                                }
                             }
                         }
                         if (!(currUrl in block_sites)){
@@ -421,11 +474,11 @@ function checkTitle( tabID, currUrl, callback ){
                         console.log("STORAGEKEY freq incr:", term, storageKeys[term])
                         //pause the video
                         nonoVideo = true
-                        if (!instigatorKeywordsArr.includes(term)){
-                            instigatorKeywordsArr.push(term)
-                        }
+                        // if (!instigatorKeywordsArr.includes(term)){
+                        //     instigatorKeywordsArr.push(term)
+                        // }
                     }
-                    if ((term in sessionStorageKeys) && !isFirstSessionOccur){
+                    if ((term in sessionStorageKeys) && !isFirstSessionOccur && (currUrl != result.last_video.url || result.last_video["toggle-cleared"] == true)){
                         console.log("SESSIONSTORAGEKEY freq:", term, sessionStorageKeys[term])
                         sessionStorageKeys[term].total_freq++
                         sessionStorageKeys[term].session_freq++
@@ -434,7 +487,7 @@ function checkTitle( tabID, currUrl, callback ){
                         console.log("SESSIONSTORAGEKEY freq incr:", term, sessionStorageKeys[term])
                     }
                     // else if (!term.replace(/\s/g, '').length){
-                    else if (!(term in sessionStorageKeys) && !(term in storageKeys)){
+                    else if (!(term in sessionStorageKeys) && !(term in storageKeys) && (currUrl != result.last_video.url || result.last_video["toggle-cleared"] == true) ){
                         console.log("NEW SESSIONSTORAGEKEY freq:", term, sessionStorageKeys, sessionStorageKeys[term])
                         sessionStorageKeys[term] = {
                                 "total_freq": 1,
@@ -446,7 +499,7 @@ function checkTitle( tabID, currUrl, callback ){
                         console.log("NEW SESSIONSTORAGEKEY freq:", term, sessionStorageKeys[term])
                     }
                 });
-                chrome.storage.sync.set({'keywords': storageKeys, 'session_keywords': sessionStorageKeys , 'max_wordID': new_max_wordID, 'last_video': currUrl, 'session_block': block_sites}, function() {
+                chrome.storage.sync.set({'keywords': storageKeys, 'session_keywords': sessionStorageKeys , 'max_wordID': new_max_wordID, 'last_video': {'url': currUrl, 'toggle-cleared': false}, 'session_block': block_sites}, function() {
                     console.log('Values changed to 1: ' , storageKeys);
                     console.log('Values changed to 2: ' , sessionStorageKeys);
                     console.log('Values changed to 3: ' , new_max_wordID);
@@ -456,7 +509,7 @@ function checkTitle( tabID, currUrl, callback ){
 
 
                 // pauseVideo(tabID, currUrl)
-            }
+            // }
 
             var instigatorKeywordsArr2 = []
             if (currUrl in block_sites){
@@ -506,6 +559,26 @@ chrome.runtime.onMessage.addListener( function (request, sender, sendResponse ){
     if (request.message == "show_user_keys"){
         console.log("userKeys array: ", newKeys)//get from storage
         sendResponse({userKeys: newKeys , divContent: `wowowo`}) //send storage info
+        // chrome.tabs.sendMessage(activeTab.id, {"message": "pause_video"});
+        // video.pause();
+    }
+    if (request.message == "save_keys"){
+
+
+        chrome.storage.sync.set(request.user_changes, function() {
+            console.log("USER CHANGES", request.user_changes)
+
+            chrome.storage.sync.get("last_video", function(request){
+                console.log("Last video", request.last_video)
+
+            })
+            // alert(request.user_changes)
+            // document.getElementById("text1").value = ''
+            // console.log("NEW ADDED VAL: " , storageKeys)
+        });
+        // console.log("userKeys array: ", newKeys)//get from storage
+
+        // sendResponse({userKeys: newKeys , divContent: `wowowo`}) //send storage info
         // chrome.tabs.sendMessage(activeTab.id, {"message": "pause_video"});
         // video.pause();
     }

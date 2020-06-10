@@ -139,9 +139,16 @@ chrome.runtime.onMessage.addListener( function (request, sender, sendResponse ){
     }
     if (request.message == "show_popup"){
         // alert(request.instigatorKeyword)
+        // chrome.storage.sync.get(['keywords', 'session_keywords', 'max_wordID' ], function(result) {
+        //     var storageKeys = result.keywords
+        //     var sessionStorageKeys = result.session_keywords
+        //     console.log("THESE ARE THE REAL AVAILABLE KEYWORDS:",storageKeys )
+
+        // })
 
         var titleVal = document.getElementById("info-contents").querySelector("h1").firstChild.innerHTML
-        console.log("TITLE INFO", titleVal)
+        console.log("TITLE INFO", titleVal )
+        console.log("INSTIGATING KEYWORDS", request.instigatorKeyword )
         document.getElementById("info-contents").querySelector("h1").firstChild.innerHTML = styleSearchString( titleVal , request.instigatorKeyword )
         
 
@@ -201,6 +208,7 @@ chrome.runtime.onMessage.addListener( function (request, sender, sendResponse ){
 
 function styleSearchString( string , query = []){
     // alert(string)
+    console.log("QUERY: ", query, "STRING:", string)
     var querystr = '' 
     var result = string;
     var reg = null;
@@ -210,7 +218,26 @@ function styleSearchString( string , query = []){
     
     for (var idx = 0; idx< query.length ; idx++ ){
         querystr = query[idx]
-        reg = new RegExp(querystr, 'gi');
+        // reg = new RegExp(querystr, 'gi');
+        // reg = new RegExp("(^\s"+querystr+"\s$|^\s"+querystr+"$|^"+querystr+"\s$)", 'gi');
+        // reg = new RegExp(/\s/+querystr , 'gi');
+        // reg = new RegExp(/\s/+querystr+" |REACTS)", 'gi');
+        var doubleSymbols = [["(",")"]]
+        // querystr=" "+querystr+" | "+querystr+"$|^"+querystr+" |"
+        // for ( i in )
+        // /\w(.*\s?)\w/
+        // reg = new RegExp(" "+querystr+" | "+querystr+"$|^"+querystr+" |"+/(?<=\()/+querystr+/(?=\))/, 'gi');
+        // reg = new RegExp(" "+querystr+" | "+querystr+"$|^"+querystr+" |"+/(?<=\()/+querystr+/(?=\))/, 'gi');
+        // reg = new RegExp(" "+querystr+" | "+querystr+"$|^"+querystr+" |"+/(?<=\()/+querystr+/(?=\))/, 'gi');
+        // reg = new RegExp("\W"+querystr+"\W|\W"+querystr+"$|^"+querystr+"\W", 'gi');
+
+        // reg = new RegExp(/\s/+querystr+/\s|\W/+querystr+/$|^/+querystr+/\W/, 'gi');
+        // "\\W"+querystr+"\\W|\\W"+querystr+"$|^"+querystr+"\\W"+
+        // reg = new RegExp("\\W"+querystr+"\\W|\\W"+querystr+"$|^"+querystr+"\\W", 'gi');
+        reg = new RegExp("((?<=\\W)("+querystr+")(?=\\W))|((?<=\\W)("+querystr+"))|(("+querystr+")(?=\\W))", 'gi');
+
+        // reg = new RegExp(querystr, 'gi');
+        console.log("REGEX:", reg)
         final_str =  "" + final_str.replace(reg, function(str) {return '<span class="ext-searchIndication">'+str+'</span>'});
     }
     final_str = "<span id='ext-styled-text'>"+final_str+"</span>"

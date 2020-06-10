@@ -51,52 +51,55 @@ document.addEventListener('DOMContentLoaded', function(){
 
                     var string = document.getElementById("text1").value;//"HELLO HAPPY DAY"; //STRING FROM INPUT FIELD
                     var strArr =  string.toUpperCase().split(" ").filter(Boolean);
-                    chrome.storage.sync.get(['keywords', 'session_keywords', 'max_wordID' ], function(result) {
-                        var storageKeys = result.keywords
-                        var sessionStorageKeys = result.session_keywords
-                        var new_max_wordID = result.max_wordID
-                        console.log("strArr:", strArr)
-                        strArr.forEach(function(term){
-                            var currDateTime = Date.now()
-                            if(!(term in storageKeys)){
-                                // console.log("STORAGEKEY freq:", term, storageKeys[term])
-                                
-                                if(!(term in sessionStorageKeys)){
-                                    storageKeys[term] ={
-                                        "first_occur": currDateTime,
-                                        "lastest_occur": null,
-                                        "session_freq": 1,
-                                        "total_freq": 1,
-                                        "wordID": new_max_wordID++
-                                    }
-                                    // storageKeys[term].total_freq = 1
-                                    // storageKeys[term].session_freq = 0
-                                    // storageKeys[term].first_occur = currDateTime
-                                    // storageKeys[term].lastest_occur = null
-                                    // storageKeys[term].wordID = new_max_wordID++
-                                    var list = document.getElementById("keys-list");
-                                    // alert("You added 1", term, storageKeys);
-                                    addUI(list, term, storageKeys[term], "NoNoWord")
-                                }
-                                else{
-                                    storageKeys[term] ={
-                                        "first_occur": sessionStorageKeys[term].first_occur,
-                                        "lastest_occur": sessionStorageKeys[term].lastest_occur,
-                                        "session_freq": sessionStorageKeys[term].session_freq,
-                                        "total_freq": sessionStorageKeys[term].total_freq,
-                                        "wordID": sessionStorageKeys[term].wordID
-                                    }
-                                    var list = document.getElementById("keys-list");
-                                    // alert("You added 2"+ term);
-                                    addUI(list, term, storageKeys[term], "NoNoWord")
-                                }
-                            }
-                        });
-                        chrome.storage.sync.set({ 'keywords': storageKeys, 'max_wordID': new_max_wordID }, function() {
-                            document.getElementById("text1").value = ''
-                            console.log("NEW ADDED VAL: " , storageKeys)
-                        });
-                    });
+                    var list = document.getElementById("keys-list");
+                    addKeywords(strArr, list)
+                    document.getElementById("text1").value = '';
+                                                            // chrome.storage.sync.get(['keywords', 'session_keywords', 'max_wordID' ], function(result) {
+                                                            //     var storageKeys = result.keywords
+                                                            //     var sessionStorageKeys = result.session_keywords
+                                                            //     var new_max_wordID = result.max_wordID
+                                                            //     console.log("strArr:", strArr)
+                                                            //     strArr.forEach(function(term){
+                                                            //         var currDateTime = Date.now()
+                                                            //         if(!(term in storageKeys)){
+                                                            //             // console.log("STORAGEKEY freq:", term, storageKeys[term])
+                                                                        
+                                                            //             if(!(term in sessionStorageKeys)){
+                                                            //                 storageKeys[term] ={
+                                                            //                     "first_occur": currDateTime,
+                                                            //                     "lastest_occur": null,
+                                                            //                     "session_freq": 1,
+                                                            //                     "total_freq": 1,
+                                                            //                     "wordID": new_max_wordID++
+                                                            //                 }
+                                                            //                 // storageKeys[term].total_freq = 1
+                                                            //                 // storageKeys[term].session_freq = 0
+                                                            //                 // storageKeys[term].first_occur = currDateTime
+                                                            //                 // storageKeys[term].lastest_occur = null
+                                                            //                 // storageKeys[term].wordID = new_max_wordID++
+                                                            //                 var list = document.getElementById("keys-list");
+                                                            //                 // alert("You added 1", term, storageKeys);
+                                                            //                 addUI(list, term, storageKeys[term], "NoNoWord")
+                                                            //             }
+                                                            //             else{
+                                                            //                 storageKeys[term] ={
+                                                            //                     "first_occur": sessionStorageKeys[term].first_occur,
+                                                            //                     "lastest_occur": sessionStorageKeys[term].lastest_occur,
+                                                            //                     "session_freq": sessionStorageKeys[term].session_freq,
+                                                            //                     "total_freq": sessionStorageKeys[term].total_freq,
+                                                            //                     "wordID": sessionStorageKeys[term].wordID
+                                                            //                 }
+                                                            //                 var list = document.getElementById("keys-list");
+                                                            //                 // alert("You added 2"+ term);
+                                                            //                 addUI(list, term, storageKeys[term], "NoNoWord")
+                                                            //             }
+                                                            //         }
+                                                            //     });
+                                                            //     chrome.storage.sync.set({ 'keywords': storageKeys, 'max_wordID': new_max_wordID }, function() {
+                                                            //         document.getElementById("text1").value = ''
+                                                            //         console.log("NEW ADDED VAL: " , storageKeys)
+                                                            //     });
+                                                            // });
                     break;
                 case "delete_keyword": //changed to not need to be based off one button (obviously) do it's found in a function below
                     chrome.runtime.sendMessage({"message": "DELETE_KEYWORD", "keyword": "cats" } , tester2 ) //sends keyword to background.js to delete from the keyword list
@@ -109,9 +112,13 @@ document.addEventListener('DOMContentLoaded', function(){
                     });
                     window.close();
                     chrome.tabs.sendMessage(tabs[0].id, {"message": "print_test", "printMsg": "set the alarm2"}  )
-                    chrome.storage.sync.set({'mode':'PRODUCTIVITY'}, function() {
-                        // console.log('Value is set to ' + value);
-                    });
+                    chrome.runtime.sendMessage({"message": "save_keys", "user_changes": {'mode':'PRODUCTIVITY', "session_keywords": {}, "session_block": {} }} , function(){
+                        console.log("PRODUCTIVE TIME NEW SESSION")
+                        // alert("success")
+                    } )
+                    // chrome.storage.sync.set({'mode':'PRODUCTIVITY'}, function() {
+                    //     // console.log('Value is set to ' + value);
+                    // });
                     
                     //this 1) sets the alarm and 2) changes the storage value for whether we're in productivity mode or not to true (value used for reference if we will pause video )
                     break;
@@ -119,9 +126,13 @@ document.addEventListener('DOMContentLoaded', function(){
                     chrome.runtime.sendMessage({"message": "STOP_TIMER" } , tester2 ) 
                     chrome.alarms.clear("PRODUCTIVITY_MODE");
                     window.close();
-                    chrome.storage.sync.set({'mode':'LEISURE'}, function() {
-                        // console.log('Value is set to ' + value);
-                    });
+                    chrome.runtime.sendMessage({"message": "save_keys", "user_changes": {'mode':'LEISURE'}} , function(){
+                        console.log("LEISURE TIME")
+                        // alert("success")
+                    } )
+                    // chrome.storage.sync.set({'mode':'LEISURE'}, function() {
+                    //     // console.log('Value is set to ' + value);
+                    // });
                     //this 1) clears ALL alarms (not refined further rn) and 2) changes the storage value for whether we're in productivity mode or not to false (value used for reference if we will pause video )
                     break;
             }
@@ -150,6 +161,7 @@ document.addEventListener('DOMContentLoaded', function(){
 document.getElementById("closingButton").addEventListener('click',function(){
     console.log("CLICKIE")
     var footerMenu = document.getElementById("keywordSummaryWrapper")
+    // var footerMenuInfo = document.getElementById("keywordSummary")
     var footerMenuSpacer = document.getElementById("blankFooterSpace")
     // $('#delete').click(function (e) {
         // .classList.contains(class);
@@ -178,6 +190,7 @@ document.getElementById("closingButton").addEventListener('click',function(){
         var footerMenuSpacer = document.getElementById("blankFooterSpace")
 
         if ($("#keywordSummaryWrapper").hasClass('animateOut')){
+            // styleOverflowScrollable(footerMenuInfo, "keywordSummary-s")
             $("#keywordSummaryWrapper").removeClass('animateOut');
             $("#keywordSummaryWrapper").addClass('animateIn');
             console.log("ANIMATE IN")
@@ -196,6 +209,9 @@ document.getElementById("closingButton").addEventListener('click',function(){
             }
         }
         else if ($("#keywordSummaryWrapper").hasClass('animateIn')){
+            // if (footerMenuInfo.classList.contains('keywordSummary-s')){
+            //     footerMenuInfo.classList.remove('keywordSummary-s');
+            // }
             $("#keywordSummaryWrapper").removeClass('animateIn');
             $("#keywordSummaryWrapper").addClass('animateOut');
             console.log("ANIMATE OUT")
@@ -261,6 +277,7 @@ document.getElementById("closingButton").addEventListener('click',function(){
 var display = function(block_name, title) {
     // Toogle Middle Block Content 
     $('.middleBlock').css('display', 'none');
+    $('.middleBlock').css('visibility', 'visible');
     
     $('#' + block_name + '').css('display', 'block');
   
@@ -474,49 +491,273 @@ function show_list(){
 
 function addUI(ul, value, keywordInfo, keywordType ) {
 
-
+//might be a smart idea to make this quicker by changing the divs when you click the button instead of load the whole thing in on condition
 if (keywordInfo!= undefined){
+    chrome.storage.sync.get( keyStoreVals, function(val) {
+        // console.log("-------RENDERED")
+        var storageKeys = val.keywords
     var freqType = null;
+    var closeClassType = null;
     if ( keywordType=="NoNoWord" ){
         freqType="total_freq"
+        closeClassType = "close"
     }
     else if ( keywordType=="FrequentWord" ){
         freqType="session_freq"
+
+
+
+            // console.log("KEY IN LIST:" , kw,  kw in keys)
+            if (value in storageKeys){
+                closeClassType = "close"
+            }
+            else{
+                closeClassType = "close-freq"
+            }
+            console.log("-------RENDERED")
+            
+            
+       
+        // closeClassType = "close-freq"
+
+
+        // if (!inStorage(value, "NoNoWord" )){
+
+        //     console.log("THIS WILL SHOW BOTH", inStorage(value, "NoNoWord" ))
+        //     closeClassType = "close-freq"
+        // }
+        // else{
+        //     closeClassType = "close"
+        //     console.log("ONLY CLOSE")
+        // }
     }
+    addUIRender( ul, value, keywordInfo, keywordType, freqType, closeClassType)
 
-    var li = document.createElement("li");
-    li.classList.add("list-group-item")
+                            // var li = document.createElement("li");
+                            // li.classList.add("list-group-item")
 
-    var infoDiv = document.createElement("div");
-    infoDiv.classList.add("info-container")
-    li.appendChild(infoDiv);
-    // $("li").addClass("list-group-item");
+                            // var infoDiv = document.createElement("div");
+                            // infoDiv.classList.add("info-container")
+                            // li.appendChild(infoDiv);
+                            // // $("li").addClass("list-group-item");
 
-    // li.appendChild(document.createTextNode(value));
+                            // // li.appendChild(document.createTextNode(value));
 
-    if (freqType in keywordInfo){
-        infoDiv.innerHTML =     "<div class='list-item-name' >"+
-                                    value+
-                                "</div>"+
-                                "<div class='list-item-freq' >"+
-                                    "("+keywordInfo[freqType]+")"
-                                "</div>"
-        }
+                            // if (freqType in keywordInfo){
+                            //     infoDiv.innerHTML =     "<div class='list-item-name' >"+
+                            //                                 value+
+                            //                             "</div>"+
+                            //                             "<div class='list-item-freq' >"+
+                            //                                 "("+keywordInfo[freqType]+")"
+                            //                             "</div>"
+                            //     }
 
-    if (value != '') {
-        ul.appendChild(li);
-    }
-    var span = document.createElement("SPAN");
-    // span.style.fontSize = "0.75rem";
-    var txt = document.createTextNode("\u00D7");
+                            // if (value != '') {
+                            //     ul.appendChild(li);
+                            // }
+                            // var closeButton = document.createElement("SPAN");
+                            // // closeButton.style.fontSize = "0.75rem";
+                            // var x_txt = document.createTextNode("\u00D7");
+                            // var plus_txt = document.createTextNode("+");
+                            
+                            // closeButton.classList.add(closeClassType);
+                            // closeButton.appendChild(x_txt);
+                            // li.appendChild(closeButton);
+                            // if ( closeClassType == "close-freq" ){
+                            //     var addButton = document.createElement("SPAN");
+                            //     addButton.classList.add("add-freq");
+                            //     addButton.appendChild(plus_txt);
+                            //     li.appendChild(addButton);
+                            //     addButton.addEventListener('click', function(event){
+                            //         // var index = $(this).index(".close");
+                            //         // console.log(index);
+                            //         var div = this.parentElement;
+                            //         console.log("PARENT DIV: ", div , "CHILD:" ,this)
+                            //         //alternatively we can get rid of this removal and just apply a disable on the add button
+                            //         var prevKey = this.previousSibling
+                            //         if(prevKey  && prevKey.classList.contains("close-freq") ){
+                            //             prevKey.classList.remove("close-freq")
+                            //             prevKey.classList.add("close")
+                            //         }
+                            //         this.remove()
+                            //         if (div){
+                            //             var keyword = div.firstChild.firstChild.innerHTML
+                            //             console.log( "PARENT VAL", div.firstChild.firstChild.innerHTML )
+                            //             var list = document.getElementById("keys-list");
+                            //             addKeywords([keyword], list)
+                            //         }
+
+                            //         // var div = this.parentElement
+                            //         // chrome.storage.sync.get( keyStoreVals, function(val) {
+                            //         //     var storageKeys = val.keywords
+                            //         //     var sessionStorageKeys = val.session_keywords
+                            //         //     var keyword = div.firstChild.firstChild.innerHTML
+                            //         //     storageKeys[keyword] = sessionStorageKeys[keyword]
+                            //         //     var list = document.getElementById("keys-list");
+                            //         //     chrome.storage.sync.set({'keywords': storageKeys, 'session_keywords': sessionStorageKeys }, function() {
+                            //         //     });
+                            //         //     addUI(list, keyword, storageKeys[keyword], "NoNoWord")
+                            //         // })
+
+
+
+                            //         // var div = this.parentElement;
+                            //         // console.log("PARENT DIV: ", div , "CHILD:" ,this)
+                            //         // this.remove()
+                            //         // if (div){
+                            //         //     console.log( "PARENT VAL", div.firstChild.firstChild.innerHTML )
+                            //         //     removeKeyword(div.firstChild.firstChild.innerHTML, keywordType)
+                            //         //     div.remove()
+                            //         // }
+                            //     },false);
+        })
     
-    span.className = "close";
-    span.appendChild(txt);
-    li.appendChild(span);
+    }
+}
+
+
+    function addUIRender(ul, value, keywordInfo, keywordType, freqType, closeClassType ) {
+        console.log("-------RENDERED",ul, value, keywordInfo, keywordType, freqType, closeClassType )
+        var li = document.createElement("li");
+        li.classList.add("list-group-item")
+    
+        var infoDiv = document.createElement("div");
+        infoDiv.classList.add("info-container")
+
+        
+        li.appendChild(infoDiv);
+
+        // console.log("-------RENDERED")
+        // $("li").addClass("list-group-item");
+        console.log("-------RENDERED2", keywordInfo[freqType])
+        // li.appendChild(document.createTextNode(value));
+
+        var nameDiv = document.createElement("div");
+        nameDiv.textContent = value
+        nameDiv.classList.add("list-item-name")
+        if (value != '') {
+            ul.appendChild(li);
+        }
+        console.log("VALS1:", nameDiv.scrollHeight, nameDiv.clientHeight)
+        
+
+        // if (value.length>33+1){
+        //     nameDiv.classList.add("list-item-name-scroll")
+        // }
+        // else{
+        //     nameDiv.classList.add("list-item-name")
+        // }
+        // nameDiv.classList.add("list-item-name")
+        // if (value.length>33+1){
+        //     nameDiv.style.alignItems="flex-start"
+        // }
+        console.log("VALS2:", nameDiv.scrollHeight, nameDiv.clientHeight)
+        var freqDiv = document.createElement("div");
+        freqDiv.textContent =  "("+keywordInfo[freqType]+")"
+        freqDiv.classList.add("list-item-freq")
+        console.log("VALS3:", nameDiv.scrollHeight, nameDiv.clientHeight)
+
+        if (freqType in keywordInfo){
+            infoDiv.appendChild(nameDiv)
+            infoDiv.appendChild(freqDiv)
+
+
+
+            // infoDiv.innerHTML =     nameDiv+
+            //                         "<div class='list-item-freq' >"+
+            //                             "("+keywordInfo[freqType]+")"
+            //                         "</div>"
+            console.log("-------RENDERED",keywordInfo[freqType] )
+        }
+        styleOverflowScrollable( nameDiv, "list-item-name-s" )
+        // if (nameDiv.scrollHeight != nameDiv.clientHeight){
+        //     nameDiv.classList.add("list-item-name-s")
+        // }
+        console.log("VALS4:", nameDiv.scrollHeight, nameDiv.clientHeight)
+
+        // if (freqType in keywordInfo){
+        //     infoDiv.innerHTML =     "<div class='list-item-name' >"+
+        //                                 value+
+        //                             "</div>"+
+        //                             "<div class='list-item-freq' >"+
+        //                                 "("+keywordInfo[freqType]+")"
+        //                             "</div>"
+        //     console.log("-------RENDERED",keywordInfo[freqType] )
+        // }
+
+    
+        // if (value != '') {
+        //     ul.appendChild(li);
+        // }
+        var closeButton = document.createElement("SPAN");
+        // closeButton.style.fontSize = "0.75rem";
+        var x_txt = document.createTextNode("\u00D7");
+        var plus_txt = document.createTextNode("+");
+        
+        closeButton.classList.add(closeClassType);
+        closeButton.appendChild(x_txt);
+        li.appendChild(closeButton);
+        if ( closeClassType == "close-freq" ){
+            var addButton = document.createElement("SPAN");
+            addButton.classList.add("add-freq");
+            addButton.appendChild(plus_txt);
+            li.appendChild(addButton);
+            addButton.addEventListener('click', function(event){
+                // var index = $(this).index(".close");
+                // console.log(index);
+                var div = this.parentElement;
+                console.log("PARENT DIV: ", div , "CHILD:" ,this)
+                //alternatively we can get rid of this removal and just apply a disable on the add button
+                var prevKey = this.previousSibling
+                if(prevKey  && prevKey.classList.contains("close-freq") ){
+                    prevKey.classList.remove("close-freq")
+                    prevKey.classList.add("close")
+                }
+                this.remove()
+                if (div){
+                    var keyword = div.firstChild.firstChild.innerHTML
+                    console.log( "PARENT VAL", div.firstChild.firstChild.innerHTML )
+                    var list = document.getElementById("keys-list");
+                    addKeywords([keyword], list)
+                }
+                
+                // var div = this.parentElement
+                // chrome.storage.sync.get( keyStoreVals, function(val) {
+                //     var storageKeys = val.keywords
+                //     var sessionStorageKeys = val.session_keywords
+                //     var keyword = div.firstChild.firstChild.innerHTML
+                //     storageKeys[keyword] = sessionStorageKeys[keyword]
+                //     var list = document.getElementById("keys-list");
+                //     chrome.storage.sync.set({'keywords': storageKeys, 'session_keywords': sessionStorageKeys }, function() {
+                //     });
+                //     addUI(list, keyword, storageKeys[keyword], "NoNoWord")
+                // })
+    
+    
+    
+                // var div = this.parentElement;
+                // console.log("PARENT DIV: ", div , "CHILD:" ,this)
+                // this.remove()
+                // if (div){
+                //     console.log( "PARENT VAL", div.firstChild.firstChild.innerHTML )
+                //     removeKeyword(div.firstChild.firstChild.innerHTML, keywordType)
+                //     div.remove()
+                // }
+            },false);
+    }
+
+    console.log("VALS5: " ,nameDiv.scrollHeight, nameDiv.clientHeight)
 
     // $(".close").click(function () {
+        nameDiv.addEventListener('click', function(event){
+            // var index = $(this).index(".close");
+            // console.log(index);
+            console.log(nameDiv.scrollHeight, nameDiv.clientHeight)
+            
+        },false);
+        nameDiv.click()
 
-    span.addEventListener('click', function(event){
+    closeButton.addEventListener('click', function(event){
         // var index = $(this).index(".close");
         // console.log(index);
         var div = this.parentElement;
@@ -530,11 +771,20 @@ if (keywordInfo!= undefined){
     },false);
     
     infoDiv.addEventListener('click', function(event){
-        console.log(event.currentTarget.firstChild)
-        fillKeywordInfo(event.currentTarget.firstChild, keywordType)
+        // console.log(event.currentTarget.firstChild)
+        // fillKeywordInfo(event.currentTarget.firstChild, keywordType)
         console.log("CLICK!!!", document.getElementById("keywordSummaryWrapper"),document.getElementById("keywordSummaryWrapper").style )
         var footerMenu = document.getElementById("keywordSummaryWrapper")
+        var footerMenuInfo = document.getElementById("keywordSummary")
+        // footerMenuInfo.classList.add("keywordSummary-s")
+        console.log(footerMenuInfo)
         var footerMenuSpacer = document.getElementById("blankFooterSpace")
+
+        console.log(event.currentTarget.firstChild)
+        fillKeywordInfo(event.currentTarget.firstChild, keywordType)
+
+        // var footerMenuInfo = document.getElementById("keywordSummary")
+        // styleOverflowScrollable( footerMenuInfo, "keywordSummary-s" )
 
         // document.getElementById("cheveron").classList.remove("cheveronFlip")
         // document.getElementById("cheveron").classList.add("cheveronFlipLeft")
@@ -548,6 +798,7 @@ if (keywordInfo!= undefined){
 
             //need to put a condition here such that this listerner only fires this animation one time at the start
             if (footerMenu!= null && !(footerMenu.classList.contains("animateIn"))){
+                // styleOverflowScrollable(footerMenuInfo, "keywordSummary-s")
                 footerMenu.classList.add("animateIn") 
                 if (!(document.getElementById("cheveron").classList.contains("cheveronFlip"))){
                     document.getElementById("cheveron").classList.add("cheveronFlip")
@@ -562,6 +813,7 @@ if (keywordInfo!= undefined){
         }
         else if (footerMenu!= null && (footerMenu.style.visibility == "visible")){
             if (footerMenu!= null && (footerMenu.classList.contains("animateOut"))){
+                // styleOverflowScrollable(footerMenuInfo, "keywordSummary-s")
                 footerMenu.classList.remove("animateOut") 
                 footerMenu.classList.add("animateIn") 
                 if (!(document.getElementById("cheveron").classList.contains("cheveronFlip"))){
@@ -593,9 +845,106 @@ if (keywordInfo!= undefined){
     // },false);
 }
     // })
+
+
+//this would be a general function but I don't want to mess with two types (callback true and false) of endless parameters so... not finishing for now
+// function inStorage( kw , storageType, callbackTrue, callbackFalse ){
+//     chrome.storage.sync.get( keyStoreVals, function(val) {
+//         var storageKeys = val.keywords
+//         var sessionStorageKeys = val.session_keywords
+//         var keys = null
+//         if (storageType == "NoNoWord"){
+//             keys = storageKeys
+//         }
+//         else if (storageType == "FrequentWord"){
+//             keys = sessionStorageKeys
+//         }
+//         console.log("KEY IN NONO LIST:" , kw, kw in keys)
+//         if (kw in keys){
+//             callbackTrue()
+//         }
+//         else{
+//             callbackFalse()
+//         }
+//     })
+// }
+
+
+function styleOverflowScrollable( DOMobject , scrollCSSClass = null ){
+    //note: for this to work, the DOM element in question must have been added to the page's DOM structure
+    //it can not be a randomly generated DOM element that's just a variable and floating
+    console.log("ELEMENT S:", DOMobject.scrollHeight , DOMobject.clientHeight, scrollCSSClass, DOMobject.classList, (DOMobject.classList.contains(scrollCSSClass)))
+    if (scrollCSSClass != null && DOMobject.scrollHeight != DOMobject.clientHeight && !(DOMobject.classList.contains(scrollCSSClass))){
+        DOMobject.classList.add(scrollCSSClass)
+        console.log("SCROLLABLE!!!")
+    }
+    else if ( scrollCSSClass != null && DOMobject.scrollHeight == DOMobject.clientHeight && (DOMobject.classList.contains(scrollCSSClass)))
+        DOMobject.classList.remove(scrollCSSClass)
+        console.log("NOT SCROLLABLE....")
+}
+
+
+function addKeywords(kwList, list){
+
+
+    chrome.storage.sync.get(['keywords', 'session_keywords', 'max_wordID' ], function(result) {
+        var storageKeys = result.keywords
+        var sessionStorageKeys = result.session_keywords
+        var new_max_wordID = result.max_wordID
+        console.log("kwList:", kwList, storageKeys)
+        kwList.forEach(function(term){
+            var currDateTime = Date.now()
+            if(!(term in storageKeys)){
+                // console.log("STORAGEKEY freq:", term, storageKeys[term])
+                
+                if(!(term in sessionStorageKeys)){
+                    storageKeys[term] ={
+                        "first_occur": currDateTime,
+                        "lastest_occur": null,
+                        "session_freq": 1,
+                        "total_freq": 1,
+                        "wordID": new_max_wordID++
+                    }
+                    // storageKeys[term].total_freq = 1
+                    // storageKeys[term].session_freq = 0
+                    // storageKeys[term].first_occur = currDateTime
+                    // storageKeys[term].lastest_occur = null
+                    // storageKeys[term].wordID = new_max_wordID++
+                    
+                    // alert("You added 1", term, storageKeys);
+                    addUI(list, term, storageKeys[term], "NoNoWord")
+                }
+                else{
+                    storageKeys[term] ={
+                        "first_occur": sessionStorageKeys[term].first_occur,
+                        "lastest_occur": sessionStorageKeys[term].lastest_occur,
+                        "session_freq": sessionStorageKeys[term].session_freq,
+                        "total_freq": sessionStorageKeys[term].total_freq,
+                        "wordID": sessionStorageKeys[term].wordID
+                    }
+                    
+                    // alert("You added 2"+ term);
+                    addUI(list, term, storageKeys[term], "NoNoWord")
+                }
+            }
+        });
+        //this one will make the changes instant
+        chrome.runtime.sendMessage({"message": "save_keys", "user_changes": { 'keywords': storageKeys, 'max_wordID': new_max_wordID }} , function(){
+            // alert("success")
+        } )
+        //this one will make all changes happen when the page refreshes or reloads
+        // chrome.storage.sync.set({ 'keywords': storageKeys, 'max_wordID': new_max_wordID }, function() {
+        //     document.getElementById("text1").value = ''
+        //     console.log("NEW ADDED VAL: " , storageKeys)
+        // });
+    });
+
+
+
+
 }
     
-function fillKeywordInfo(clickedKeyword, keywordType) {
+function fillKeywordInfo(clickedKeyword, keywordType ) {
 
     chrome.storage.sync.get( keyStoreVals, function(val) {
         var storageKeys = val.keywords; 
@@ -634,6 +983,9 @@ function fillKeywordInfo(clickedKeyword, keywordType) {
             document.getElementById("keywordSummary-date").innerHTML= day+"-"+month+"-"+year+"-"+hour+":"+minute+":"+second
             document.getElementById("keywordSummary-freq-total-value").innerHTML = keys[currKeyword]["total_freq"]
             document.getElementById("keywordSummary-freq-last-value").innerHTML = keys[currKeyword]["session_freq"] 
+
+            var footerMenuInfo = document.getElementById("keywordSummary")
+            styleOverflowScrollable( footerMenuInfo, "keywordSummary-s" )
         }
     })
 
@@ -672,11 +1024,18 @@ function fillKeywordInfo(clickedKeyword, keywordType) {
             }
             
 
-
-            chrome.storage.sync.set({ 'keywords': storageKeys, 'session_keywords': sessionStorageKeys, 'session_block': block_sites }, function() {
+            chrome.runtime.sendMessage({"message": "save_keys", "user_changes": { 'keywords': storageKeys, 'session_keywords': sessionStorageKeys, 'session_block': block_sites }} , function(){
                 console.log("VALS LEFT AFTER DELETION: " , storageKeys)
-            });
+                // alert("success")
+            } )
+            // chrome.storage.sync.set({ 'keywords': storageKeys, 'session_keywords': sessionStorageKeys, 'session_block': block_sites }, function() {
+            //     console.log("VALS LEFT AFTER DELETION: " , storageKeys)
+            // });
     
+
+
+
+
             // for(let key in storageKeys){
             //     console.log("Keyword: " + key)
             //     if(storageKeys.hasOwnProperty(key))
@@ -705,21 +1064,21 @@ function fillKeywordInfo(clickedKeyword, keywordType) {
         
     }
 
-    function removeItem(itemIndex) {
-        console.log("Attempt to work");
-        chrome.storage.sync.get(['keywords'], function (val) {
-            storageKeys = val.keywords;
-            var rmvkey = Object.keys(storageKeys)[itemIndex]; 
-            delete storageKeys.rmvkey; 
-            console.log("updated list", storageKeys)
+    // function removeItem(itemIndex) {
+    //     console.log("Attempt to work");
+    //     chrome.storage.sync.get(['keywords'], function (val) {
+    //         storageKeys = val.keywords;
+    //         var rmvkey = Object.keys(storageKeys)[itemIndex]; 
+    //         delete storageKeys.rmvkey; 
+    //         console.log("updated list", storageKeys)
 
-            chrome.storage.sync.set({
-                'keywords': storageKeys
-            })
+    //         chrome.storage.sync.set({
+    //             'keywords': storageKeys
+    //         })
 
-        })
+    //     })
 
-    }
+    // }
 
 
 document.addEventListener('keypress', function (e) {
@@ -941,16 +1300,27 @@ $('.switch3 input').on('change', function(){
     var dad = $(this).parent();
     if($(this).is(':checked')){
         dad.addClass('switch3-checked');
-        chrome.storage.sync.set({'mode':'PRODUCTIVITY', "session_keywords": {}, "session_block": {} }, function() {
-            console.log("PRODUCTIVE TIME NEW SESSION")
-          // console.log('Value is set to ' + value);
-        });
+        chrome.storage.sync.get( ['last_video'], function(val) {
+            console.log(val.last_video.url, val.last_video)
+            chrome.runtime.sendMessage({"message": "save_keys", "user_changes": {'mode':'PRODUCTIVITY', "session_keywords": {}, "session_block": {} , 'last_video': { 'url': val.last_video.url  , 'toggle-cleared': true}}} , function(){
+                console.log("PRODUCTIVE TIME NEW SESSION")
+                // alert("success")
+            } )
+        })
+        // chrome.storage.sync.set({'mode':'PRODUCTIVITY', "session_keywords": {}, "session_block": {} }, function() {
+        //     console.log("PRODUCTIVE TIME NEW SESSION")
+        //   // console.log('Value is set to ' + value);
+        // });
     }
     else{
         dad.removeClass('switch3-checked');
-        chrome.storage.sync.set({'mode':'LEISURE'}, function() {
+        chrome.runtime.sendMessage({"message": "save_keys", "user_changes": {'mode':'LEISURE'}} , function(){
             console.log("LEISURE TIME")
-          // console.log('Value is set to ' + value);
-        });
+            // alert("success")
+        } )
+        // chrome.storage.sync.set({'mode':'LEISURE'}, function() {
+        //     console.log("LEISURE TIME")
+        //   // console.log('Value is set to ' + value);
+        // });
     }
   });
