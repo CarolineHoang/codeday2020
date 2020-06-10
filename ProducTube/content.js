@@ -43,6 +43,9 @@
 //         // alert('Watch page!');
 //     }
 // }
+
+
+
 (document.body || document.documentElement).addEventListener('DOMContentLoaded',
   function(/*TransitionEvent*/ event) {
     // afterNavigate();
@@ -57,8 +60,8 @@
 }, true);
 // // After page load
 // afterNavigate();
-
-
+var firstLanding = true
+var historyLastURL = document.URL
 chrome.runtime.onMessage.addListener( function (request, sender, sendResponse ){
     
 
@@ -88,9 +91,49 @@ chrome.runtime.onMessage.addListener( function (request, sender, sendResponse ){
     //     sendResponse({count: matches , divContent: `wowowo`})
     // }
 
+
+    
+
+    if (request.message == "IS_PAGE_PROCESSABLE"){
+        // alert(document.getElementById("ext-styled-text").innerHTML)
+        // console.log()
+
+        if (request.msgOriginType == "onHistoryStateUpdated"){
+            if ( historyLastURL != document.URL || firstLanding){
+                chrome.runtime.sendMessage({ "message": "PROCESS_PAGE" } , function(){
+                    console.log("WE SHOULD NOW PROCESS")
+                    historyLastURL = document.URL
+                    firstLanding = false
+                    // alert("success")
+                } )
+            }
+        }else{
+            chrome.runtime.sendMessage({ "message": "PROCESS_PAGE" } , function(){
+                console.log("WE SHOULD NOW PROCESS")
+                firstLanding = false
+                // alert("success")
+            } )
+        }
+
+        // // alert("WE SHOULD PROCESS")
+        // console.log("PROCESS CONSIDERATION", firstLanding)
+        // if (firstLanding){
+        //     chrome.runtime.sendMessage({ "message": "PROCESS_PAGE" } , function(){
+        //         console.log("WE SHOULD NOW PROCESS")
+        //         firstLanding = false
+        //         // alert("success")
+        //     } )
+        // }
+        // else{
+        //     console.log("CANNOT PROCESS",firstLanding , document.URL)
+        // }
+    }
+
     if (request.message == "remove_old_title" && document.getElementById("ext-styled-text") != null){
         // alert(document.getElementById("ext-styled-text").innerHTML)
-        document.getElementById("ext-styled-text").remove()
+        if (document.getElementById("ext-styled-text") != null && document.getElementById("ext-styled-text") != undefined){
+            document.getElementById("ext-styled-text").remove()
+        }
     }
     if (request.message == "pause_video"){
         var video = document.querySelector("video");

@@ -16,35 +16,35 @@ chrome.runtime.onInstalled.addListener(function(details){
                                     "wordID":0
                                     },
                         "HAMILTON":{
-                                    "total_freq": 1,
+                                    "total_freq": 7,
                                     "session_freq": 0,
                                     "first_occur": Date.now(),
                                     "lastest_occur": null,
                                     "wordID":0
                                     },
                         "IUBLOIYBLIBYLIYBIYLI;UTBILTUBI7LRTVFILRTBIVTIKVTLTIUBLOIYBLIBYLIYBIYLI;UTBILTUBI7LRTVFILRTBIVTIKVTLT":{
-                                    "total_freq": 1,
+                                    "total_freq": 60,
                                     "session_freq": 0,
                                     "first_occur": Date.now(),
                                     "lastest_occur": null,
                                     "wordID":1
                                     },
                         "SUPERCALIFRAGILISTICEXPIALIDOCIOUS":{
-                                    "total_freq": 1,
+                                    "total_freq": 50,
                                     "session_freq": 0,
                                     "first_occur": Date.now(),
                                     "lastest_occur": null,
                                     "wordID":1
                                     },
                         "PNEUMONOULTRAMICROSCOPICSILICOVOLCANOCONIOSIS":{
-                                    "total_freq": 1,
+                                    "total_freq": 55,
                                     "session_freq": 0,
                                     "first_occur": Date.now(),
                                     "lastest_occur": null,
                                     "wordID":1
                                     },
                         "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW":{
-                                    "total_freq": 1,
+                                    "total_freq": 100,
                                     "session_freq": 0,
                                     "first_occur": Date.now(),
                                     "lastest_occur": null,
@@ -92,7 +92,7 @@ console.log("testest")
 var newKeys = []
 // var oldUrl = null;
 
-const PAUSE_DELAY = 2000 //miliseconds
+const PAUSE_DELAY = 3000 //miliseconds
 const notVideoRegex = /.*\/\/.*youtube.com\/(?!watch).*/
 const notVideoRegexString = ".*\/\/.*youtube.com\/(?!watch).*" //"^(.*)$"//
 
@@ -125,116 +125,66 @@ const notVideoRegexString = ".*\/\/.*youtube.com\/(?!watch).*" //"^(.*)$"//
     
 // })
 chrome.webNavigation.onHistoryStateUpdated.addListener(function(details) { 
-    alert("History Nav") 
+    
+    // alert("History Nav") 
+    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+        var activeTab = tabs[0];
+        console.log("History Nav", activeTab.url)
+        chrome.tabs.sendMessage(
+            // details.tabId,
+            activeTab.id,
+            {"message": "remove_old_title"}, function(res){
+
+                console.log("removed old title")
+        })
+
+        setTimeout(function(){ 
+            // alert("WE SHOULD HAVE PROCESSED")
+            chrome.tabs.sendMessage(activeTab.id, {"message": "IS_PAGE_PROCESSABLE", "msgOriginType": "onHistoryStateUpdated", function(res){
+                
+            } }  )
+        }, PAUSE_DELAY)
+        
+        
+    })
 
 
-// chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {   
-    // console.log(" anytime", changeInfo.status, changeInfo.url)
-    // // if (changeInfo.status == undefined ) {
-    // //     console.log("IT's UNDEFINED")
-    // // }
-    // // if (changeInfo.url!=undefined && changeInfo.url!=oldUrl ){
-    // //     oldUrl = changeInfo.url
-    // //     console.log(" url is not undefined", changeInfo.status, changeInfo.url)
-    // // }
-    // if ((changeInfo.status == 'complete' || (changeInfo.status == undefined ) ) && tab.active) { //make sure to do this after processing if it's in the tag //undefined might go forever and call when the page is not laoded, but it's necessary for internal navigation (that goes in history without sending a "completed" status. But, putting a listener on the history changing fires before the page changes.)
+        // console.log("hngcgcj", window.location.href, details.url, details.transitionType, details.parentFrameId)
 
-// chrome.webNavigation.onCompleted.addListener(function(details) {
-// chrome.webNavigation.onDOMContentLoaded.addListener(function(details) {
-// chrome.webNavigation.onCommitted.addListener(function(details) {
-        // chrome.tabs.executeScript(null,{file:"content.js"});
-        // alert(details.frameId)
+                                    // chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+                                    //     var activeTab = tabs[0];
+                                    //     // var url = tab.url;
+                                    //     var url = details.url;
+                                    //     console.log("active vs details: ", activeTab.url,  details.url)
+                                    //     const found = url.match(notVideoRegex);
 
-        //if there is a old styled title, delete it
+                                        
+                                    //     //to make sure that the old title is deleted while internally navigating
+                                    //     //Reason:   after applying styles, the default youtube system seems to be unable to get 
+                                    //     //          rid of the title by itself unless the page is just reloaded
+                                    //     chrome.tabs.sendMessage(
+                                    //         // details.tabId,
+                                    //         activeTab.id,
+                                    //         {"message": "remove_old_title"}, function(res){
 
-
-
-        console.log("hngcgcj", window.location.href, details.url, details.transitionType, details.parentFrameId)
-        // var tab = chrome.tabs.get(info.tabId, function(tab) {
-        //     localStorage["current_url"] = tab.url;
-        // });
-        // console.log("helllloooo2", details.url)
-
-        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-            var activeTab = tabs[0];
-            // var url = tab.url;
-            var url = details.url;
-            console.log("active vs details: ", activeTab.url,  details.url)
-            const found = url.match(notVideoRegex);
-
-            
-            //to make sure that the old title is deleted while internally navigating
-            //Reason:   after applying styles, the default youtube system seems to be unable to get 
-            //          rid of the title by itself unless the page is just reloaded
-            chrome.tabs.sendMessage(
-                // details.tabId,
-                activeTab.id,
-                {"message": "remove_old_title"}, function(res){
+                                    //             // chrome.tabs.sendMessage(activeTab.id, {"message": "clicked_browser_action"});
+                                    //             if (activeTab && found == url ){
+                                    //                 chrome.tabs.sendMessage(activeTab.id, {"message": "hide_popup"} , function(resp){
+                                    //                     resetPopup()
+                                    //                 });   
+                                    //             }
+                                    //             else{
+                                    //                 // checkTitle( activeTab.id, url )
+                                                    
 
 
+                                    //                 setTimeout(function(){ checkTitle( activeTab.id, url , pauseVideo); }, PAUSE_DELAY); //to avoid taking the information from the last page
+                                    //                 // checkTitle( activeTab.id, url , pauseVideo)
 
-                    // chrome.tabs.sendMessage(activeTab.id, {"message": "clicked_browser_action"});
-                    if (activeTab && found == url ){
-                        chrome.tabs.sendMessage(activeTab.id, {"message": "hide_popup"} , function(resp){
-                            resetPopup()
-                        });   
-                    }
-                    else{
-                        // checkTitle( activeTab.id, url )
-                        
-
-
-                        setTimeout(function(){ checkTitle( activeTab.id, url , pauseVideo); }, PAUSE_DELAY); //to avoid taking the information from the last page
-                        // checkTitle( activeTab.id, url , pauseVideo)
-
-                        // chrome.tabs.sendMessage(
-                        //     // details.tabId,
-                        //     activeTab.id, 
-                        //     {"message": "get_video_info"}, function(res){
-                        //     if (res && res.vidTitle){
-                        //         console.log(res.vidTitle.substring(0, res.vidTitle.length-10), res.channelName) //minus 10 to get rid of "- Youtube" (9+1)
-                        //         chrome.storage.sync.get(['last_video'], function(result) {
-                        //             if (url != result.last_video){
-                        //                 checkTitle(res.vidTitle, url)
-                        //             }
-                        //         })
-                        //     }
-                        // });
-
-                        // pauseVideo(activeTab.id, url)
-                        
-                        // chrome.storage.sync.get(['session_block'], function(result) {
-                        //     console.log("BLOCKED SITES1:",result.session_block )
-                            
-                        //     if (url in result.session_block){
-                        //         console.log("BLOCKED SITES2:",result.session_block )
-                        //         chrome.tabs.sendMessage(
-                        //             // details.tabId,
-                        //             activeTab.id, 
-                        //             {"message": "pause_video"}, function(res){
-                        //             console.log("video paused! 1",res.video )
-                        //         });
-                        //         console.log("video paused! 2")
-                        //     }
-                        // })
-                    }
-
-
-
-
-                    // alert("DELETED")
-                })
-
-
-
-
-            
-        });
-        // var video = document.querySelector("video");
-        // console.log("video ", video)
-        // video.pause();
-        // if (video.paused){video.play();} else {video.pause();}
-    // }
+                                    //             }
+                                    //             // alert("DELETED")
+                                    //         })
+                                    // });
 }, {url: [{hostSuffix: 'youtube.com'
 // , urlContains: '/watch'
 }]
@@ -253,39 +203,44 @@ chrome.webNavigation.onHistoryStateUpdated.addListener(function(details) {
 chrome.webNavigation.onCompleted.addListener(function(details) { 
     alert("Page Completed")  
 
+    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+        var activeTab = tabs[0];
+        chrome.tabs.sendMessage(activeTab.id, {"message": "IS_PAGE_PROCESSABLE", "msgOriginType": "onCompleted" }  )
+    })
+
             // console.log("hngcgcj", window.location.href, details.url, details.transitionType, details.parentFrameId)
 
     
-            chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-                var activeTab = tabs[0];
-                // var url = tab.url;
-                var url = details.url;
-                // console.log("active vs details: ", activeTab.url,  details.url)
+                                    // chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+                                    //     var activeTab = tabs[0];
+                                    //     // var url = tab.url;
+                                    //     var url = details.url;
+                                    //     // console.log("active vs details: ", activeTab.url,  details.url)
 
-                chrome.tabs.sendMessage(
-                    // details.tabId,
-                    activeTab.id,
-                    {"message": "remove_old_title"}, function(res){
-    
-    
+                                    //     chrome.tabs.sendMessage(
+                                    //         // details.tabId,
+                                    //         activeTab.id,
+                                    //         {"message": "remove_old_title"}, function(res){
+                            
+                            
 
-                    const found = url.match(notVideoRegex);
-                    // chrome.tabs.sendMessage(activeTab.id, {"message": "clicked_browser_action"});
-                    if (activeTab && found == url ){
-                        chrome.tabs.sendMessage(activeTab.id, {"message": "hide_popup"});
-                        resetPopup()
-                    }
-                    else{
-                    
+                                    //         const found = url.match(notVideoRegex);
+                                    //         // chrome.tabs.sendMessage(activeTab.id, {"message": "clicked_browser_action"});
+                                    //         if (activeTab && found == url ){
+                                    //             chrome.tabs.sendMessage(activeTab.id, {"message": "hide_popup"});
+                                    //             resetPopup()
+                                    //         }
+                                    //         else{
+                                            
 
-                        // checkTitle( activeTab.id, url , pauseVideo)
-                        setTimeout(function(){ checkTitle( activeTab.id, url , pauseVideo); }, PAUSE_DELAY); //to avoid calling content when it's not available
-                        resetPopup()
-                    }
+                                    //             // checkTitle( activeTab.id, url , pauseVideo)
+                                    //             setTimeout(function(){ checkTitle( activeTab.id, url , pauseVideo); }, PAUSE_DELAY); //to avoid calling content when it's not available
+                                    //             resetPopup()
+                                    //         }
 
-                })
-                
-            });
+                                    //     })
+                                        
+                                    // });
         // }        
     }
     ,{url: [{hostSuffix: 'youtube.com' 
@@ -552,6 +507,48 @@ function checkTitle( tabID, currUrl, callback ){
 
 chrome.runtime.onMessage.addListener( function (request, sender, sendResponse ){
     console.log("we hit background.js ")
+    if (request.message == "PROCESS_PAGE"){
+
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+            var activeTab = tabs[0];
+            var url = activeTab.url;
+            // var url = tab.url;
+            // var url = details.url;
+            // console.log("active vs details: ", activeTab.url,  details.url)
+
+            chrome.tabs.sendMessage(
+                // details.tabId,
+                activeTab.id,
+                {"message": "remove_old_title"}, function(res){
+
+                    console.log("removed old title")
+
+
+
+                const found = url.match(notVideoRegex);
+                // chrome.tabs.sendMessage(activeTab.id, {"message": "clicked_browser_action"});
+                if (activeTab && found == url ){
+                    chrome.tabs.sendMessage(activeTab.id, {"message": "hide_popup"});
+                    resetPopup()
+                }
+                else{
+                
+
+                    // checkTitle( activeTab.id, url , pauseVideo)
+                    checkTitle( activeTab.id, url , pauseVideo)
+                    // setTimeout(function(){ checkTitle( activeTab.id, url , pauseVideo); }, PAUSE_DELAY); //to avoid calling content when it's not available
+                    resetPopup()
+                }
+
+            })
+            
+        });
+
+
+
+
+
+    }
 
     if (request.message == "show_new_keys"){
         console.log("newKeys array: ", newKeys)
