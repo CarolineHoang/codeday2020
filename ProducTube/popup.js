@@ -669,22 +669,9 @@ $('.switch3 input').on('change', function(){
     // chrome.storage.sync.set({'timer_deadline': deadline})
 
     interval = setInterval(function(){
-    if(reset){
-        timer_pre_vis()
-        document.getElementById("hour_time").value = ""
-        document.getElementById("min_time").value = ""
-        document.getElementById("sec_time").value =""
-        document.getElementById("focus_text").innerHTML = "When active, videos tagged with your NoNo Keywords will be alerted"
-        start.classList.remove('hidden')
-        starter.classList.remove('hidden')
-        clearInterval(interval);
-        console.log("reset pressed")
-        reset = false
-        document.getElementById("time").innerHTML = "Focus Time Remaining"
-        //This is not working 
-    }
+    
     if(!pause && !reset ){
-        
+        console.log("Timer-calculations being done ")
         // chrome.storage.sync.set({'timer_deadline': deadline})
         now = new Date().getTime(); 
         //console.log("CHECKING TO SEE OUTPUT HERE" + time_rem(deadline))
@@ -733,6 +720,23 @@ $('.switch3 input').on('change', function(){
 
 
     }
+    if(reset){
+        console.log("Reset conditional reached")
+        timer_pre_vis()
+        document.getElementById("hour_time").value = ""
+        document.getElementById("min_time").value = ""
+        document.getElementById("sec_time").value =""
+        document.getElementById("focus_text").innerHTML = "When active, videos tagged with your NoNo Keywords will be alerted"
+        start.classList.remove('hidden')
+        starter.classList.remove('hidden')
+        clearInterval(interval);
+        console.log("reset pressed")
+        
+        reset = false
+        document.getElementById("time").innerHTML = "Focus Time Remaining"
+        //This is not working 
+    }
+    
     function pause_clock(){
         pause = true;
         clearInterval(interval)
@@ -773,6 +777,21 @@ $('.switch3 input').on('change', function(){
         }
     }
 
+    function reset_clock(){
+        timer_pre_vis()
+        document.getElementById("hour_time").value = ""
+        document.getElementById("min_time").value = ""
+        document.getElementById("sec_time").value =""
+        document.getElementById("focus_text").innerHTML = "When active, videos tagged with your NoNo Keywords will be alerted"
+        start.classList.remove('hidden')
+        starter.classList.remove('hidden')
+        clearInterval(interval);
+        console.log("reset function pressed")
+        reset = false
+        document.getElementById("time").innerHTML = "Focus Time Remaining"
+
+    }
+
     document.getElementById('pause_timer').addEventListener('click', function () {
         pause=true;
     });
@@ -782,6 +801,7 @@ $('.switch3 input').on('change', function(){
     });
     document.getElementById('reset_timer').addEventListener('click', function () {
         reset = true;
+        //reset_clock()
     });
     
     
