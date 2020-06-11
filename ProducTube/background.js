@@ -224,7 +224,11 @@ chrome.webNavigation.onCompleted.addListener(function(details) {
 
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
         var activeTab = tabs[0];
-        chrome.tabs.sendMessage(activeTab.id, {"message": "IS_PAGE_PROCESSABLE", "msgOriginType": "onCompleted" }  )
+        setTimeout(function(){ 
+            // alert("WE SHOULD HAVE PROCESSED")
+            chrome.tabs.sendMessage(activeTab.id, {"message": "IS_PAGE_PROCESSABLE", "msgOriginType": "onCompleted" }  )
+        }, PAUSE_DELAY)
+        
     })
     //
                                     // console.log("hngcgcj", window.location.href, details.url, details.transitionType, details.parentFrameId)
@@ -369,15 +373,21 @@ function checkTitle( tabID, currUrl ){
                 console.log("GROUP 3: prefix",          "(234) This is(?s)432 (.*sdf - YouTub".match(re))
                 console.log("GROUP 4: suffix",          "(234)This is(?s)432 (.*sdf - YouTube".match(re))
                 console.log("GROUP 5: neither",         "(234)This is(?s)432 (.*sdf - YouTub".match(re))
-                console.log("whole string: ", foundRE[0])
-                var idx = 2;
-                while (idx < 6 && string == ''){
-                    console.log(foundRE[idx])
-                    if (foundRE[idx] != undefined){
-                        string = foundRE[idx]
+                if (foundRE){
+                    console.log("whole string: ", foundRE[0])
+
+                    var idx = 2;
+                    while (idx < 6 && string == ''){
+                        console.log(foundRE[idx])
+                        if (foundRE[idx] != undefined){
+                            string = foundRE[idx]
+                        }
+                        idx++
                     }
-                    idx++
+
                 }
+                // console.log("whole string: ", foundRE[0])
+
                 if (string == ''){
                     string = res.vidTitle
                 }
@@ -516,6 +526,7 @@ function checkTitle( tabID, currUrl ){
 }
 
 function pauseVideo( tabID, url, instigatorKeyword = [] ){
+    // alert("arriced at pause function")
     chrome.storage.sync.get(['session_block', 'popup_activated','keywords'], function(result) {
         console.log("returned True!", url, result.session_block)
         // console.log(url, result.session_block)

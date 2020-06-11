@@ -86,7 +86,13 @@ chrome.runtime.onMessage.addListener( function (request, sender, sendResponse ){
         var titleVal = document.getElementById("info-contents").querySelector("h1").firstChild.innerHTML
         console.log("TITLE INFO", titleVal )
         console.log("INSTIGATING KEYWORDS", request.instigatorKeyword )
-        document.getElementById("info-contents").querySelector("h1").firstChild.innerHTML = styleSearchString( titleVal , request.instigatorKeyword )
+        if (document.getElementById("ext-styled-text")== null && document.getElementById("ext-styled-text")== undefined){
+            document.getElementById("info-contents").querySelector("h1").firstChild.innerHTML = styleSearchString( titleVal , request.instigatorKeyword )
+        }
+        else{
+            console.log("THIS IS THE TITLE STYLED OBJECT:", document.getElementById("ext-styled-text"))
+        }
+        
         
 
         var div=document.createElement("div"); 
@@ -145,21 +151,97 @@ document.addEventListener('click',function(e){
 
 //helper functions______________________________________________________________________________________________________
 
+function recursiveSplitJoin( stringArr, queryArr, queryIdx ){
+    var splitArr = []
+    if (queryIdx == queryArr.length){
+        return 
+    }
+    else{
+        for (var i= 0; i< stringArr.length; i++){
+            // if not empty string
+            splitArr = stringArr[i].split(queryArr[queryIdx])//the regex before
+
+        }
+    }
+}
+
+
+
 
 function styleSearchString( string , query = []){
+
+    // var strArr =  string.split(" ").filter(Boolean);
+    // const querySet = new Set(query);
+    // var objString =''
+
+    // strArr.forEach(function(t){
+    //     term = t
+    //     termRE1 = term.match(/([\w](.*\s?)[\w])|([\w])/);
+        
+    //     console.log("TERM:", termRE1)
+    //     if (termRE1){
+    //         term=termRE1[0]
+    //         if (querySet.has(term.toUpperCase())){
+    //             objString+='<span class="ext-searchIndication">'+term+'</span>'
+    //         }
+    //         else{
+    //             objString+=term
+    //         }
+    //     }
+
+    // }
+
+
     console.log("QUERY: ", query, "STRING:", string)
     var querystr = '' 
     var result = string;
     var reg = null;
     final_str =  result
+    stringArr = []
+    regString=''
+
+
+    // for (var idx = 0; idx< query.length ; idx++ ){
+    //     querystr = query[idx]
+    //     strPart = 
+
+        
+
+    // }
+
+    // for (var idx = 0; idx< query.length ; idx++ ){
+    //     querystr = query[idx]
+    //     if (idx == query.length-1){
+    //         regString+="((?<=\\W)("+querystr+")(?=\\W))|((?<=\\W)("+querystr+"))|(("+querystr+")(?=\\W))"
+    //     }
+    //     else{
+    //         regString+="((?<=\\W)("+querystr+")(?=\\W))|((?<=\\W)("+querystr+"))|(("+querystr+")(?=\\W))|"
+    //     }
+    //     // reg = new RegExp(querystr, 'gi');
+    // }
+    // reg = new RegExp(regString, 'gi');
+    // console.log("REGEX:", reg)
+
+    // final_str =  "" + final_str.replace(reg, function(str) {return '<span class="ext-searchIndication">'+str+'</span>'});
+    //will fail if the added tag itself will be a search string like "class"
 
     for (var idx = 0; idx< query.length ; idx++ ){
         querystr = query[idx]
-        reg = new RegExp("((?<=\\W)("+querystr+")(?=\\W))|((?<=\\W)("+querystr+"))|(("+querystr+")(?=\\W))", 'gi');
+        if (querystr == "class"){
+            reg = new RegExp("((?<=\\W)(querystr)((?!(\=\"ext-searchIndication\">)|(\\w))))|(^(querystr)((?!(\\=\"ext-searchIndication\">)|(\\w))))", 'gi');
+        }
+        else if (querystr == "span"){
+            reg = new RegExp( "((?<=[^\\w<])(span)((?!(\\sclass\=\"ext-searchIndication\">)|(\\w))))|(^(span)((?!(\\sclass\=\"ext-searchIndication\">)|(\\w))))", 'gi');
+        }
+        else{
+            reg = new RegExp("((?<=\\W)("+querystr+")(?=\\W))|((?<=\\W)("+querystr+"))|(("+querystr+")(?=\\W))", 'gi');
+        }
         // reg = new RegExp(querystr, 'gi');
         console.log("REGEX:", reg)
         final_str =  "" + final_str.replace(reg, function(str) {return '<span class="ext-searchIndication">'+str+'</span>'});
     }
+
+
     final_str = "<span id='ext-styled-text'>"+final_str+"</span>"
     return final_str
 }
