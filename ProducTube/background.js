@@ -490,7 +490,7 @@ chrome.runtime.onMessage.addListener( function (request, sender, sendResponse ){
             )
         });
     }
-    //This is an important fucntion since we're saving changes to storage in background and changes are immediate (saving from content scripts require for you to wait until the page is reloaded or changed)
+    //This is an important function since we're saving changes to storage in background and changes are immediate (saving from content scripts require for you to wait until the page is reloaded or changed)
     if (request.message == "save_keys"){
         chrome.storage.sync.set(request.user_changes, function() {
             console.log("USER CHANGES", request.user_changes)
