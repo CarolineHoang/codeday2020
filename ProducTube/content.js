@@ -1,6 +1,56 @@
 var firstLanding = true
 var historyLastURL = document.URL
 
+// document.addEventListener('click',function(){
+//     console.log(document.getElementsByTagName("ytd-app")[0])
+//     alert("page-loaded")
+// })
+//oddly this fires whenever we go from history to a video 
+// document.addEventListener('yt-guide-close',function(){
+//     console.log(document.getElementsByTagName("ytd-app")[0])
+//     // console.log("body tag:", document.getElementsByTagName("body")[0])
+//     alert("guide closed")
+// })
+
+
+//this will fire whenever we land on a page after navigating to it (the info is not necessarily loaded yet)
+// document.addEventListener('yt-navigate-finish',function(){
+//     console.log("asdfadfgagfagag", document.getElementsByTagName("ytd-app")[0])
+//     console.log(document.getElementById("info-contents").querySelector("h1").firstChild.innerHTML)
+//     alert("we navigated")
+// })
+
+//this will fire every time the toggle icon is clicked!
+// document.addEventListener('yt-guide-toggle',function(){
+//     console.log(document.getElementsByTagName("ytd-app")[0])
+//     console.log("body tag:", document.getElementsByTagName("body")[0])
+//     alert("toggle clicked")
+// })
+
+document.getElementsByTagName("ytd-app")[0].addEventListener('yt-focus-searchbox',function(){
+    alert("searchbox focused")
+})
+document.getElementsByTagName("body")[0].addEventListener('yt-page-data-updated',function(){
+    console.log("SHOW RENDERED body tag:", document.getElementsByTagName("body")[0])
+    console.log("SHOW  TITLE :", document.getElementById("info-contents").querySelector("h1").firstChild)
+    const notVideoRegex = /.*\/\/.*youtube.com\/(?!watch).*/
+    const found = document.URL.match(notVideoRegex);
+    if (found != document.URL){
+        chrome.runtime.sendMessage({ "message": "PROCESS_PAGE" } , function(){
+            console.log("WE SHOULD NOW PROCESS")
+            historyLastURL = document.URL
+            firstLanding = false
+            // alert("page PROCESSING")
+        } )
+    }
+    else{
+        // alert("NOT A VIDEO")
+        deletePopup()
+        resetPopup()
+    }
+
+    // alert("page-UPDATED")
+})
 
 //response listeners____________________________________________________________________________________________________
 
@@ -13,19 +63,30 @@ chrome.runtime.onMessage.addListener( function (request, sender, sendResponse ){
 
         if (request.msgOriginType == "onHistoryStateUpdated"){
             if ( historyLastURL != document.URL || firstLanding){
-                chrome.runtime.sendMessage({ "message": "PROCESS_PAGE" } , function(){
-                    console.log("WE SHOULD NOW PROCESS")
-                    historyLastURL = document.URL
-                    firstLanding = false
-                    // alert("success")
-                } )
+                
+                console.log("WE SHOULD NOW PROCESS")
+                historyLastURL = document.URL
+                firstLanding = false
+                sendResponse({"processCommand": "PROCESS_PAGE"})
+                // chrome.runtime.sendMessage({ "message": "PROCESS_PAGE" } , function(){
+                //     console.log("WE SHOULD NOW PROCESS")
+                //     historyLastURL = document.URL
+                //     firstLanding = false
+                //     // alert("success")
+                // } )
+            }
+            else{
+                sendResponse({"processCommand": "DON'T_PROCESS_PAGE"})
             }
         }else{
-            chrome.runtime.sendMessage({ "message": "PROCESS_PAGE" } , function(){
-                console.log("WE SHOULD NOW PROCESS")
-                firstLanding = false
-                // alert("success")
-            } )
+            console.log("WE SHOULD NOW PROCESS")
+            firstLanding = false
+            sendResponse({"processCommand": "PROCESS_PAGE"})
+            // chrome.runtime.sendMessage({ "message": "PROCESS_PAGE" } , function(){
+            //     console.log("WE SHOULD NOW PROCESS")
+            //     firstLanding = false
+            //     // alert("success")
+            // } )
         }
         //HIDDEN OLD CODE:
             // // alert("WE SHOULD PROCESS")
@@ -44,9 +105,7 @@ chrome.runtime.onMessage.addListener( function (request, sender, sendResponse ){
 
     if (request.message == "remove_old_title" && document.getElementById("ext-styled-text") != null){
         // alert(document.getElementById("ext-styled-text").innerHTML)
-        if (document.getElementById("ext-styled-text") != null && document.getElementById("ext-styled-text") != undefined){
-            document.getElementById("ext-styled-text").remove()
-        }
+        removeTitle()
     }
     
     if (request.message == "pause_video"){
@@ -72,7 +131,7 @@ chrome.runtime.onMessage.addListener( function (request, sender, sendResponse ){
         if (title!= null){
             titleString = document.querySelector("title").innerHTML ;
         }
-        
+        // titleString = document.querySelector('meta[name="title"]').content
         //VERSION THAT TAKES THE SEARCH TITLE STRING FROM THE SAME TITLE WE EDIT
         // var titleString = document.getElementById("info-contents").querySelector("h1").firstChild.innerHTML
         
@@ -82,15 +141,41 @@ chrome.runtime.onMessage.addListener( function (request, sender, sendResponse ){
     }
 
     if (request.message == "show_popup"){
+        // console.log("This is the video title" , document.querySelector('meta[name="title"]').content)
 
         var titleVal = document.getElementById("info-contents").querySelector("h1").firstChild.innerHTML
+        // titleVal = document.querySelector('meta[name="title"]').content
         console.log("TITLE INFO", titleVal )
         console.log("INSTIGATING KEYWORDS", request.instigatorKeyword )
-        if (document.getElementById("ext-styled-text")== null && document.getElementById("ext-styled-text")== undefined){
-            document.getElementById("info-contents").querySelector("h1").firstChild.innerHTML = styleSearchString( titleVal , request.instigatorKeyword )
+        // if ((document.getElementById("ext-styled-text")== null && document.getElementById("ext-styled-text")== undefined) ){ //|| (document.getElementById("ext-styled-text")!= null && document.getElementById("ext-styled-text")== undefined)){
+        //     if(document.getElementById("info-contents")){
+        //         if ( document.getElementById("info-contents").querySelector("h1")){
+        //             if ( document.getElementById("info-contents").querySelector("h1").firstChild){
+        //                 if ( document.getElementById("info-contents").querySelector("h1").firstChild.innerHTML != ""){
+        //                     alert("filling")
+        //                     document.getElementById("info-contents").querySelector("h1").firstChild.innerHTML = styleSearchString( titleVal , request.instigatorKeyword )
+        //                 }    
+        //             }
+        //         }
+        //     }      
+        // }
+        console.log("THESE ARE THE STYLE TAGSjvuj:", document.getElementsByClassName("ext-searchIndication"))
+        if (document.getElementsByClassName("ext-searchIndication")!= null  && document.getElementsByClassName("ext-searchIndication").length == 0  ){ //|| (document.getElementById("ext-styled-text")!= null && document.getElementById("ext-styled-text")== undefined)){
+            if (document.getElementById("info-contents").querySelector("h1").firstChild.innerHTML.length > 0){
+                document.getElementById("info-contents").querySelector("h1").firstChild.innerHTML = styleSearchString( /*titleVal*/ request.title , request.instigatorKeyword )  
+                // alert("ADDING title")
+            }
+           
         }
         else{
             console.log("THIS IS THE TITLE STYLED OBJECT:", document.getElementById("ext-styled-text"))
+            console.log("THESE ARE THE STYLE TAGS:", document.getElementsByClassName("ext-searchIndication"))
+            // removeTitle()
+            // if (document.getElementById("info-contents").querySelector("h1").firstChild.innerHTML.length > 0){
+            //     document.getElementById("info-contents").querySelector("h1").firstChild.innerHTML = styleSearchString( /*titleVal*/ request.title , request.instigatorKeyword )  
+            // }
+            // if 
+            // .parentNode.removeChild(popupArr[0]
         }
         
         
@@ -227,11 +312,11 @@ function styleSearchString( string , query = []){
 
     for (var idx = 0; idx< query.length ; idx++ ){
         querystr = query[idx]
-        if (querystr == "class"){
-            reg = new RegExp("((?<=\\W)(querystr)((?!(\=\"ext-searchIndication\">)|(\\w))))|(^(querystr)((?!(\\=\"ext-searchIndication\">)|(\\w))))", 'gi');
+        if (querystr == "CLASS"){
+            reg = new RegExp("((?<=\\W)("+querystr+")((?!(\=\"ext-searchIndication\">)|(\\w))))|(^("+querystr+")((?!(\\=\"ext-searchIndication\">)|(\\w))))", 'gi');
         }
-        else if (querystr == "span"){
-            reg = new RegExp( "((?<=[^\\w<])(span)((?!(\\sclass\=\"ext-searchIndication\">)|(\\w))))|(^(span)((?!(\\sclass\=\"ext-searchIndication\">)|(\\w))))", 'gi');
+        else if (querystr == "SPAN"){
+            reg = new RegExp( "((?<=[^\\w<])("+querystr+")((?!(\\sclass\=\"ext-searchIndication\">)|(\\w))))|(^("+querystr+")((?!(\\sclass\=\"ext-searchIndication\">)|(\\w))))", 'gi');
         }
         else{
             reg = new RegExp("((?<=\\W)("+querystr+")(?=\\W))|((?<=\\W)("+querystr+"))|(("+querystr+")(?=\\W))", 'gi');
@@ -242,7 +327,7 @@ function styleSearchString( string , query = []){
     }
 
 
-    final_str = "<span id='ext-styled-text'>"+final_str+"</span>"
+    final_str = "<span id='ext-styled-text' vidURL='"+document.URL+"'>"+final_str+"</span>"
     return final_str
 }
 
@@ -260,4 +345,15 @@ function deletePopup(){
 function resetPopup(){
     chrome.storage.sync.set({'popup_activated': false}, function() {
     });
+ }
+
+
+ function removeTitle(){
+    // alert("removing title")
+    if (document.getElementById("ext-styled-text") != null && document.getElementById("ext-styled-text") != undefined && document.getElementById("ext-styled-text").getAttribute("vidURL")!= document.URL){
+        document.getElementById("ext-styled-text").remove()
+        // console.log()
+        // alert("removing title")
+
+    }
  }

@@ -56,6 +56,22 @@ chrome.runtime.onInstalled.addListener(function(details){
                                     "lastest_occur": null,
                                     "wordID":1
                                     },
+
+                        "MIDDLE":{
+                                    "total_freq": 1,
+                                    "session_freq": 0,
+                                    "first_occur": Date.now(),
+                                    "lastest_occur": null,
+                                    "wordID":1
+                                    },
+
+                        "CLASS":{
+                                    "total_freq": 1,
+                                    "session_freq": 0,
+                                    "first_occur": Date.now(),
+                                    "lastest_occur": null,
+                                    "wordID":1
+                                    },
                         "POP":{
                                     "total_freq": 1,
                                     "session_freq": 0,
@@ -158,116 +174,286 @@ const notVideoRegex = /.*\/\/.*youtube.com\/(?!watch).*/
 
 //rendering listeners___________________________________________________________________________________________________
 
-chrome.webNavigation.onHistoryStateUpdated.addListener(function(details) { 
-    // alert("History Nav") 
-    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-        var activeTab = tabs[0];
-        console.log("History Nav", activeTab.url)
-        chrome.tabs.sendMessage(
-            // details.tabId,
-            activeTab.id,
-            {"message": "remove_old_title"}, function(res){
-                console.log("removed old title")
-        })
-        setTimeout(function(){ 
-            // alert("WE SHOULD HAVE PROCESSED")
-            chrome.tabs.sendMessage(activeTab.id, {"message": "IS_PAGE_PROCESSABLE", "msgOriginType": "onHistoryStateUpdated"}, function(res){
-                console.log("check message sent") 
-            })
-        }, PAUSE_DELAY)
-    })
-    //hidden old code for saving space:
+// chrome.webNavigation.onHistoryStateUpdated.addListener(function(details) { 
+//     chrome.storage.sync.get(['keywords', 'session_keywords' , 'max_wordID', 'session_block', 'last_video', 'mode' ], function(result) {
     
-    // SAVING IN CASE WE BACKTRACK AND JUST WANT TO PERFORM THIS AS A RESPONSE TO THE FIRST MESSAGE INSTEAD OF A SEPARATE MESSAGE
-    // SINCE THIS IS FUNCTIONALLY THE SAME AS THE OTHER ONE, WE CAN MAKE IT A FUNCTION AND USE IT FOR BOTH (BUT IF THEY'RE DIFFERENT LATER THEN THAT'S A DIFFERENT STORY AND WE NEED THESE TWO SEPERATE)
-    //
-                    // console.log("hngcgcj", window.location.href, details.url, details.transitionType, details.parentFrameId)
 
-                    // chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-                    //     var activeTab = tabs[0];
-                    //     // var url = tab.url;
-                    //     var url = details.url;
-                    //     console.log("active vs details: ", activeTab.url,  details.url)
-                    //     const found = url.match(notVideoRegex);
+//     console.log("NAV DATA:" , details)
+//     // alert("History Nav") 
+//     var activeTab = details.tabId;
+//     var url = details.url;
+//     // chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+//     //     var activeTab = tabs[0];
+//     //     console.log("History Nav", activeTab.url)
+//         // chrome.tabs.sendMessage(
+//         //     // details.tabId,
+//         //     activeTab.id,
+//         //     {"message": "remove_old_title"}, function(res){
+//         //         console.log("removed old title")
+//         // })
 
-                    //     //to make sure that the old title is deleted while internally navigating
-                    //     //Reason:   after applying styles, the default youtube system seems to be unable to get 
-                    //     //          rid of the title by itself unless the page is just reloaded
-                    //     chrome.tabs.sendMessage(
-                    //         // details.tabId,
-                    //         activeTab.id,
-                    //         {"message": "remove_old_title"}, function(res){
 
-                    //             // chrome.tabs.sendMessage(activeTab.id, {"message": "clicked_browser_action"});
-                    //             if (activeTab && found == url ){
-                    //                 chrome.tabs.sendMessage(activeTab.id, {"message": "hide_popup"} , function(resp){
-                    //                     resetPopup()
-                    //                 });   
-                    //             }
-                    //             else{
-                    //                 // checkTitle( activeTab.id, url )
+//         const found = url.match(notVideoRegex);
+//         // chrome.tabs.sendMessage(activeTab.id, {"message": "clicked_browser_action"});
+//         if (activeTab && found == url ){
+//             chrome.tabs.sendMessage(activeTab , {"message": "hide_popup"});
+//             resetPopup()
+//         }
+//         else if ( url == result.last_video.url ){
+//             // chrome.tabs.sendMessage(activeTab , {"message": "remove_old_title"},  function(){
+//         setTimeout(function(){ 
+//             // alert("WE SHOULD HAVE PROCESSED")
+//             chrome.tabs.sendMessage(activeTab , {"message": "IS_PAGE_PROCESSABLE", "msgOriginType": "onHistoryStateUpdated"}, function(res){
+//                 console.log("check message sent") 
+//                 if (res.processCommand == "PROCESS_PAGE"){
 
-                    //                 setTimeout(function(){ checkTitle( activeTab.id, url , pauseVideo); }, PAUSE_DELAY); //to avoid taking the information from the last page
-                    //                 // checkTitle( activeTab.id, url , pauseVideo)
+//                     // chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+//                     //     var activeTab = tabs[0];
+//                     //     var url = activeTab.url;
 
-                    //             }
-                    //             // alert("DELETED")
-                    //         })
-                    // });
+
+//                         // var url = tab.url;
+//                         // var url = details.url;
+//                         // console.log("active vs details: ", activeTab.url,  details.url)
+            
+//                         // chrome.tabs.sendMessage(
+//                         //     // details.tabId,
+//                         //     activeTab.id,
+//                         //     {"message": "remove_old_title"}, 
+//                         //     function(res){
+//                         //         console.log("removed old title")
+
+
+
+
+//                                 // const found = url.match(notVideoRegex);
+//                                 // // chrome.tabs.sendMessage(activeTab.id, {"message": "clicked_browser_action"});
+//                                 // if (activeTab && found == url ){
+//                                 //     chrome.tabs.sendMessage(activeTab , {"message": "hide_popup"});
+//                                 //     resetPopup()
+//                                 // }
+//                                 // else{
+//                                     // checkTitle( activeTab.id, url , pauseVideo)
+//                                     // chrome.tabs.sendMessage(activeTab , {"message": "remove_old_title"},  function(){
+//                                         checkTitle( activeTab , url , pauseVideo)
+//                                         // setTimeout(function(){ checkTitle( activeTab.id, url , pauseVideo); }, PAUSE_DELAY); //to avoid calling content when it's not available
+//                                         resetPopup()
+//                                     // });
+//                                 // }
+
+
+
+
+
+//                         //     }
+//                         // )
+
+
+
+//                     // });
+
+//                 }
+
+               
+
+//             })
+//         }, PAUSE_DELAY)
+//     // })
+//         }
+//         else{
+//             chrome.tabs.sendMessage(activeTab , {"message": "remove_old_title"},  function(){
+//         setTimeout(function(){ 
+//             // alert("WE SHOULD HAVE PROCESSED")
+//             chrome.tabs.sendMessage(activeTab , {"message": "IS_PAGE_PROCESSABLE", "msgOriginType": "onHistoryStateUpdated"}, function(res){
+//                 console.log("check message sent") 
+//                 if (res.processCommand == "PROCESS_PAGE"){
+
+//                     // chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+//                     //     var activeTab = tabs[0];
+//                     //     var url = activeTab.url;
+
+
+//                         // var url = tab.url;
+//                         // var url = details.url;
+//                         // console.log("active vs details: ", activeTab.url,  details.url)
+            
+//                         // chrome.tabs.sendMessage(
+//                         //     // details.tabId,
+//                         //     activeTab.id,
+//                         //     {"message": "remove_old_title"}, 
+//                         //     function(res){
+//                         //         console.log("removed old title")
+
+
+
+
+//                                 // const found = url.match(notVideoRegex);
+//                                 // // chrome.tabs.sendMessage(activeTab.id, {"message": "clicked_browser_action"});
+//                                 // if (activeTab && found == url ){
+//                                 //     chrome.tabs.sendMessage(activeTab , {"message": "hide_popup"});
+//                                 //     resetPopup()
+//                                 // }
+//                                 // else{
+//                                     // checkTitle( activeTab.id, url , pauseVideo)
+//                                     // chrome.tabs.sendMessage(activeTab , {"message": "remove_old_title"},  function(){
+//                                         checkTitle( activeTab , url , pauseVideo)
+//                                         // setTimeout(function(){ checkTitle( activeTab.id, url , pauseVideo); }, PAUSE_DELAY); //to avoid calling content when it's not available
+//                                         resetPopup()
+//                                     // });
+//                                 // }
+
+
+
+
+
+//                         //     }
+//                         // )
+
+
+
+//                     // });
+
+//                 }
+
+               
+
+//             })
+//         }, PAUSE_DELAY)
+//     })
+//         }
+//     // })
+
+
+//     //hidden old code for saving space:
     
-    }, {url: [{hostSuffix: 'youtube.com' /* , urlContains: '/watch'*/}]}
-);
+//     // SAVING IN CASE WE BACKTRACK AND JUST WANT TO PERFORM THIS AS A RESPONSE TO THE FIRST MESSAGE INSTEAD OF A SEPARATE MESSAGE
+//     // SINCE THIS IS FUNCTIONALLY THE SAME AS THE OTHER ONE, WE CAN MAKE IT A FUNCTION AND USE IT FOR BOTH (BUT IF THEY'RE DIFFERENT LATER THEN THAT'S A DIFFERENT STORY AND WE NEED THESE TWO SEPERATE)
+//     //
+//                     // console.log("hngcgcj", window.location.href, details.url, details.transitionType, details.parentFrameId)
+
+//                     // chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+//                     //     var activeTab = tabs[0];
+//                     //     // var url = tab.url;
+//                     //     var url = details.url;
+//                     //     console.log("active vs details: ", activeTab.url,  details.url)
+//                     //     const found = url.match(notVideoRegex);
+
+//                     //     //to make sure that the old title is deleted while internally navigating
+//                     //     //Reason:   after applying styles, the default youtube system seems to be unable to get 
+//                     //     //          rid of the title by itself unless the page is just reloaded
+//                     //     chrome.tabs.sendMessage(
+//                     //         // details.tabId,
+//                     //         activeTab.id,
+//                     //         {"message": "remove_old_title"}, function(res){
+
+//                     //             // chrome.tabs.sendMessage(activeTab.id, {"message": "clicked_browser_action"});
+//                     //             if (activeTab && found == url ){
+//                     //                 chrome.tabs.sendMessage(activeTab.id, {"message": "hide_popup"} , function(resp){
+//                     //                     resetPopup()
+//                     //                 });   
+//                     //             }
+//                     //             else{
+//                     //                 // checkTitle( activeTab.id, url )
+
+//                     //                 setTimeout(function(){ checkTitle( activeTab.id, url , pauseVideo); }, PAUSE_DELAY); //to avoid taking the information from the last page
+//                     //                 // checkTitle( activeTab.id, url , pauseVideo)
+
+//                     //             }
+//                     //             // alert("DELETED")
+//                     //         })
+//                     // });
+    
+//     })
+//                 }, {url: [{hostSuffix: 'youtube.com' /* , urlContains: '/watch'*/}]}
+// );
 
 
-chrome.webNavigation.onCompleted.addListener(function(details) { 
-    // alert("Page Completed")  
+// chrome.webNavigation.onCompleted.addListener(function(details) { 
+//     // alert("Page Completed")  
 
-    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-        var activeTab = tabs[0];
-        setTimeout(function(){ 
-            // alert("WE SHOULD HAVE PROCESSED")
-            chrome.tabs.sendMessage(activeTab.id, {"message": "IS_PAGE_PROCESSABLE", "msgOriginType": "onCompleted" }  )
-        }, PAUSE_DELAY)
+//     chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+//         var activeTab = tabs[0];
+//         setTimeout(function(){ 
+//             // alert("WE SHOULD HAVE PROCESSED")
+//             chrome.tabs.sendMessage(activeTab.id, {"message": "IS_PAGE_PROCESSABLE", "msgOriginType": "onCompleted" } , function(res){
+
+//                 if (res.processCommand == "PROCESS_PAGE"){
+
+//                     chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+//                         var activeTab = tabs[0];
+//                         var url = activeTab.url;
+//                         // var url = tab.url;
+//                         // var url = details.url;
+//                         // console.log("active vs details: ", activeTab.url,  details.url)
+            
+//                         chrome.tabs.sendMessage(
+//                             // details.tabId,
+//                             activeTab.id,
+//                             {"message": "remove_old_title"}, 
+//                             function(res){
+//                                 console.log("removed old title")
+//                                 const found = url.match(notVideoRegex);
+//                                 // chrome.tabs.sendMessage(activeTab.id, {"message": "clicked_browser_action"});
+//                                 if (activeTab && found == url ){
+//                                     chrome.tabs.sendMessage(activeTab.id, {"message": "hide_popup"});
+//                                     resetPopup()
+//                                 }
+//                                 else{
+//                                     // checkTitle( activeTab.id, url , pauseVideo)
+//                                     checkTitle( activeTab.id, url , pauseVideo)
+//                                     // setTimeout(function(){ checkTitle( activeTab.id, url , pauseVideo); }, PAUSE_DELAY); //to avoid calling content when it's not available
+//                                     resetPopup()
+//                                 }
+//                             }
+//                         )
+//                     });
+
+//                 }
+
+
+
+//             } )
+//         }, PAUSE_DELAY)
         
-    })
-    //
-                                    // console.log("hngcgcj", window.location.href, details.url, details.transitionType, details.parentFrameId)
+//     })
+//     //
+//                                     // console.log("hngcgcj", window.location.href, details.url, details.transitionType, details.parentFrameId)
 
     
-                                    // chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-                                    //     var activeTab = tabs[0];
-                                    //     // var url = tab.url;
-                                    //     var url = details.url;
-                                    //     // console.log("active vs details: ", activeTab.url,  details.url)
+//                                     // chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+//                                     //     var activeTab = tabs[0];
+//                                     //     // var url = tab.url;
+//                                     //     var url = details.url;
+//                                     //     // console.log("active vs details: ", activeTab.url,  details.url)
 
-                                    //     chrome.tabs.sendMessage(
-                                    //         // details.tabId,
-                                    //         activeTab.id,
-                                    //         {"message": "remove_old_title"}, function(res){
+//                                     //     chrome.tabs.sendMessage(
+//                                     //         // details.tabId,
+//                                     //         activeTab.id,
+//                                     //         {"message": "remove_old_title"}, function(res){
                             
                             
 
-                                    //         const found = url.match(notVideoRegex);
-                                    //         // chrome.tabs.sendMessage(activeTab.id, {"message": "clicked_browser_action"});
-                                    //         if (activeTab && found == url ){
-                                    //             chrome.tabs.sendMessage(activeTab.id, {"message": "hide_popup"});
-                                    //             resetPopup()
-                                    //         }
-                                    //         else{
+//                                     //         const found = url.match(notVideoRegex);
+//                                     //         // chrome.tabs.sendMessage(activeTab.id, {"message": "clicked_browser_action"});
+//                                     //         if (activeTab && found == url ){
+//                                     //             chrome.tabs.sendMessage(activeTab.id, {"message": "hide_popup"});
+//                                     //             resetPopup()
+//                                     //         }
+//                                     //         else{
                                             
 
-                                    //             // checkTitle( activeTab.id, url , pauseVideo)
-                                    //             setTimeout(function(){ checkTitle( activeTab.id, url , pauseVideo); }, PAUSE_DELAY); //to avoid calling content when it's not available
-                                    //             resetPopup()
-                                    //         }
+//                                     //             // checkTitle( activeTab.id, url , pauseVideo)
+//                                     //             setTimeout(function(){ checkTitle( activeTab.id, url , pauseVideo); }, PAUSE_DELAY); //to avoid calling content when it's not available
+//                                     //             resetPopup()
+//                                     //         }
 
-                                    //     })
+//                                     //     })
                                         
-                                    // });
-                                    // }        
-    }
-    ,{url: [{hostSuffix: 'youtube.com' /* , urlContains: '/watch' */}]}
-);
+//                                     // });
+//                                     // }        
+//     }
+//     ,{url: [{hostSuffix: 'youtube.com' /* , urlContains: '/watch' */}]}
+// );
 
 //response listeners____________________________________________________________________________________________________
 
@@ -353,6 +539,7 @@ chrome.alarms.onAlarm.addListener(function( alarm ) {
 //helper functions______________________________________________________________________________________________________
 
 function checkTitle( tabID, currUrl ){
+    // alert("arriced at check title")
     chrome.tabs.sendMessage(
         // details.tabId,
         tabID, 
@@ -360,59 +547,61 @@ function checkTitle( tabID, currUrl ){
         function(res){
             if (res && res.vidTitle){
                                 
-                var string = ''
-                var re = /(^\(\d*\)\s(.*)\s-\sYouTube$|^\(\d*\)\s(.*)$|^(.*)\s-\sYouTube$|^(.*)$)/
-                //this regEx checks for a string that begins with a number in parenthesis or ends with ' - YouTube' and cuts out the string inbetween
-                //the text inbetween can be any group between 2 and 5 inclusive
-                //group 1 happens to contain the whole string
-                //group number curresponds to the index in the returned array by .match()
-                //the 0 index is the whole string
-                const foundRE = res.vidTitle.match(re);
-                console.log("REGEX RESULTS:", foundRE)
-                console.log("GROUP 2: prefix+suffix",   "(234) This is(?s)432 (.*sdf - YouTube".match(re))
-                console.log("GROUP 3: prefix",          "(234) This is(?s)432 (.*sdf - YouTub".match(re))
-                console.log("GROUP 4: suffix",          "(234)This is(?s)432 (.*sdf - YouTube".match(re))
-                console.log("GROUP 5: neither",         "(234)This is(?s)432 (.*sdf - YouTub".match(re))
-                if (foundRE){
-                    console.log("whole string: ", foundRE[0])
-
-                    var idx = 2;
-                    while (idx < 6 && string == ''){
-                        console.log(foundRE[idx])
-                        if (foundRE[idx] != undefined){
-                            string = foundRE[idx]
-                        }
-                        idx++
-                    }
-
-                }
-                // console.log("whole string: ", foundRE[0])
-
-                if (string == ''){
-                    string = res.vidTitle
-                }
-                        // Hidden code to go with using a string that comes from a div without need to strip
-                            // console.log(res.vidTitle.substring(4, res.vidTitle.length-10), res.channelName) //minus 10 to get rid of "- Youtube" (9+1)
-                            // var string = res.vidTitle
-                            // if( string.substring(0, 27) == "<span id='ext-styled-text'>"){
-                            //     console.log("THE TITLE IS STYLED", string = '')
-                            //     string = ''
-                            // }
-                            
-                            //The below code only works for strings that may or may not begin with "(1) " but not any other number
-                            // var string = res.vidTitle
-                            // if(res.vidTitle.substring(0,4)=="(1) "){
-                            //     string = string.substring(4, string.length) 
-                            // }
-                            // if(res.vidTitle.substring(res.vidTitle.length-10,res.vidTitle.length)==" - YouTube"){
-                            //     string = string.substring(0, string.length-10) 
-                            // }
-                            // console.log("["+string+"]", "["+res.channelName+"]", "["+res.vidTitle.substring(res.vidTitle.length-10,res.vidTitle.length)+"]" )
-                        //
-                        
-                var strArr =  string.toUpperCase().split(" ").filter(Boolean);
+              
                 chrome.storage.sync.get(['keywords', 'session_keywords' , 'max_wordID', 'session_block', 'last_video', 'mode' ], function(result) {
-                    if (result.mode == "PRODUCTIVITY"){
+                    var string = ''
+                    // var re = /(^\(\d*\)\s(.*)\s-\sYouTube$|^\(\d*\)\s(.*)$|^(.*)\s-\sYouTube$|^(.*)$)/
+                    var re = /(^\(\d*\)\s([\s\S]*)\s-\sYouTube$|^\(\d*\)\s([\s\S]*)$|^([\s\S]*)\s-\sYouTube$|^([\s\S]*)$)/
+                    //this regEx checks for a string that begins with a number in parenthesis or ends with ' - YouTube' and cuts out the string inbetween
+                    //the text inbetween can be any group between 2 and 5 inclusive
+                    //group 1 happens to contain the whole string
+                    //group number curresponds to the index in the returned array by .match()
+                    //the 0 index is the whole string
+                    const foundRE = res.vidTitle.match(re);
+                    console.log("REGEX RESULTS:", foundRE, res.vidTitle , re)
+                    console.log("GROUP 2: prefix+suffix",   "(234) This is(?s)432 (.*sdf - YouTube".match(re))
+                    console.log("GROUP 3: prefix",          "(234) This is(?s)432 (.*sdf - YouTub".match(re))
+                    console.log("GROUP 4: suffix",          "(234)This is(?s)432 (.*sdf - YouTube".match(re))
+                    console.log("GROUP 5: neither",         "(234)This is(?s)432 (.*sdf - YouTub".match(re))
+                    if (foundRE){
+                        console.log("whole string: ", foundRE[0])
+    
+                        var idx = 2;
+                        while (idx < 6 && string == ''){
+                            console.log(foundRE[idx])
+                            if (foundRE[idx] != undefined){
+                                string = foundRE[idx]
+                            }
+                            idx++
+                        }
+    
+                    }
+                    // console.log("whole string: ", foundRE[0])
+    
+                    // if (string == ''){
+                    //     string = res.vidTitle
+                    // }
+                            // Hidden code to go with using a string that comes from a div without need to strip
+                                // console.log(res.vidTitle.substring(4, res.vidTitle.length-10), res.channelName) //minus 10 to get rid of "- Youtube" (9+1)
+                                // var string = res.vidTitle
+                                // if( string.substring(0, 27) == "<span id='ext-styled-text'>"){
+                                //     console.log("THE TITLE IS STYLED", string = '')
+                                //     string = ''
+                                // }
+                                
+                                //The below code only works for strings that may or may not begin with "(1) " but not any other number
+                                // var string = res.vidTitle
+                                // if(res.vidTitle.substring(0,4)=="(1) "){
+                                //     string = string.substring(4, string.length) 
+                                // }
+                                // if(res.vidTitle.substring(res.vidTitle.length-10,res.vidTitle.length)==" - YouTube"){
+                                //     string = string.substring(0, string.length-10) 
+                                // }
+                                // console.log("["+string+"]", "["+res.channelName+"]", "["+res.vidTitle.substring(res.vidTitle.length-10,res.vidTitle.length)+"]" )
+                            //
+                            
+                    var strArr =  string.toUpperCase().split(" ").filter(Boolean);
+                    if (result.mode == "PRODUCTIVITY" && string != ''){
                         // alert( currUrl ) //result.last_video)
                         var instigatorKeywordsArr = []
 
@@ -517,7 +706,7 @@ function checkTitle( tabID, currUrl ){
                             instigatorKeywordsArr = Object.keys(block_sites[currUrl]["keywords"])
                         }
                         console.log("instigatorKeywordsArr:", instigatorKeywordsArr, currUrl )
-                        pauseVideo( tabID, currUrl, instigatorKeywordsArr ) //instigatorKeywordsArr != [] ? instigatorKeywordsArr[0] : '' )
+                        pauseVideo( tabID, currUrl, instigatorKeywordsArr, string ) //instigatorKeywordsArr != [] ? instigatorKeywordsArr[0] : '' )
                     }
                 })
             }
@@ -525,7 +714,7 @@ function checkTitle( tabID, currUrl ){
     );
 }
 
-function pauseVideo( tabID, url, instigatorKeyword = [] ){
+function pauseVideo( tabID, url, instigatorKeyword = [] , title ){
     // alert("arriced at pause function")
     chrome.storage.sync.get(['session_block', 'popup_activated','keywords'], function(result) {
         console.log("returned True!", url, result.session_block)
@@ -545,7 +734,7 @@ function pauseVideo( tabID, url, instigatorKeyword = [] ){
                 chrome.tabs.sendMessage(
                     // details.tabId,
                     tabID, 
-                    {"message": "show_popup" , 'instigatorKeyword': instigatorKeyword }, function(res){
+                    {"message": "show_popup" , 'instigatorKeyword': instigatorKeyword , 'title': title }, function(res){
                     console.log("popup! 1")
                     console.log("THESE ARE THE PARTIALLY AVAILABLE KEYWORDS:",result.keywords )
                     chrome.storage.sync.set({'popup_activated': true}, function() {
