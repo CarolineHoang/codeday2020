@@ -3,6 +3,7 @@
 // VARIABLES AND CONSTANTS _____________________________________________________________________________________________
 
 var keyStoreVals = ['keywords', 'session_keywords' , 'max_wordID', 'session_block' ]
+const FREQ_COUNT_CAP =1000000
 
 
 // MAIN RENDERING FUNCTION _____________________________________________________________________________________________
@@ -357,11 +358,17 @@ function addUIRender(ul, value, keywordInfo, keywordType, freqType, closeClassTy
     var li = document.createElement("li");
     li.classList.add("list-group-item")
 
+    // document.getElementById("myDIV").childElementCount
+
     var infoDiv = document.createElement("div");
     infoDiv.classList.add("info-container")
 
     li.appendChild(infoDiv);
     console.log("-------RENDERED2", keywordInfo[freqType])
+
+    var listNumDiv = document.createElement("div");
+    listNumDiv.classList.add("list-item-number")
+    listNumDiv.textContent =  "("+(ul.childElementCount+1)+")"
 
     var nameDiv = document.createElement("div");
     nameDiv.textContent = value
@@ -371,11 +378,23 @@ function addUIRender(ul, value, keywordInfo, keywordType, freqType, closeClassTy
         ul.appendChild(li);
     }
     var freqDiv = document.createElement("div");
-    freqDiv.textContent =  "("+keywordInfo[freqType]+")"
+    
+    //if we hit a cap, to not burst from the allocated space, just print a static number with a plus sign after it
+    console.log("freq num:", keywordInfo[freqType], parseInt(keywordInfo[freqType])<FREQ_COUNT_CAP)
+    if (parseInt(keywordInfo[freqType])<FREQ_COUNT_CAP){
+        freqDiv.textContent =  "("+keywordInfo[freqType]+")"
+    }
+    else{
+        freqDiv.textContent =  "("+(FREQ_COUNT_CAP-1)+"+"+")"
+    }
+    freqDiv.title = keywordInfo[freqType]
+    // freqDiv.textContent =  "("+keywordInfo[freqType]+")"
     freqDiv.classList.add("list-item-freq")
+    // freqDiv.classList.add("list-item-freq")
 
     //YOU MUST FIRST APPEND (AS SEEN BELOW) TO THE DOCUMENT TREE BEFORE TRYING TO FIND INFO ABOUT SIZE (ALSO IT MUST NOT BE DISPLAY NONE, VISIBILITY: HIDDEN WORKS, HOWEVER) 
     if (freqType in keywordInfo){
+        infoDiv.appendChild(listNumDiv)
         infoDiv.appendChild(nameDiv)
         infoDiv.appendChild(freqDiv)
 
@@ -426,8 +445,9 @@ function addUIRender(ul, value, keywordInfo, keywordType, freqType, closeClassTy
             }
             this.remove()
             if (div){
-                var keyword = div.firstChild.firstChild.innerHTML
-                console.log( "PARENT VAL", div.firstChild.firstChild.innerHTML )
+                var keyword = div.querySelector(".list-item-name").innerHTML
+                // var keyword = div.firstChild.firstChild.innerHTML
+                console.log( "PARENT VAL", div.querySelector(".list-item-name").innerHTML )
                 var list = document.getElementById("keys-list");
                 addKeywords([keyword], list)
             }
@@ -448,8 +468,8 @@ function addUIRender(ul, value, keywordInfo, keywordType, freqType, closeClassTy
         console.log("PARENT DIV: ", div , "CHILD:" ,this)
         this.remove()
         if (div){
-            console.log( "PARENT VAL", div.firstChild.firstChild.innerHTML )
-            removeKeyword(div.firstChild.firstChild.innerHTML, keywordType)
+            console.log( "PARENT VAL", div.querySelector(".list-item-name").innerHTML )
+            removeKeyword(div.querySelector(".list-item-name").innerHTML, keywordType)
             div.remove()
         }
     },false);
