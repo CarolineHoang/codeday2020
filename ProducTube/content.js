@@ -353,7 +353,7 @@ function deletePopup(){
 
 // NOT SENDING THIS LIKE THE REST TO BACKGROUND FIRST BECAUSE, IF ANYTHING, I DON'T WANT THIS TO HAPPEN TOO IMMEDIATELY
 function resetPopup(){
-    chrome.storage.sync.set({'popup_activated': false}, function() {
+    chrome.storage.local.set({'popup_activated': false}, function() {
     });
  }
 
@@ -419,7 +419,7 @@ function checkTitle( tabID, currUrl ){
             if (res && res.vidTitle){
                                 
               
-                chrome.storage.sync.get(['keywords', 'session_keywords' , 'max_wordID', 'session_block', 'last_video', 'mode' ], function(result) {
+                chrome.storage.local.get(['keywords', 'session_keywords' , 'max_wordID', 'session_block', 'last_video', 'mode' ], function(result) {
                     var string = ''
                     // var re = /(^\(\d*\)\s(.*)\s-\sYouTube$|^\(\d*\)\s(.*)$|^(.*)\s-\sYouTube$|^(.*)$)/
                     var re = /(^\(\d*\)\s([\s\S]*)\s-\sYouTube$|^\(\d*\)\s([\s\S]*)$|^([\s\S]*)\s-\sYouTube$|^([\s\S]*)$)/
@@ -555,7 +555,7 @@ function checkTitle( tabID, currUrl ){
                             pauseVideo( tabID, currUrl, instigatorKeywordsArr, string ) 
                             // console.log({'keywords': storageKeys, 'session_keywords': sessionStorageKeys , 'max_wordID': new_max_wordID, 'last_video': {'url': currUrl, 'toggle-cleared': false}, 'session_block': block_sites})
                         } )
-                        // chrome.storage.sync.set({'keywords': storageKeys, 'session_keywords': sessionStorageKeys , 'max_wordID': new_max_wordID, 'last_video': {'url': currUrl, 'toggle-cleared': false}, 'session_block': block_sites}, function() {
+                        // chrome.storage.local.set({'keywords': storageKeys, 'session_keywords': sessionStorageKeys , 'max_wordID': new_max_wordID, 'last_video': {'url': currUrl, 'toggle-cleared': false}, 'session_block': block_sites}, function() {
                         //     console.log('Values changed to 1: ' , storageKeys);
                         //     console.log('Values changed to 2: ' , sessionStorageKeys);
                         //     console.log('Values changed to 3: ' , new_max_wordID);
@@ -579,7 +579,7 @@ function pauseVideo( tabID, url, instigatorKeyword = [] , title ){
     // alert("arriced at pause function")
     // alert("not Paused yet")
 
-    chrome.storage.sync.get(['session_block', 'popup_activated','keywords'], function(result) {
+    chrome.storage.local.get(['session_block', 'popup_activated','keywords'], function(result) {
         // alert("not Paused yet")
         console.log("returned True!", url, result.session_block)
         // console.log(url, result.session_block)
@@ -601,7 +601,7 @@ function pauseVideo( tabID, url, instigatorKeyword = [] , title ){
                 //     {"message": "show_popup" , 'instigatorKeyword': instigatorKeyword , 'title': title }, function(res){
                 //     console.log("popup! 1")
                 //     console.log("THESE ARE THE PARTIALLY AVAILABLE KEYWORDS:",result.keywords )
-                //     chrome.storage.sync.set({'popup_activated': true}, function() {
+                //     chrome.storage.local.set({'popup_activated': true}, function() {
                 //     });
                 //     // alert("video is paused")
                 // });

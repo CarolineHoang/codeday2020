@@ -9,7 +9,7 @@ var keyStoreVals = ['keywords', 'session_keywords' , 'max_wordID', 'session_bloc
 document.addEventListener('DOMContentLoaded', function(){
     
     //flip the check box depending on the current mode // default initialization should be leisure
-    chrome.storage.sync.get( ['mode'], function(val) {
+    chrome.storage.local.get( ['mode'], function(val) {
         var currMode = val.mode
         console.log("WHAT IS THE CURRENT STATE? ", currMode )
         if (currMode == "PRODUCTIVITY"){
@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', function(){
                         console.log("PRODUCTIVE TIME NEW SESSION")
                         // alert("success")
                     } )
-                    // chrome.storage.sync.set({'mode':'PRODUCTIVITY'}, function() {
+                    // chrome.storage.local.set({'mode':'PRODUCTIVITY'}, function() {
                     //     // console.log('Value is set to ' + value);
                     // });
                     //this 1) sets the alarm and 2) changes the storage value for whether we're in productivity mode or not to true (value used for reference if we will pause video )
@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', function(){
                         console.log("LEISURE TIME")
                         // alert("success")
                     } )
-                    // chrome.storage.sync.set({'mode':'LEISURE'}, function() {
+                    // chrome.storage.local.set({'mode':'LEISURE'}, function() {
                     //     // console.log('Value is set to ' + value);
                     // });
                     //this 1) clears ALL alarms (not refined further rn) and 2) changes the storage value for whether we're in productivity mode or not to false (value used for reference if we will pause video )
@@ -161,7 +161,7 @@ $('.switch3 input').on('change', function(){
     var dad = $(this).parent();
     if($(this).is(':checked')){
         dad.addClass('switch3-checked');
-        chrome.storage.sync.get( ['last_video'], function(val) {
+        chrome.storage.local.get( ['last_video'], function(val) {
             console.log(val.last_video.url, val.last_video)
             chrome.runtime.sendMessage({"message": "save_keys", "user_changes": {'mode':'PRODUCTIVITY', "session_keywords": {}, "session_block": {} , 'last_video': { 'url': val.last_video.url  , 'toggle-cleared': true}}} , function(){
                 console.log("PRODUCTIVE TIME NEW SESSION")
@@ -219,7 +219,7 @@ var display = function(block_name, title) {
 function show_list(){
     var list = document.getElementById("keys-list");
     var freq_list = document.getElementById("freq-list");
-    chrome.storage.sync.get( keyStoreVals, function(val) {
+    chrome.storage.local.get( keyStoreVals, function(val) {
         var storageKeys = val.keywords; 
         var sessionStorageKeys = val.session_keywords;
         var x = val.keywords.length; 
@@ -249,7 +249,7 @@ function addUI(ul, value, keywordInfo, keywordType ) {
 
     //might be a smart idea to make this quicker by changing the divs when you click the button instead of load the whole thing in on condition
     if (keywordInfo!= undefined){
-        chrome.storage.sync.get( keyStoreVals, function(val) {
+        chrome.storage.local.get( keyStoreVals, function(val) {
             var storageKeys = val.keywords
         var freqType = null;
         var closeClassType = null;
@@ -324,13 +324,13 @@ function addUI(ul, value, keywordInfo, keywordType ) {
                                 //         }
 
                                 //         // var div = this.parentElement
-                                //         // chrome.storage.sync.get( keyStoreVals, function(val) {
+                                //         // chrome.storage.local.get( keyStoreVals, function(val) {
                                 //         //     var storageKeys = val.keywords
                                 //         //     var sessionStorageKeys = val.session_keywords
                                 //         //     var keyword = div.firstChild.firstChild.innerHTML
                                 //         //     storageKeys[keyword] = sessionStorageKeys[keyword]
                                 //         //     var list = document.getElementById("keys-list");
-                                //         //     chrome.storage.sync.set({'keywords': storageKeys, 'session_keywords': sessionStorageKeys }, function() {
+                                //         //     chrome.storage.local.set({'keywords': storageKeys, 'session_keywords': sessionStorageKeys }, function() {
                                 //         //     });
                                 //         //     addUI(list, keyword, storageKeys[keyword], "NoNoWord")
                                 //         // })
@@ -501,7 +501,7 @@ function addUIRender(ul, value, keywordInfo, keywordType, freqType, closeClassTy
 //ADD KEYWORDS TO CHROME STORAGE SYNC
 function addKeywords(kwList, list){
 
-    chrome.storage.sync.get(['keywords', 'session_keywords', 'max_wordID' ], function(result) {
+    chrome.storage.local.get(['keywords', 'session_keywords', 'max_wordID' ], function(result) {
         var storageKeys = result.keywords
         var sessionStorageKeys = result.session_keywords
         var new_max_wordID = result.max_wordID
@@ -537,7 +537,7 @@ function addKeywords(kwList, list){
             // alert("success")
         } )
         //this one will make all changes happen when the page refreshes or reloads
-        // chrome.storage.sync.set({ 'keywords': storageKeys, 'max_wordID': new_max_wordID }, function() {
+        // chrome.storage.local.set({ 'keywords': storageKeys, 'max_wordID': new_max_wordID }, function() {
         //     document.getElementById("text1").value = ''
         //     console.log("NEW ADDED VAL: " , storageKeys)
         // });
@@ -546,7 +546,7 @@ function addKeywords(kwList, list){
 
 //REMOVE A DELETED KEYWORD FROM CHROME STORAGE SYNC
 function removeKeyword(kw, keywordType) {
-    chrome.storage.sync.get( keyStoreVals, function(val) {
+    chrome.storage.local.get( keyStoreVals, function(val) {
         var storageKeys = val.keywords; 
         var sessionStorageKeys = val.session_keywords;
         var x = val.keywords.length; 
@@ -609,7 +609,7 @@ function sortByNonDecreasingFreq(keysObject, freqType ){
 //PULL INFO ON A KEYWORD FROM CHROME STORAGE SYNC ON CLICK OF A OBJECT AND FILL THE KEYWORD SUMMARY OBJECT
 function fillKeywordInfo(clickedKeyword, keywordType ) {
 
-    chrome.storage.sync.get( keyStoreVals, function(val) {
+    chrome.storage.local.get( keyStoreVals, function(val) {
         var storageKeys = val.keywords; 
         var sessionStorageKeys = val.session_keywords;
         var x = val.keywords.length; 
@@ -655,7 +655,7 @@ function fillKeywordInfo(clickedKeyword, keywordType ) {
 
 //this would be a general function but I don't want to mess with two types (callback true and false) of endless parameters so... not finishing for now
     // function inStorage( kw , storageType, callbackTrue, callbackFalse ){
-    //     chrome.storage.sync.get( keyStoreVals, function(val) {
+    //     chrome.storage.local.get( keyStoreVals, function(val) {
     //         var storageKeys = val.keywords
     //         var sessionStorageKeys = val.session_keywords
     //         var keys = null
