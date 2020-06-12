@@ -1,154 +1,184 @@
-// alert("grrr")
+var firstLanding = true
+var historyLastURL = document.URL
 
-// chrome.runtime.onConnect.addListener(port => {
-//     console.log('connected ', port);
-
-// chrome.webNavigation.onDOMContentLoaded.addListener(function(details) {
-    
-//     // var channelName = document.getElementById("channel-name").querySelector("a").innerHTML//alternatively: .querySelector("#text").getElementsByTagName("a")         //.getElementsByTagName("div")//.getElementById("text")//.getElementsByTagName("a").innerHTML;
-//     // var title = document.querySelector("title") ;
-//     // var titleString = document.querySelector("title").innerHTML ;
-//     // console.log("testingtesting123 ")
-//     // console.log(/*"video ", video,*/ "title", title, "titleString", titleString, "channelName:", channelName)
-//     alert("the page has loaded")
-//     // alert("the page has loaded", "title", title, "titleString", titleString, "channelName:", channelName)
-    
+// document.addEventListener('click',function(){
+//     console.log(document.getElementsByTagName("ytd-app")[0])
+//     alert("page-loaded")
+// })
+//oddly this fires whenever we go from history to a video 
+// document.addEventListener('yt-guide-close',function(){
+//     console.log(document.getElementsByTagName("ytd-app")[0])
+//     // console.log("body tag:", document.getElementsByTagName("body")[0])
+//     alert("guide closed")
 // })
 
 
-
-// document.addEventListener('DOMContentLoaded', function(){
-//     alert("the page has started")
+//this will fire whenever we land on a page after navigating to it (the info is not necessarily loaded yet)
+// document.addEventListener('yt-navigate-finish',function(){
+//     console.log("asdfadfgagfagag", document.getElementsByTagName("ytd-app")[0])
+//     console.log(document.getElementById("info-contents").querySelector("h1").firstChild.innerHTML)
+//     alert("we navigated")
 // })
-// document.addEventListener('DOMContentLoaded', process);
-// function process(){
-//     alert("the page has started")
-// }
 
+//this will fire every time the toggle icon is clicked!
+// document.addEventListener('yt-guide-toggle',function(){
+//     console.log(document.getElementsByTagName("ytd-app")[0])
+//     console.log("body tag:", document.getElementsByTagName("body")[0])
+//     alert("toggle clicked")
+// })
 
-// alert("the page should have loaded")
+document.getElementsByTagName("ytd-app")[0].addEventListener('yt-focus-searchbox',function(){
+    alert("searchbox focused")
+})
+document.getElementsByTagName("body")[0].addEventListener('yt-page-data-updated',function(){
+    console.log("SHOW RENDERED body tag:", document.getElementsByTagName("body")[0])
+    console.log("SHOW  TITLE :", document.getElementById("info-contents").querySelector("h1").firstChild)
+    const notVideoRegex = /.*\/\/.*youtube.com\/(?!watch).*/
+    const found = document.URL.match(notVideoRegex);
+    if (found != document.URL){
+        chrome.runtime.sendMessage({ "message": "PROCESS_PAGE" } , function(){
+            console.log("WE SHOULD NOW PROCESS")
+            historyLastURL = document.URL
+            firstLanding = false
+            // alert("page PROCESSING")
+        } )
+    }
+    else{
+        // alert("NOT A VIDEO")
+        deletePopup()
+        resetPopup()
+    }
 
-// console.log("only when page loads")
+    // alert("page-UPDATED")
+})
 
-
-// function afterNavigate() {
-//     if ('/watch' === location.pathname) {
-        // alert('Watch page!');
-//         // var channelName = document.getElementById("channel-name").querySelector("a").innerHTML//alternatively: .querySelector("#text").getElementsByTagName("a")         //.getElementsByTagName("div")//.getElementById("text")//.getElementsByTagName("a").innerHTML;
-//         // var title = document.querySelector("title") ;
-//         // var titleString = document.querySelector("title").innerHTML ;
-//         // console.log("testingtesting123 ")
-//         // console.log(/*"video ", video,*/ "title", title, "titleString", titleString, "channelName:", channelName)
-//         // alert('Watch page!',"title", title, "titleString", titleString, "channelName:", channelName);
-//         // alert('Watch page!');
-//     }
-// }
-(document.body || document.documentElement).addEventListener('DOMContentLoaded',
-  function(/*TransitionEvent*/ event) {
-    // afterNavigate();
-    // if (event.propertyName === 'width' && event.target.id === 'progress') {
-    //     afterNavigate();
-    // }
-    console.log("EVENT: ", event.propertyName)
-    // if (event.propertyName === 'width' && event.target.id === 'progress') {
-    //     afterNavigate();
-    // }
-}, true);
-// // After page load
-// afterNavigate();
-
+//response listeners____________________________________________________________________________________________________
 
 chrome.runtime.onMessage.addListener( function (request, sender, sendResponse ){
     
 
-    // const re = new RegExp('<h1 class=', 'gi')
-    // const matches = document.documentElement.innerHTML.match(re) //|| []
-    // document.documentElement.innerHTML.match(re)
-    // var video = document.querySelector("video");
-    // var title = document.querySelector("title") ;
-    // var titleString = document.querySelector("title").innerHTML ;
-    // console.log("testingtesting123 ")
-    // console.log("video ", video, "title", title, "titleString", titleString)
-
-    // chrome.storage.sync.set({key: value}, function() {
-    //     console.log('Value is set to ' + value);
-    //   });
-
-
-
-
-    //THE FUNCTION TO SEARCH A PAGE FOR INSTANCES
-    // console.log(request)
-    // if (request.message == "send_matches"){
-    //     const re = new RegExp('<h1 class=', 'gi')
-    //     const matches = document.documentElement.innerHTML.match(re) //|| []
-    //     document.documentElement.innerHTML.match(re)
-        
-    //     sendResponse({count: matches , divContent: `wowowo`})
-    // }
-
-    if (request.message == "remove_old_title"){
+    if (request.message == "IS_PAGE_PROCESSABLE"){
         // alert(document.getElementById("ext-styled-text").innerHTML)
-        document.getElementById("ext-styled-text").remove()
+        // console.log()
+
+        if (request.msgOriginType == "onHistoryStateUpdated"){
+            if ( historyLastURL != document.URL || firstLanding){
+                
+                console.log("WE SHOULD NOW PROCESS")
+                historyLastURL = document.URL
+                firstLanding = false
+                sendResponse({"processCommand": "PROCESS_PAGE"})
+                // chrome.runtime.sendMessage({ "message": "PROCESS_PAGE" } , function(){
+                //     console.log("WE SHOULD NOW PROCESS")
+                //     historyLastURL = document.URL
+                //     firstLanding = false
+                //     // alert("success")
+                // } )
+            }
+            else{
+                sendResponse({"processCommand": "DON'T_PROCESS_PAGE"})
+            }
+        }else{
+            console.log("WE SHOULD NOW PROCESS")
+            firstLanding = false
+            sendResponse({"processCommand": "PROCESS_PAGE"})
+            // chrome.runtime.sendMessage({ "message": "PROCESS_PAGE" } , function(){
+            //     console.log("WE SHOULD NOW PROCESS")
+            //     firstLanding = false
+            //     // alert("success")
+            // } )
+        }
+        //HIDDEN OLD CODE:
+            // // alert("WE SHOULD PROCESS")
+            // console.log("PROCESS CONSIDERATION", firstLanding)
+            // if (firstLanding){
+            //     chrome.runtime.sendMessage({ "message": "PROCESS_PAGE" } , function(){
+            //         console.log("WE SHOULD NOW PROCESS")
+            //         firstLanding = false
+            //         // alert("success")
+            //     } )
+            // }
+            // else{
+            //     console.log("CANNOT PROCESS",firstLanding , document.URL)
+            // }
     }
+
+    if (request.message == "remove_old_title" && document.getElementById("ext-styled-text") != null){
+        // alert(document.getElementById("ext-styled-text").innerHTML)
+        removeTitle()
+    }
+    
     if (request.message == "pause_video"){
         var video = document.querySelector("video");
-        // var title = document.querySelector("title") ;
-        // var titleString = document.querySelector("title").innerHTML ;
-        // console.log("testingtesting123 ")
         console.log("video ", video )//, "title", title, "titleString", titleString)
 
         console.log("pausing")
         video.pause();
         sendResponse({video: video})
     }
+
     if (request.message == "get_video_info"){
         console.log(window.location.href)
         // var video = document.querySelector("video");
         var background =  document.getElementById("columns")
-        // console.log("background: " , background, background.classList.add(""))
 
-
-
-        // var iFrame  = document.createElement ("div");
-        // iFrame.src  = chrome.extension.getURL ("embedded_warning.html");
-
-        // document.body.insertBefore (iFrame, document.body.lastChild.nextSibling);
-
-//         var div=document.createElement("div"); 
-// document.body.appendChild(div); 
-// div.setAttribute("id", "ext-popup")
-// div.innerHTML= "<div class='ext-popup-button-container'><button id='ext-return-button' class='ext-popup-button' >Return to Safety</button><button id='ext-proceed-button' class='ext-popup-button'>Proceed to Video</button></div>"
-// // div.innerText="test123";
-// div.classList.add("ext-popupDiv");
-// // div.focus();
-// // var insertingCSS = browser.tabs.insertCSS({file: "contentStyles.css"});
-// // insertingCSS.then(null, onError);
-        // background.c
-        var channelName = document.getElementById("channel-name").querySelector("a").innerHTML//alternatively: .querySelector("#text").getElementsByTagName("a")         //.getElementsByTagName("div")//.getElementById("text")//.getElementsByTagName("a").innerHTML;
+        if (document.getElementById("channel-name")!= null){
+            var channelName = document.getElementById("channel-name").querySelector("a").innerHTML
+        }
+        // var channelName = document.getElementById("channel-name").querySelector("a").innerHTML//alternatively: .querySelector("#text").getElementsByTagName("a")         //.getElementsByTagName("div")//.getElementById("text")//.getElementsByTagName("a").innerHTML;
         var title = document.querySelector("title") ;
-        // var titleString = document.querySelector("title").innerHTML ;
-        var titleString = document.getElementById("info-contents").querySelector("h1").firstChild.innerHTML
+        var titleString = null
+        if (title!= null){
+            titleString = document.querySelector("title").innerHTML ;
+        }
+        // titleString = document.querySelector('meta[name="title"]').content
+        //VERSION THAT TAKES THE SEARCH TITLE STRING FROM THE SAME TITLE WE EDIT
+        // var titleString = document.getElementById("info-contents").querySelector("h1").firstChild.innerHTML
         
-        console.log("testingtesting123 ")
         console.log(/*"video ", video,*/ "title", title, "titleString", titleString, "channelName:", channelName)
         
-        console.log("new+tab here")
         sendResponse({vidTitle: titleString, channelName: channelName})
-        // video.pause();
     }
+
     if (request.message == "show_popup"){
-        // alert(request.instigatorKeyword)
+        // console.log("This is the video title" , document.querySelector('meta[name="title"]').content)
 
         var titleVal = document.getElementById("info-contents").querySelector("h1").firstChild.innerHTML
-        console.log("TITLE INFO", titleVal)
-        document.getElementById("info-contents").querySelector("h1").firstChild.innerHTML = styleSearchString( titleVal , request.instigatorKeyword )
+        // titleVal = document.querySelector('meta[name="title"]').content
+        console.log("TITLE INFO", titleVal )
+        console.log("INSTIGATING KEYWORDS", request.instigatorKeyword )
+        // if ((document.getElementById("ext-styled-text")== null && document.getElementById("ext-styled-text")== undefined) ){ //|| (document.getElementById("ext-styled-text")!= null && document.getElementById("ext-styled-text")== undefined)){
+        //     if(document.getElementById("info-contents")){
+        //         if ( document.getElementById("info-contents").querySelector("h1")){
+        //             if ( document.getElementById("info-contents").querySelector("h1").firstChild){
+        //                 if ( document.getElementById("info-contents").querySelector("h1").firstChild.innerHTML != ""){
+        //                     alert("filling")
+        //                     document.getElementById("info-contents").querySelector("h1").firstChild.innerHTML = styleSearchString( titleVal , request.instigatorKeyword )
+        //                 }    
+        //             }
+        //         }
+        //     }      
+        // }
+        console.log("THESE ARE THE STYLE TAGSjvuj:", document.getElementsByClassName("ext-searchIndication"))
+        if (document.getElementsByClassName("ext-searchIndication")!= null  && document.getElementsByClassName("ext-searchIndication").length == 0  ){ //|| (document.getElementById("ext-styled-text")!= null && document.getElementById("ext-styled-text")== undefined)){
+            if (document.getElementById("info-contents").querySelector("h1").firstChild.innerHTML.length > 0){
+                document.getElementById("info-contents").querySelector("h1").firstChild.innerHTML = styleSearchString( /*titleVal*/ request.title , request.instigatorKeyword )  
+                // alert("ADDING title")
+            }
+           
+        }
+        else{
+            console.log("THIS IS THE TITLE STYLED OBJECT:", document.getElementById("ext-styled-text"))
+            console.log("THESE ARE THE STYLE TAGS:", document.getElementsByClassName("ext-searchIndication"))
+            // removeTitle()
+            // if (document.getElementById("info-contents").querySelector("h1").firstChild.innerHTML.length > 0){
+            //     document.getElementById("info-contents").querySelector("h1").firstChild.innerHTML = styleSearchString( /*titleVal*/ request.title , request.instigatorKeyword )  
+            // }
+            // if 
+            // .parentNode.removeChild(popupArr[0]
+        }
         
-
-        var titleString = document.querySelector("title").innerHTML ;
-        // alert(titleString)
-        console.log(document.querySelector("title"))
-        document.querySelector("title").innerHTML = "asdfsdg"//styleSearchString( channelName )
+        
 
         var div=document.createElement("div"); 
         document.body.appendChild(div); 
@@ -164,8 +194,6 @@ chrome.runtime.onMessage.addListener( function (request, sender, sendResponse ){
             keywordsStr = keywords.join(" <span class='ext-array-and-styles'>and</span> ")
         }
         
-        
-        // div.innerHTML= "<div class='ext-popup-button-container'><button id='ext-return-button' class='ext-popup-button' >Return to Safety</button><button id='ext-proceed-button' class='ext-popup-button'>Proceed to Video</button></div>"
         div.innerHTML=      "<div class='ext-title-container'>"+
                                 "Whoops, looks like this video's on your  NoNoList!"+
                             "</div>"+
@@ -179,14 +207,7 @@ chrome.runtime.onMessage.addListener( function (request, sender, sendResponse ){
                                     "<button id='ext-proceed-button' class='ext-popup-button'>Proceed to Video</button>"+
                                 "</div>"+
                             "</div>"
-        // div.innerText="test123";
         div.classList.add("ext-popupDiv");
-// div.focus();
-// var insertingCSS = browser.tabs.insertCSS({file: "contentStyles.css"});
-// insertingCSS.then(null, onError);
-       
-        // sendResponse({vidTitle: titleString, channelName: channelName})
-        // video.pause();
     }
     if (request.message == "hide_popup"){
         deletePopup()
@@ -194,84 +215,145 @@ chrome.runtime.onMessage.addListener( function (request, sender, sendResponse ){
     if (request.message == "print_test"){
         console.log("PRINTF: " , request.printMsg)
     }
-    // alert(request)
-    return Promise.resolve("Dummy response to keep the console quiet");
 })
 
-
-function styleSearchString( string , query = []){
-    // alert(string)
-    var querystr = '' 
-    var result = string;
-    var reg = null;
-    final_str =  result
-
-   
-    
-    for (var idx = 0; idx< query.length ; idx++ ){
-        querystr = query[idx]
-        reg = new RegExp(querystr, 'gi');
-        final_str =  "" + final_str.replace(reg, function(str) {return '<span class="ext-searchIndication">'+str+'</span>'});
-    }
-    final_str = "<span id='ext-styled-text'>"+final_str+"</span>"
-    // alert(query)
-    // var querystr = query
-    // var result = string;
-    // var reg = new RegExp(querystr, 'gi');
-    // var final_str =  " " + result.replace(reg, function(str) {return '<span class="ext-searchIndication">'+str+'</span>'});
-    // console.log("REPLACEMENT STRING:", final_str)
-    return final_str
-}
-//if I wanted it to work specifically for function/class, replace Array for something else //correction: it didn't work
-// Array.toString() = function() {
-//     if (this.length > 0){
-//         this[this.length-1]= "and "+this[this.length-1]
-//         return this.join(',')
-//     }
-    
-    // keywords[keywords.length-1]= "and "+keywords[keywords.length-1]
-    // return keywords.join(',')
-// }   
-
-
+//listeners for popup clicks____________________________________________________________________________________________
 
 document.addEventListener('click',function(e){
     if(e.target){
         switch(e.target.id){
             case "ext-return-button":
-                // chrome.tabs.goBack(integer tabId, function callback)
                 chrome.runtime.sendMessage({"message": "GO_BACK"} ) 
-                // chrome.tabs.goBack()
-                
-                // break;
             case "ext-proceed-button":
                 deletePopup()
                 resetPopup()
-                // chrome.storage.sync.set({'popup_activated': false}, function() {
-                // });
                 break;
         }
-            //do something)
     }
- });
- function deletePopup(){
-    var popup= document.getElementById("ext-popup")
-                console.log("clicking")
-            
-                popup.parentNode.removeChild( popup);
+});
+
+
+
+//helper functions______________________________________________________________________________________________________
+
+function recursiveSplitJoin( stringArr, queryArr, queryIdx ){
+    var splitArr = []
+    if (queryIdx == queryArr.length){
+        return 
+    }
+    else{
+        for (var i= 0; i< stringArr.length; i++){
+            // if not empty string
+            splitArr = stringArr[i].split(queryArr[queryIdx])//the regex before
+
+        }
+    }
+}
+
+
+
+
+function styleSearchString( string , query = []){
+
+    // var strArr =  string.split(" ").filter(Boolean);
+    // const querySet = new Set(query);
+    // var objString =''
+
+    // strArr.forEach(function(t){
+    //     term = t
+    //     termRE1 = term.match(/([\w](.*\s?)[\w])|([\w])/);
+        
+    //     console.log("TERM:", termRE1)
+    //     if (termRE1){
+    //         term=termRE1[0]
+    //         if (querySet.has(term.toUpperCase())){
+    //             objString+='<span class="ext-searchIndication">'+term+'</span>'
+    //         }
+    //         else{
+    //             objString+=term
+    //         }
+    //     }
+
+    // }
+
+
+    console.log("QUERY: ", query, "STRING:", string)
+    var querystr = '' 
+    var result = string;
+    var reg = null;
+    final_str =  result
+    stringArr = []
+    regString=''
+
+
+    // for (var idx = 0; idx< query.length ; idx++ ){
+    //     querystr = query[idx]
+    //     strPart = 
+
+        
+
+    // }
+
+    // for (var idx = 0; idx< query.length ; idx++ ){
+    //     querystr = query[idx]
+    //     if (idx == query.length-1){
+    //         regString+="((?<=\\W)("+querystr+")(?=\\W))|((?<=\\W)("+querystr+"))|(("+querystr+")(?=\\W))"
+    //     }
+    //     else{
+    //         regString+="((?<=\\W)("+querystr+")(?=\\W))|((?<=\\W)("+querystr+"))|(("+querystr+")(?=\\W))|"
+    //     }
+    //     // reg = new RegExp(querystr, 'gi');
+    // }
+    // reg = new RegExp(regString, 'gi');
+    // console.log("REGEX:", reg)
+
+    // final_str =  "" + final_str.replace(reg, function(str) {return '<span class="ext-searchIndication">'+str+'</span>'});
+    //will fail if the added tag itself will be a search string like "class"
+
+    for (var idx = 0; idx< query.length ; idx++ ){
+        querystr = query[idx]
+        if (querystr == "CLASS"){
+            reg = new RegExp("((?<=\\W)("+querystr+")((?!(\=\"ext-searchIndication\">)|(\\w))))|(^("+querystr+")((?!(\\=\"ext-searchIndication\">)|(\\w))))", 'gi');
+        }
+        else if (querystr == "SPAN"){
+            reg = new RegExp( "((?<=[^\\w<])("+querystr+")((?!(\\sclass\=\"ext-searchIndication\">)|(\\w))))|(^("+querystr+")((?!(\\sclass\=\"ext-searchIndication\">)|(\\w))))", 'gi');
+        }
+        else{
+            reg = new RegExp("((?<=\\W)("+querystr+")(?=\\W))|((?<=\\W)("+querystr+"))|(("+querystr+")(?=\\W))", 'gi');
+        }
+        // reg = new RegExp(querystr, 'gi');
+        console.log("REGEX:", reg)
+        final_str =  "" + final_str.replace(reg, function(str) {return '<span class="ext-searchIndication">'+str+'</span>'});
+    }
+
+
+    final_str = "<span id='ext-styled-text' vidURL='"+document.URL+"'>"+final_str+"</span>"
+    return final_str
+}
+
+
+
+function deletePopup(){
+    var popupArr = document.getElementsByClassName("ext-popupDiv")
+    while(popupArr.length > 0){
+        popupArr[0].parentNode.removeChild(popupArr[0]);   
+    }  
  }
 
- function resetPopup(){
+
+// NOT SENDING THIS LIKE THE REST TO BACKGROUND FIRST BECAUSE, IF ANYTHING, I DON'T WANT THIS TO HAPPEN TOO IMMEDIATELY
+function resetPopup(){
     chrome.storage.sync.set({'popup_activated': false}, function() {
     });
  }
 
-// function remove(element) {
-//     element.parentNode.removeChild(element);
-// }
-// function removePopup() {
-//     var popup= document.getElementById("ext-popup")
-//     console.log("clicking")
 
-//     popup.parentNode.removeChild( popup);
-// }
+ function removeTitle(){
+    // alert("removing title")
+    if (document.getElementById("ext-styled-text") != null && document.getElementById("ext-styled-text") != undefined && document.getElementById("ext-styled-text").getAttribute("vidURL")!= document.URL){
+        document.getElementById("ext-styled-text").remove()
+        // console.log()
+        // alert("removing title")
+
+    }
+ }
