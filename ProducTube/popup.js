@@ -568,8 +568,8 @@ function addUIRender(ul, value, keywordInfo, keywordType, freqType, closeClassTy
         console.log(footerMenuInfo)
         var footerMenuSpacer = document.getElementById("blankFooterSpace")
 
-        console.log(event.currentTarget.firstChild)
-        fillKeywordInfo(event.currentTarget.firstChild, keywordType)
+        console.log(event.currentTarget.querySelector(".list-item-name") )
+        fillKeywordInfo(event.currentTarget.querySelector(".list-item-name"), keywordType)
 
         if (footerMenu!= null && (footerMenu.style.visibility == "" || footerMenu.style.visibility == "hidden")){
             footerMenu.style.visibility = "visible"
