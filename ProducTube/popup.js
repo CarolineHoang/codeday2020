@@ -12,16 +12,26 @@ document.addEventListener('DOMContentLoaded', function(){
     //flip the check box depending on the current mode // default initialization should be leisure
     chrome.storage.local.get( ['mode'], function(val) {
         var currMode = val.mode
+        var dad = document.getElementById("focusSwitch").parentElement
+        
         console.log("WHAT IS THE CURRENT STATE? ", currMode )
         if (currMode == "PRODUCTIVITY"){
-            $("#focusSwitch").prop( "checked", true );
-            var dad = $("#focusSwitch").parent()
-            dad.addClass('switch3-checked');
+            // setTimeout(function() { document.getElementById("focusSwitch").checked = true; }, 0)
+            document.getElementById("focusSwitch").checked = true
+            // $("#focusSwitch").prop( "checked", true );
+            // var dad = $("#focusSwitch").parent()
+            // dad.classList.remove('switch3-checked')
+            // dad.offsetHeight
+            dad.classList.add('switch3-checked')
+            // dad.addClass('switch3-checked');
         }
         else{
-            $("#focusSwitch").prop( "checked", false);
-            var dad = $("#focusSwitch").parent()
-            dad.removeClass('switch3-checked');
+            // $("#focusSwitch").prop( "checked", false);
+            document.getElementById("focusSwitch").checked = false
+            // var dad = document.getElementById("focusSwitch").parentElement
+            dad.classList.remove('switch3-checked')
+            // var dad = $("#focusSwitch").parent()
+            // dad.removeClass('switch3-checked');
         }
     });
     
@@ -116,10 +126,14 @@ document.getElementById("closingButton").addEventListener('click',function(){
 
         //CONVERT TO JAVASCRIPT LATER:
 
-        if ($("#keywordSummaryWrapper").hasClass('animateOut')){
+        // if ($("#keywordSummaryWrapper").hasClass('animateOut')){
+        if (footerMenu.classList.contains('animateOut')){
             // styleOverflowScrollable(footerMenuInfo, "keywordSummary-s")
-            $("#keywordSummaryWrapper").removeClass('animateOut');
-            $("#keywordSummaryWrapper").addClass('animateIn');
+            footerMenu.classList.remove('animateOut')
+            footerMenu.classList.add('animateIn')
+
+            // $("#keywordSummaryWrapper").removeClass('animateOut');
+            // $("#keywordSummaryWrapper").addClass('animateIn');
             console.log("ANIMATE IN")
 
             if (footerMenuSpacer!= null && (footerMenuSpacer.style.display == "" || footerMenuSpacer.style.display == "none")){
@@ -135,10 +149,14 @@ document.getElementById("closingButton").addEventListener('click',function(){
                 console.log("ADDING CHEVERON")
             }
         }
-        else if ($("#keywordSummaryWrapper").hasClass('animateIn')){
-            $("#keywordSummaryWrapper").removeClass('animateIn');
-            $("#keywordSummaryWrapper").addClass('animateOut');
-            console.log("ANIMATE OUT")
+        // else if ($("#keywordSummaryWrapper").hasClass('animateIn')){
+        //     $("#keywordSummaryWrapper").removeClass('animateIn');
+        //     $("#keywordSummaryWrapper").addClass('animateOut');
+        //     console.log("ANIMATE OUT")
+        else if (footerMenu.classList.contains('animateIn')){
+            // styleOverflowScrollable(footerMenuInfo, "keywordSummary-s")
+            footerMenu.classList.remove('animateIn')
+            footerMenu.classList.add('animateOut')
 
             if (footerMenuSpacer!= null && ( footerMenuSpacer.style.display == "block")){
                 console.log("IT'S NONE!!!")
@@ -158,10 +176,10 @@ document.getElementById("closingButton").addEventListener('click',function(){
 
 //SWITCH TO MANUALLY TURN PRODUCTIVITY MODE ON AND OFF
 // found on a Codepen by Joel César (sweet switch!)
-$('.switch3 input').on('change', function(){
-    var dad = $(this).parent();
-    if($(this).is(':checked')){
-        dad.addClass('switch3-checked');
+document.querySelector('.switch3 input').addEventListener('change', function(){
+    var dad = this.parentElement;
+    if(this.checked == true){
+        dad.classList.add('switch3-checked')
         chrome.storage.local.get( ['last_video'], function(val) {
             console.log(val.last_video.url, val.last_video)
             chrome.runtime.sendMessage({"message": "save_keys", "user_changes": {'mode':'PRODUCTIVITY', "session_keywords": {}, "session_block": {} , 'last_video': { 'url': val.last_video.url  , 'toggle-cleared': true}}} , function(){
@@ -170,12 +188,49 @@ $('.switch3 input').on('change', function(){
         })
     }
     else{
-        dad.removeClass('switch3-checked');
+        dad.classList.remove('switch3-checked')
         chrome.runtime.sendMessage({"message": "save_keys", "user_changes": {'mode':'LEISURE'}} , function(){
             console.log("LEISURE TIME")
         } )
     }
   });
+// $('.switch3 input').on('change', function(){
+//     var dad = $(this).parent();
+//     if($(this).is(':checked')){
+//         dad.classList.add('switch3-checked')
+//         chrome.storage.local.get( ['last_video'], function(val) {
+//             console.log(val.last_video.url, val.last_video)
+//             chrome.runtime.sendMessage({"message": "save_keys", "user_changes": {'mode':'PRODUCTIVITY', "session_keywords": {}, "session_block": {} , 'last_video': { 'url': val.last_video.url  , 'toggle-cleared': true}}} , function(){
+//                 console.log("PRODUCTIVE TIME NEW SESSION")
+//             } )
+//         })
+//     }
+//     else{
+//         dad.classList.remove('switch3-checked')
+//         chrome.runtime.sendMessage({"message": "save_keys", "user_changes": {'mode':'LEISURE'}} , function(){
+//             console.log("LEISURE TIME")
+//         } )
+//     }
+//   });
+
+//   $('.switch3 input').on('change', function(){
+//     var dad = $(this).parent();
+//     if($(this).is(':checked')){
+//         dad.addClass('switch3-checked');
+//         chrome.storage.local.get( ['last_video'], function(val) {
+//             console.log(val.last_video.url, val.last_video)
+//             chrome.runtime.sendMessage({"message": "save_keys", "user_changes": {'mode':'PRODUCTIVITY', "session_keywords": {}, "session_block": {} , 'last_video': { 'url': val.last_video.url  , 'toggle-cleared': true}}} , function(){
+//                 console.log("PRODUCTIVE TIME NEW SESSION")
+//             } )
+//         })
+//     }
+//     else{
+//         dad.removeClass('switch3-checked');
+//         chrome.runtime.sendMessage({"message": "save_keys", "user_changes": {'mode':'LEISURE'}} , function(){
+//             console.log("LEISURE TIME")
+//         } )
+//     }
+//   });
 
 // SUBMIT INPUT FOR KEYWORD IF ENTER IS PRESSED IN INPUT FIELD
 document.addEventListener('keypress', function (e) {
@@ -191,30 +246,61 @@ document.addEventListener('keypress', function (e) {
 //THIS SHOULD BE CONVERTED TO PURE JAVASCRIPT LATER
 var display = function(block_name, title) {
     // Toogle Middle Block Content 
-    $('.middleBlock').css('display', 'none');
-    $('.middleBlock').css('visibility', 'visible');
+    var blocks = document.querySelectorAll(".middleBlock")
+    console.log(blocks)
+    blocks.forEach(function(block){
+        block.style.display = "none"
+        block.style.visibility = "visible"
+    })
+    document.getElementById(block_name).style.display="block"
+    // $('.middleBlock').css('display', 'none');
+    // $('.middleBlock').css('visibility', 'visible');
     
-    $('#' + block_name + '').css('display', 'block');
+    // $('#' + block_name + '').css('display', 'block');
   
   }
   
-  $('#timer').on('click', function() {
-    display('timeBlock', $(this));
-  });
-  
-  $('#list').on('click', function() {
-    display('listBlock', $(this));
-  });
-  
-  $('#freq').on('click', function() {
-    display('freqBlock', $(this));
+  document.getElementById('timer').addEventListener('click', function() {
+    display('timeBlock', this);
   });
 
-    $('.navButtons').click(function(e){
-        console.log("clicking navs")
-    $('.navButtons').removeClass("color_change")
-    $(this).addClass("color_change")
-});
+  document.getElementById('list').addEventListener('click', function() {
+    display('listBlock', this);
+  });
+
+  document.getElementById('freq').addEventListener('click', function() {
+    display('freqBlock', this);
+  });
+
+//   $('#timer').on('click', function() {
+//     display('timeBlock', $(this));
+//   });
+  
+//   $('#list').on('click', function() {
+//     display('listBlock', $(this));
+//   });
+  
+//   $('#freq').on('click', function() {
+//     display('freqBlock', $(this));
+//   });
+
+var navButtons = document.querySelectorAll(".navButtons")
+console.log("navbuttons:" ,navButtons)
+navButtons.forEach(function(nb){
+    nb.addEventListener('click', function(e) {
+        var navButtonsReset = document.querySelectorAll(".navButtons")
+        navButtonsReset.forEach(function(nbr){
+            nbr.classList.remove("color_change")
+        })
+        this.classList.add("color_change")
+    })
+   
+})
+//     $('.navButtons').click(function(e){
+//         console.log("clicking navs")
+//     $('.navButtons').removeClass("color_change")
+//     $(this).addClass("color_change")
+// });
 
 //RENDER BOTH THE NONO LIST AND MOST FREQUENT LIST
 function show_list(){

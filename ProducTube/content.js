@@ -27,10 +27,54 @@ var historyLastURL = document.URL
 //     alert("toggle clicked")
 // })
 
-document.getElementsByTagName("ytd-app")[0].addEventListener('yt-focus-searchbox',function(){
-    alert("searchbox focused")
+
+// document.getElementsByTagName("ytd-app")[0].addEventListener('yt-focus-searchbox',function(){
+//     alert("searchbox focused")
+// })
+
+
+//when the page is full and the title updates
+// document.getElementsByTagName("ytd-app")[0].addEventListener('yt-update-title',function(){
+//     alert("title updated")
+// })
+
+
+// document.getElementsByTagName("ytd-app")[0].addEventListener('yt-visibility-refresh',function(){
+//     console.log("visibility refreshed")
+//     // alert("visibility refreshed")
+// })
+
+//fires when a full page vid ends (BEFORE THE TIMER)
+// document.getElementsByTagName("ytd-app")[0].addEventListener('yt-autonav-pause-player-ended',function(){
+//     // console.log("player ended")
+//     alert("player ended")
+// })
+
+// document.getElementsByTagName("ytd-app")[0].addEventListener('app-drawer-transitioned',function(){
+//     // console.log("player ended")
+//     alert("app-drawer transitioned")
+// })
+// document.getElementsByTagName("ytd-app")[0].addEventListener('app-drawer-transitioned',function(){
+//     // console.log("player ended")
+//     alert("app-drawer transitioned")
+// })
+
+document.addEventListener('readystatechange',function(){
+    // console.log("player ended")
+    // alert("state changed")      // important check
 })
+
+var playAbleVid = function(){
+   console.log("we can now play")
+}
+
+
+document.querySelector("#movie_player > div.html5-video-container > video").addEventListener('canplay', playAbleVid )
+// document.getElementsByTagName("body")[0].addEventListener('yt-page-data-updated',function(){
+    
+// })
 document.getElementsByTagName("body")[0].addEventListener('yt-page-data-updated',function(){
+    console.log("miniplayer info:", document.querySelector("ytd-miniplayer"))
     console.log("SHOW RENDERED body tag:", document.getElementsByTagName("body")[0])
     console.log("SHOW  TITLE :", document.getElementById("info-contents").querySelector("h1").firstChild)
     const notVideoRegex = /.*\/\/.*youtube.com\/(?!watch).*/
@@ -39,11 +83,19 @@ document.getElementsByTagName("body")[0].addEventListener('yt-page-data-updated'
         console.log("WE SHOULD NOW PROCESS")
         historyLastURL = document.URL
         firstLanding = false //not needed 
-        removeTitle()
-        checkTitle( 2, document.URL , pauseVideo)
-        resetPopup()
-        // code if we go background.js is the primary script
-        // alert("we are processing")
+
+        observer.observe( document.querySelector("body > ytd-app") , observerOptions);
+        if (document.querySelector("body > ytd-app").hasAttribute("is-watch-page")){
+            // alert("it's watch")      // important check
+            removeTitle()
+            checkTitle( 2, document.URL , pauseVideo, "player")
+            resetPopup()
+            // code if we go background.js is the primary script
+            // alert("we are processing")      // important check
+        }
+
+
+        
         // chrome.runtime.sendMessage({ "message": "PROCESS_PAGE" } , function(){
         //     console.log("WE SHOULD NOW PROCESS")
         //     historyLastURL = document.URL
@@ -59,6 +111,76 @@ document.getElementsByTagName("body")[0].addEventListener('yt-page-data-updated'
 
     // alert("page-UPDATED")
 })
+
+
+
+
+var observerOptions = {
+    childList: false,
+    attributes: true,
+    subtree: false //Omit or set to false to observe only changes to the parent node.
+  }
+
+function callback(mutationList, observer) {
+    console.log ("MUTATION:", mutationList)
+    mutationList.forEach(function(ml){
+        console.log("attribute: ", ml.attributeName)
+        
+        if (ml.attributeName == "miniplayer-active_"){
+            console.log("Mini player: ", document.querySelector("#movie_player > div.html5-video-container > video") )
+            console.log("Mini player Title: ", document.querySelector("#info-bar > div.metadata.style-scope.ytd-miniplayer > h1 > a > yt-formatted-string") )
+            observerTitle.observe( document.querySelector("#info-bar > div.metadata.style-scope.ytd-miniplayer > h1 > a > yt-formatted-string") , observerOptionsTitle);
+
+
+            // document.querySelector("#movie_player > div.html5-video-container > video").addEventListener("canplaythrough", function(){
+            //     console.log("Mini player: ", document.querySelector("#movie_player > div.html5-video-container > video") )
+            //     console.log("Mini player Title: ", document.querySelector("#info-bar > div.metadata.style-scope.ytd-miniplayer > h1 > a > yt-formatted-string") , document.querySelector("#info-bar > div.metadata.style-scope.ytd-miniplayer > h1 > a > yt-formatted-string").innerHTML)
+            // })
+        }
+
+    })
+    
+}
+
+var observer = new MutationObserver(callback);
+
+
+
+
+
+var observerOptionsTitle = {
+    childList: false,
+    attributes: true,
+    subtree: false //Omit or set to false to observe only changes to the parent node.
+  }
+
+function callbackTitle(mutationList, observer) {
+    console.log ("TITLE MUTATION:", mutationList)
+    mutationList.forEach(function(ml){
+        console.log("TITLE attribute: ", ml )
+        if (ml.attributeName == "title"){
+            console.log( document.querySelector("#info-bar > div.metadata.style-scope.ytd-miniplayer > h1 > a > yt-formatted-string").innerHTML)
+            checkTitle( 2, document.URL , pauseVideo, "miniplayer")
+            resetPopup()
+            // document.querySelector("#info-bar > div.metadata.style-scope.ytd-miniplayer > h1 > a > yt-formatted-string").innerHTML = "ttesttest"
+        }
+        // if (ml.attributeName == "miniplayer-active_"){
+            // console.log("Mini player: ", document.querySelector("#movie_player > div.html5-video-container > video") )
+            // console.log("Mini player Title: ", document.querySelector("#info-bar > div.metadata.style-scope.ytd-miniplayer > h1 > a > yt-formatted-string") )
+
+            
+            // document.querySelector("#movie_player > div.html5-video-container > video").addEventListener("canplaythrough", function(){
+            //     console.log("Mini player: ", document.querySelector("#movie_player > div.html5-video-container > video") )
+            //     console.log("Mini player Title: ", document.querySelector("#info-bar > div.metadata.style-scope.ytd-miniplayer > h1 > a > yt-formatted-string") , document.querySelector("#info-bar > div.metadata.style-scope.ytd-miniplayer > h1 > a > yt-formatted-string").innerHTML)
+            // })
+        // }
+
+    })
+    
+}
+
+var observerTitle = new MutationObserver(callbackTitle);
+
 
 //response listeners____________________________________________________________________________________________________
 
@@ -126,7 +248,7 @@ chrome.runtime.onMessage.addListener( function (request, sender, sendResponse ){
     }
 
     if (request.message == "get_video_info"){
-        sendResponse( getVideoInfo() )
+        sendResponse( getVideoInfo("player") )
         
         // console.log(window.location.href)
         // // var video = document.querySelector("video");
@@ -225,6 +347,7 @@ chrome.runtime.onMessage.addListener( function (request, sender, sendResponse ){
     if (request.message == "print_test"){
         console.log("PRINTF: " , request.printMsg)
     }
+    // return true
 })
 
 //listeners for popup clicks____________________________________________________________________________________________
@@ -382,25 +505,33 @@ function resetPopup(){
 
 
 
-function getVideoInfo(){
-    console.log(window.location.href)
-    // var video = document.querySelector("video");
-    var background =  document.getElementById("columns")
+function getVideoInfo(videoType){
+    if (videoType == "player"){
+        console.log(window.location.href)
+        // var video = document.querySelector("video");
+        var background =  document.getElementById("columns")
 
-    if (document.getElementById("channel-name")!= null){
-        var channelName = document.getElementById("channel-name").querySelector("a").innerHTML
+        if (document.getElementById("channel-name")!= null){
+            var channelName = document.getElementById("channel-name").querySelector("a").innerHTML
+        }
+        // var channelName = document.getElementById("channel-name").querySelector("a").innerHTML//alternatively: .querySelector("#text").getElementsByTagName("a")         //.getElementsByTagName("div")//.getElementById("text")//.getElementsByTagName("a").innerHTML;
+        var title = document.querySelector("title") ;
+        var titleString = null
+        if (title!= null){
+            titleString = document.querySelector("title").innerHTML ;
+        }
+        // titleString = document.querySelector('meta[name="title"]').content
+        //VERSION THAT TAKES THE SEARCH TITLE STRING FROM THE SAME TITLE WE EDIT
+        // var titleString = document.getElementById("info-contents").querySelector("h1").firstChild.innerHTML
+        
+        console.log(/*"video ", video,*/ "title", title, "titleString", titleString, "channelName:", channelName)
+
     }
-    // var channelName = document.getElementById("channel-name").querySelector("a").innerHTML//alternatively: .querySelector("#text").getElementsByTagName("a")         //.getElementsByTagName("div")//.getElementById("text")//.getElementsByTagName("a").innerHTML;
-    var title = document.querySelector("title") ;
-    var titleString = null
-    if (title!= null){
-        titleString = document.querySelector("title").innerHTML ;
+    else if (videoType == "miniplayer"){
+        var titleString  =document.querySelector("#info-bar > div.metadata.style-scope.ytd-miniplayer > h1 > a > yt-formatted-string").title
+        var channelName = ""
     }
-    // titleString = document.querySelector('meta[name="title"]').content
-    //VERSION THAT TAKES THE SEARCH TITLE STRING FROM THE SAME TITLE WE EDIT
-    // var titleString = document.getElementById("info-contents").querySelector("h1").firstChild.innerHTML
     
-    console.log(/*"video ", video,*/ "title", title, "titleString", titleString, "channelName:", channelName)
     
     return({vidTitle: titleString, channelName: channelName})
 }
@@ -408,14 +539,14 @@ function getVideoInfo(){
 
 
 
-function checkTitle( tabID, currUrl ){
+function checkTitle( tabID, currUrl , pauseVideo,  videoType){
     // alert("arriced at check title")
     // chrome.tabs.sendMessage(
     //     // details.tabId,
     //     tabID, 
     //     {"message": "get_video_info"}, 
     //     function(res){
-    var res = getVideoInfo()
+    var res = getVideoInfo(videoType)
             if (res && res.vidTitle){
                                 
               
@@ -450,6 +581,8 @@ function checkTitle( tabID, currUrl ){
  
                             
                     var strArr =  string.toUpperCase().split(" ").filter(Boolean);
+
+                    console.log("THE SEARCH ARRAY:", strArr)
                     if (result.mode == "PRODUCTIVITY" && string != ''){
                         // alert( currUrl ) //result.last_video)
                         var instigatorKeywordsArr = []
@@ -487,7 +620,8 @@ function checkTitle( tabID, currUrl ){
                             
                             var currDateTime = Date.now()
                             if(term in storageKeys){
-                                if (currUrl != result.last_video.url || result.last_video["toggle-cleared"] == true){
+                                // alert("in nono")      // important check
+                                if (currUrl != result.last_video.url || result.last_video["toggle-cleared"] == true || (videoType == "miniplayer")){
                                     console.log("STORAGEKEY freq:", term, storageKeys[term])
                                     storageKeys[term].total_freq++
                                     storageKeys[term].session_freq++
@@ -510,7 +644,7 @@ function checkTitle( tabID, currUrl ){
                                         }
                                     }
                                 }
-                                if (!(currUrl in block_sites)){
+                                if (!(currUrl in block_sites) && videoType == "player"){
                                     
                                     block_sites[currUrl]={
                                         "keywords": {}
@@ -518,14 +652,18 @@ function checkTitle( tabID, currUrl ){
                                     block_sites[currUrl]["keywords"][term] = true
                                     // alert("added")
                                 }
-                                else if (!(term in block_sites[currUrl].keywords)){
+                                else if ( block_sites[currUrl] && !(term in block_sites[currUrl].keywords) && videoType == "player"){
+                                    // alert("This must be a player")      // important check
                                     block_sites[currUrl].keywords[term] = true
+                                }
+                                else if  (!(instigatorKeywordsArr.includes(term)) && videoType == "miniplayer"){
+                                    instigatorKeywordsArr.push(term)
                                 }
                                 console.log("BLOCKED SITES: ", block_sites)
                                 console.log("STORAGEKEY freq incr:", term, storageKeys[term])
 
                             }
-                            if ((term in sessionStorageKeys) && !isFirstSessionOccur && (currUrl != result.last_video.url || result.last_video["toggle-cleared"] == true)){
+                            if ((term in sessionStorageKeys) && !isFirstSessionOccur && (currUrl != result.last_video.url || result.last_video["toggle-cleared"] == true || videoType == "miniplayer")){
                                 console.log("SESSIONSTORAGEKEY freq:", term, sessionStorageKeys[term])
                                 sessionStorageKeys[term].total_freq++
                                 sessionStorageKeys[term].session_freq++
@@ -533,7 +671,7 @@ function checkTitle( tabID, currUrl ){
 
                                 console.log("SESSIONSTORAGEKEY freq incr:", term, sessionStorageKeys[term])
                             }
-                            else if (!(term in sessionStorageKeys) && !(term in storageKeys) && (currUrl != result.last_video.url || result.last_video["toggle-cleared"] == true) ){
+                            else if (!(term in sessionStorageKeys) && !(term in storageKeys) && (currUrl != result.last_video.url || result.last_video["toggle-cleared"] == true || videoType == "miniplayer" ) ){
                                 console.log("NEW SESSIONSTORAGEKEY freq:", term, sessionStorageKeys, sessionStorageKeys[term])
                                 sessionStorageKeys[term] = {
                                         "total_freq": 1,
@@ -545,16 +683,17 @@ function checkTitle( tabID, currUrl ){
                                 console.log("NEW SESSIONSTORAGEKEY freq:", term, sessionStorageKeys[term])
                             }
                         });
-                        chrome.runtime.sendMessage({"message": "save_keys", "user_changes": {'keywords': storageKeys, 'session_keywords': sessionStorageKeys , 'max_wordID': new_max_wordID, 'last_video': {'url': currUrl, 'toggle-cleared': false}, 'session_block': block_sites}} , function(){
+                        chrome.runtime.sendMessage({"message": "save_keys", "user_changes": {'keywords': storageKeys, 'session_keywords': sessionStorageKeys , 'max_wordID': new_max_wordID, 'last_video': {'url': currUrl, 'toggle-cleared': false}, 'session_block': block_sites}} , function(res){
                             if (currUrl in block_sites){
-                                instigatorKeywordsArr = Object.keys(block_sites[currUrl]["keywords"])
+                                instigatorKeywordsArr = instigatorKeywordsArr.concat(Object.keys(block_sites[currUrl]["keywords"]))
                                 // alert("it's blocked")
                             }
                             console.log("instigatorKeywordsArr:", instigatorKeywordsArr, currUrl )
                             // alert("reached last part of check")
-                            pauseVideo( tabID, currUrl, instigatorKeywordsArr, string ) 
+                            pauseVideo( tabID, currUrl, instigatorKeywordsArr, string , videoType, result.keywords == storageKeys) 
                             // console.log({'keywords': storageKeys, 'session_keywords': sessionStorageKeys , 'max_wordID': new_max_wordID, 'last_video': {'url': currUrl, 'toggle-cleared': false}, 'session_block': block_sites})
                         } )
+                        // console.log("instigatorKeywordsArr:", instigatorKeywordsArr, currUrl )
                         // chrome.storage.local.set({'keywords': storageKeys, 'session_keywords': sessionStorageKeys , 'max_wordID': new_max_wordID, 'last_video': {'url': currUrl, 'toggle-cleared': false}, 'session_block': block_sites}, function() {
                         //     console.log('Values changed to 1: ' , storageKeys);
                         //     console.log('Values changed to 2: ' , sessionStorageKeys);
@@ -575,26 +714,31 @@ function checkTitle( tabID, currUrl ){
     // );
 }
 
-function pauseVideo( tabID, url, instigatorKeyword = [] , title ){
+function pauseVideo( tabID, url, instigatorKeyword = [] , title , videoType ){
     // alert("arriced at pause function")
     // alert("not Paused yet")
 
     chrome.storage.local.get(['session_block', 'popup_activated','keywords'], function(result) {
         // alert("not Paused yet")
         console.log("returned True!", url, result.session_block)
+        console.log("PAUSE WORDS!", instigatorKeyword)
         // console.log(url, result.session_block)
         // console.log("returned True!", url, result.session_block)
-        if (url in result.session_block){
+        if (url in result.session_block || (videoType == "miniplayer" && instigatorKeyword.length > 0) ){
             console.log("BLOCKED SITES2:",result.session_block )
             console.log("PAUSING")
+        
             var video = document.querySelector("video");
+            if (videoType == "miniplayer"){
+                video =  document.querySelector("#movie_player > div.html5-video-container > video") 
+            }
             console.log("video ", video )//, "title", title, "titleString", titleString)
     
             console.log("pausing")
             video.pause();
             // sendResponse({video: video})
             if(!result.popup_activated){
-                showPopup({"message": "show_popup" , 'instigatorKeyword': instigatorKeyword , 'title': title })
+                showPopup({"message": "show_popup" , 'instigatorKeyword': instigatorKeyword , 'title': title }, videoType )
                 // chrome.tabs.sendMessage(
                 //     // details.tabId,
                 //     tabID, 
@@ -612,6 +756,9 @@ function pauseVideo( tabID, url, instigatorKeyword = [] , title ){
             console.log("video paused! 2")
             // alert("Paused")
         }
+        else if (videoType == "miniplayer" && instigatorKeyword.length == 0 ){
+            document.querySelector("#info-bar > div.metadata.style-scope.ytd-miniplayer > h1 > a > yt-formatted-string").innerHTML = document.querySelector("#info-bar > div.metadata.style-scope.ytd-miniplayer > h1 > a > yt-formatted-string").title 
+        }
         else{
             // alert("not paused")
         }
@@ -621,7 +768,7 @@ function pauseVideo( tabID, url, instigatorKeyword = [] , title ){
 
 
 
-function showPopup(request){//instigatorKeyword , title ){
+function showPopup(request, videoType ){//instigatorKeyword , title ){
     // console.log("This is the video title" , document.querySelector('meta[name="title"]').content)
 
     var titleVal = document.getElementById("info-contents").querySelector("h1").firstChild.innerHTML
@@ -630,14 +777,19 @@ function showPopup(request){//instigatorKeyword , title ){
     console.log("INSTIGATING KEYWORDS", request.instigatorKeyword )
 
     console.log("THESE ARE THE STYLE TAGSjvuj:", document.getElementsByClassName("ext-searchIndication"))
-    if (document.getElementsByClassName("ext-searchIndication")!= null  && document.getElementsByClassName("ext-searchIndication").length == 0  ){ //|| (document.getElementById("ext-styled-text")!= null && document.getElementById("ext-styled-text")== undefined)){
-        if (document.getElementById("info-contents").querySelector("h1").firstChild.innerHTML.length > 0){
-            deletePopup() //if going from a blocked video to another one, this must be done to prevent them from stacking
-            document.getElementById("info-contents").querySelector("h1").firstChild.innerHTML = styleSearchString( /*titleVal*/ request.title , request.instigatorKeyword )  
-            // alert("ADDING title")
+    if (videoType == "player"){
+        if (document.getElementsByClassName("ext-searchIndication")!= null  && document.getElementsByClassName("ext-searchIndication").length == 0  ){ //|| (document.getElementById("ext-styled-text")!= null && document.getElementById("ext-styled-text")== undefined)){
+            if (document.getElementById("info-contents").querySelector("h1").firstChild.innerHTML.length > 0){
+                deletePopup() //if going from a blocked video to another one, this must be done to prevent them from stacking
+                document.getElementById("info-contents").querySelector("h1").firstChild.innerHTML = styleSearchString( /*titleVal*/ request.title , request.instigatorKeyword )  
+                // alert("ADDING title")
+            }    
         }
-       
     }
+    else if ("miniplayer"){
+        document.querySelector("#info-bar > div.metadata.style-scope.ytd-miniplayer > h1 > a > yt-formatted-string").innerHTML =styleSearchString( /*titleVal*/ request.title , request.instigatorKeyword )
+    }
+
     else{
         console.log("THIS IS THE TITLE STYLED OBJECT:", document.getElementById("ext-styled-text"))
         console.log("THESE ARE THE STYLE TAGS:", document.getElementsByClassName("ext-searchIndication"))

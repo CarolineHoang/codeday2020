@@ -499,6 +499,8 @@ chrome.runtime.onMessage.addListener( function (request, sender, sendResponse ){
                 console.log("Last video", request.last_video)
             })
         });
+        //must send SOME kind of response or else you will get an "Unchecked runtime.lastError: The message port closed before a response was received." error
+        sendResponse({"message": "success"})
     }
     //This responds to the popup return button to go to the last page you were on in history
     if (request.message == "GO_BACK"){
@@ -524,6 +526,7 @@ chrome.runtime.onMessage.addListener( function (request, sender, sendResponse ){
         //     case "STOP_TIMER":
         //         break;
         // }
+        // return true
 })
 
 chrome.alarms.onAlarm.addListener(function( alarm ) {
