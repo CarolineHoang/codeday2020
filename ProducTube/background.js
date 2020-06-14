@@ -10,42 +10,42 @@ chrome.runtime.onInstalled.addListener(function(details){
                                     "total_freq": 10000000,
                                     "session_freq": 0,
                                     "first_occur": Date.now(),
-                                    "lastest_occur": null,
+                                    "latest_occur": null,
                                     "wordID":0
                                     },
                         "HAMILTON":{
                                     "total_freq": 7,
                                     "session_freq": 0,
                                     "first_occur": Date.now(),
-                                    "lastest_occur": null,
+                                    "latest_occur": null,
                                     "wordID":0
                                     },
                         "IUBLOIYBLIBYLIYBIYLI;UTBILTUBI7LRTVFILRTBIVTIKVTLTIUBLOIYBLIBYLIYBIYLI;UTBILTUBI7LRTVFILRTBIVTIKVTLT":{
                                     "total_freq": 60,
                                     "session_freq": 0,
                                     "first_occur": Date.now(),
-                                    "lastest_occur": null,
+                                    "latest_occur": null,
                                     "wordID":1
                                     },
                         "SUPERCALIFRAGILISTICEXPIALIDOCIOUS":{
                                     "total_freq": 50,
                                     "session_freq": 0,
                                     "first_occur": Date.now(),
-                                    "lastest_occur": null,
+                                    "latest_occur": null,
                                     "wordID":1
                                     },
                         "PNEUMONOULTRAMICROSCOPICSILICOVOLCANOCONIOSIS":{
                                     "total_freq": 55,
                                     "session_freq": 0,
                                     "first_occur": Date.now(),
-                                    "lastest_occur": null,
+                                    "latest_occur": null,
                                     "wordID":1
                                     },
                         "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW":{
                                     "total_freq": 100,
                                     "session_freq": 0,
                                     "first_occur": Date.now(),
-                                    "lastest_occur": null,
+                                    "latest_occur": null,
                                     "wordID":1
                                     },
 
@@ -53,7 +53,7 @@ chrome.runtime.onInstalled.addListener(function(details){
                                     "total_freq": 1,
                                     "session_freq": 0,
                                     "first_occur": Date.now(),
-                                    "lastest_occur": null,
+                                    "latest_occur": null,
                                     "wordID":1
                                     },
 
@@ -61,7 +61,7 @@ chrome.runtime.onInstalled.addListener(function(details){
                                     "total_freq": 1,
                                     "session_freq": 0,
                                     "first_occur": Date.now(),
-                                    "lastest_occur": null,
+                                    "latest_occur": null,
                                     "wordID":1
                                     },
 
@@ -69,21 +69,21 @@ chrome.runtime.onInstalled.addListener(function(details){
                                     "total_freq": 1,
                                     "session_freq": 0,
                                     "first_occur": Date.now(),
-                                    "lastest_occur": null,
+                                    "latest_occur": null,
                                     "wordID":1
                                     },
                         "POP":{
                                     "total_freq": 1,
                                     "session_freq": 0,
                                     "first_occur": Date.now(),
-                                    "lastest_occur": null,
+                                    "latest_occur": null,
                                     "wordID":1
                                     },
                         "TO":{
                                     "total_freq": 1,
                                     "session_freq": 0,
                                     "first_occur": Date.now(),
-                                    "lastest_occur": null,
+                                    "latest_occur": null,
                                     "wordID":1
                                     },
         },
@@ -92,42 +92,42 @@ chrome.runtime.onInstalled.addListener(function(details){
                         //             "total_freq": 10000000,
                         //             "session_freq": 10000000,
                         //             "first_occur": Date.now(),
-                        //             "lastest_occur": null,
+                        //             "latest_occur": null,
                         //             "wordID":0
                         //             },
                         // "HAMILTON":{
                         //             "total_freq": 7,
                         //             "session_freq": 7,
                         //             "first_occur": Date.now(),
-                        //             "lastest_occur": null,
+                        //             "latest_occur": null,
                         //             "wordID":0
                         //             },
                         // "IUBLOIYBLIBYLIYBIYLI;UTBILTUBI7LRTVFILRTBIVTIKVTLTIUBLOIYBLIBYLIYBIYLI;UTBILTUBI7LRTVFILRTBIVTIKVTLT":{
                         //             "total_freq": 60,
                         //             "session_freq": 60,
                         //             "first_occur": Date.now(),
-                        //             "lastest_occur": null,
+                        //             "latest_occur": null,
                         //             "wordID":1
                         //             },
                         // "SUPERCALIFRAGILISTICEXPIALIDOCIOUS":{
                         //             "total_freq": 50,
                         //             "session_freq": 50,
                         //             "first_occur": Date.now(),
-                        //             "lastest_occur": null,
+                        //             "latest_occur": null,
                         //             "wordID":1
                         //             },
                         // "PNEUMONOULTRAMICROSCOPICSILICOVOLCANOCONIOSIS":{
                         //             "total_freq": 55,
                         //             "session_freq": 55,
                         //             "first_occur": Date.now(),
-                        //             "lastest_occur": null,
+                        //             "latest_occur": null,
                         //             "wordID":1
                         //             },
                         // "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW":{
                         //             "total_freq": 100,
                         //             "session_freq": 0,
                         //             "first_occur": Date.now(),
-                        //             "lastest_occur": null,
+                        //             "latest_occur": null,
                         //             "wordID":1
                         //             },
 
@@ -135,21 +135,21 @@ chrome.runtime.onInstalled.addListener(function(details){
                         //             "total_freq": 1,
                         //             "session_freq": 1,
                         //             "first_occur": Date.now(),
-                        //             "lastest_occur": null,
+                        //             "latest_occur": null,
                         //             "wordID":1
                         //             },
                         // "POP":{
                         //             "total_freq": 1,
                         //             "session_freq": 1,
                         //             "first_occur": Date.now(),
-                        //             "lastest_occur": null,
+                        //             "latest_occur": null,
                         //             "wordID":1
                         //             },
                         // "TO":{
                         //             "total_freq": 1,
                         //             "session_freq": 1,
                         //             "first_occur": Date.now(),
-                        //             "lastest_occur": null,
+                        //             "latest_occur": null,
                         //             "wordID":1
                         //             },
         },
@@ -645,14 +645,14 @@ function checkTitle( tabID, currUrl ){
                                     console.log("STORAGEKEY freq:", term, storageKeys[term])
                                     storageKeys[term].total_freq++
                                     storageKeys[term].session_freq++
-                                    storageKeys[term].lastest_occur = currDateTime
+                                    storageKeys[term].latest_occur = currDateTime
                                     if (!(term in sessionStorageKeys)){
                                         console.log("THIS TERM IS NOT IN SSKEYS:", term, sessionStorageKeys[term])
                                         sessionStorageKeys[term] = {
                                             "total_freq": storageKeys[term].total_freq,
                                             "session_freq": 1,
                                             "first_occur": storageKeys[term].first_occur,
-                                            "lastest_occur": currDateTime,
+                                            "latest_occur": currDateTime,
                                             "wordID": storageKeys[term].max_wordID
                                         }
                                         isFirstSessionOccur =true
@@ -682,7 +682,7 @@ function checkTitle( tabID, currUrl ){
                                 console.log("SESSIONSTORAGEKEY freq:", term, sessionStorageKeys[term])
                                 sessionStorageKeys[term].total_freq++
                                 sessionStorageKeys[term].session_freq++
-                                sessionStorageKeys[term].lastest_occur = currDateTime
+                                sessionStorageKeys[term].latest_occur = currDateTime
 
                                 console.log("SESSIONSTORAGEKEY freq incr:", term, sessionStorageKeys[term])
                             }
@@ -692,7 +692,7 @@ function checkTitle( tabID, currUrl ){
                                         "total_freq": 1,
                                         "session_freq": 1,
                                         "first_occur": currDateTime,
-                                        "lastest_occur": null,
+                                        "latest_occur": null,
                                         "wordID": new_max_wordID++
                                 }
                                 console.log("NEW SESSIONSTORAGEKEY freq:", term, sessionStorageKeys[term])

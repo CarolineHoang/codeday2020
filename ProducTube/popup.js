@@ -35,7 +35,20 @@ document.addEventListener('DOMContentLoaded', function(){
         }
     });
     
-    show_list()
+    show_list(function(){
+         //hide the blocks right after we intially render them to determine if a value can be scrolled (may need to be a callback, but I'll write this sequentially for now)
+        var blocks = document.querySelectorAll(".middleBlock")
+        console.log(blocks)
+        blocks.forEach(function(block){
+            if (block.id != "introBlock"){
+                block.style.display = "none"
+                block.style.visibility = "visible"
+            }  
+        })
+    })
+   
+
+
 
     //put a listener on every button on the popup
     articles = document.getElementsByTagName('button');
@@ -135,10 +148,13 @@ document.getElementById("closingButton").addEventListener('click',function(){
             // $("#keywordSummaryWrapper").removeClass('animateOut');
             // $("#keywordSummaryWrapper").addClass('animateIn');
             console.log("ANIMATE IN")
-
-            if (footerMenuSpacer!= null && (footerMenuSpacer.style.display == "" || footerMenuSpacer.style.display == "none")){
+            if ( footerMenuSpacer!= null && footerMenuSpacer.classList.contains("blankFooterSpaceCollapse")){
+            // if (footerMenuSpacer!= null && (footerMenuSpacer.style.display == "" || footerMenuSpacer.style.display == "none")){
                 console.log("IT'S NONE!!!")
-                footerMenuSpacer.style.display = "block"   
+                // footerMenuSpacer.style.display = "block"  
+                footerMenuSpacer.classList.remove("blankFooterSpaceCollapse") 
+                footerMenuSpacer.classList.add("blankFooterSpaceExpand") 
+                
             }
             if (document.getElementById("cheveron").classList.contains("cheveronFlip")){
                 document.getElementById("cheveron").classList.remove("cheveronFlip")
@@ -157,10 +173,12 @@ document.getElementById("closingButton").addEventListener('click',function(){
             // styleOverflowScrollable(footerMenuInfo, "keywordSummary-s")
             footerMenu.classList.remove('animateIn')
             footerMenu.classList.add('animateOut')
-
-            if (footerMenuSpacer!= null && ( footerMenuSpacer.style.display == "block")){
+            if ( footerMenuSpacer!= null && footerMenuSpacer.classList.contains("blankFooterSpaceExpand")){
+            // if (footerMenuSpacer!= null && ( footerMenuSpacer.style.display == "block")){
                 console.log("IT'S NONE!!!")
-                footerMenuSpacer.style.display = "none"   
+                // footerMenuSpacer.style.display = "none"   
+                footerMenuSpacer.classList.remove("blankFooterSpaceExpand")
+                footerMenuSpacer.classList.add("blankFooterSpaceCollapse")
             }
             if (document.getElementById("cheveron").classList.contains("cheveronFlip")){
                 document.getElementById("cheveron").classList.remove("cheveronFlip")
@@ -184,6 +202,8 @@ document.querySelector('.switch3 input').addEventListener('change', function(){
             console.log(val.last_video.url, val.last_video)
             chrome.runtime.sendMessage({"message": "save_keys", "user_changes": {'mode':'PRODUCTIVITY', "session_keywords": {}, "session_block": {} , 'last_video': { 'url': val.last_video.url  , 'toggle-cleared': true}}} , function(){
                 console.log("PRODUCTIVE TIME NEW SESSION")
+                //if necessary we can reload the page but it seems like a systme that's working fine shouldn't have this issue
+                //location.reload()
             } )
         })
     }
@@ -252,7 +272,8 @@ var display = function(block_name, title) {
         block.style.display = "none"
         block.style.visibility = "visible"
     })
-    document.getElementById(block_name).style.display="block"
+    // document.getElementById(block_name).style.display="block"
+    document.getElementById(block_name).style.display="flex"
     // $('.middleBlock').css('display', 'none');
     // $('.middleBlock').css('visibility', 'visible');
     
@@ -303,7 +324,7 @@ navButtons.forEach(function(nb){
 // });
 
 //RENDER BOTH THE NONO LIST AND MOST FREQUENT LIST
-function show_list(){
+function show_list(  callback = null){
     var list = document.getElementById("keys-list");
     var freq_list = document.getElementById("freq-list");
     chrome.storage.local.get( keyStoreVals, function(val) {
@@ -315,18 +336,28 @@ function show_list(){
 
         var sortedStorageKeysArr = sortByNonDecreasingFreq(storageKeys, "TOTAL")
         var sortedSessionStorageKeysArr = sortByNonDecreasingFreq(sessionStorageKeys, "SESSION")
+
+        var finishedCounter = 0
         for (index = 0; index < sortedStorageKeysArr.length; index++) { 
         // for(let term in storageKeys){
             term = sortedStorageKeysArr[index][0]
             console.log("Keyword: " + term)
-            addUI(list, term, storageKeys[term], "NoNoWord")
+            addUI(list, term, storageKeys[term], "NoNoWord" )
+            if (index+1 == sortedStorageKeysArr.length){
+                finishedCounter++
+            }
         }
         for (index = 0; index < sortedSessionStorageKeysArr.length; index++) { 
             term = sortedSessionStorageKeysArr[index][0]
             console.log("Keyword: " + term)
             addUI(freq_list, term, sessionStorageKeys[term], "FrequentWord")
-            
+            if (index+1 == sortedStorageKeysArr.length){
+                finishedCounter++
+            }
         }
+        // if (callback && finishedCounter == 2){
+            // return callback()
+        // }
     });
   
 }
@@ -347,7 +378,8 @@ function addUI(ul, value, keywordInfo, keywordType ) {
         else if ( keywordType=="FrequentWord" ){
             freqType="session_freq"
             if (value in storageKeys){
-                closeClassType = "close"
+                // closeClassType = "close"
+                closeClassType = "close-added" //we're not adding any buttons if it's been added before
             }
             else{
                 closeClassType = "close-freq"
@@ -508,27 +540,42 @@ function addUIRender(ul, value, keywordInfo, keywordType, freqType, closeClassTy
 
     var closeButton = document.createElement("SPAN");
     closeButton.title = "Delete \""+value+"\"";
+    var closeSpan = document.createElement("SPAN");
     var x_txt = document.createTextNode("\u00D7");
+    var plusSpan = document.createElement("SPAN");
     var plus_txt = document.createTextNode("+");
     
-    closeButton.classList.add(closeClassType);
-    closeButton.appendChild(x_txt);
-    li.appendChild(closeButton);
-    if ( closeClassType == "close-freq" ){
+    if (closeClassType == "close"){
+        closeButton.classList.add(closeClassType);
+        closeSpan.appendChild(x_txt);
+        closeSpan.classList.add("closeSpan");
+        closeButton.appendChild(closeSpan);
+        li.appendChild(closeButton);
+    }
+    
+    else if ( closeClassType == "close-freq" ){
+        // var addButton = document.createElement("SPAN");
+        // addButton.title = "Add to NoNoList"
+        // addButton.classList.add("add-freq");
+        // addButton.appendChild(plus_txt);
+        // li.appendChild(addButton);
         var addButton = document.createElement("SPAN");
         addButton.title = "Add to NoNoList"
-        addButton.classList.add("add-freq");
-        addButton.appendChild(plus_txt);
+        addButton.classList.add("add");
+        plusSpan.appendChild(plus_txt);
+        plusSpan.classList.add("plusSpan");
+        addButton.appendChild(plusSpan);
         li.appendChild(addButton);
+
         addButton.addEventListener('click', function(event){
             var div = this.parentElement;
             console.log("PARENT DIV: ", div , "CHILD:" ,this)
             //alternatively we can get rid of this removal and just apply a disable on the add button
             var prevKey = this.previousSibling
-            if(prevKey  && prevKey.classList.contains("close-freq") ){
-                prevKey.classList.remove("close-freq")
-                prevKey.classList.add("close")
-            }
+            // if(prevKey  && prevKey.classList.contains("close-freq") ){
+            //     prevKey.classList.remove("close-freq")
+            //     prevKey.classList.add("close")
+            // }
             this.remove()
             if (div){
                 var keyword = div.querySelector(".list-item-name").innerHTML
@@ -582,8 +629,14 @@ function addUIRender(ul, value, keywordInfo, keywordType, freqType, closeClassTy
                     document.getElementById("cheveron").classList.add("cheveronFlip")
                     console.log("ADDING CHEVERON FROM VAL")
                 }
-                if (footerMenuSpacer!= null && (footerMenuSpacer.style.display == "" || footerMenuSpacer.style.display == "none")){
-                    footerMenuSpacer.style.display = "block"   
+                // if (footerMenuSpacer!= null && (footerMenuSpacer.style.display == "" || footerMenuSpacer.style.display == "none")){
+                if ( footerMenuSpacer!= null && !footerMenuSpacer.classList.contains("blankFooterSpaceExpand")){
+                    if (footerMenuSpacer.classList.contains("blankFooterSpaceCollapse")){
+                        footerMenuSpacer.classList.remove("blankFooterSpaceCollapse")
+                    }
+                    footerMenuSpacer.classList.add("blankFooterSpaceExpand") 
+                    // footerMenuSpacer.style.display = "block"   
+                    // ul.classList.add("expand-list-padding-transition")
                 } 
             } 
         }
@@ -596,8 +649,13 @@ function addUIRender(ul, value, keywordInfo, keywordType, freqType, closeClassTy
                     document.getElementById("cheveron").classList.add("cheveronFlip")
                     console.log("ADDING CHEVERON FROM VAL")
                 }
-                if (footerMenuSpacer!= null && (footerMenuSpacer.style.display == "" || footerMenuSpacer.style.display == "none")){
-                    footerMenuSpacer.style.display = "block"   
+                if ( footerMenuSpacer!= null && !footerMenuSpacer.classList.contains("blankFooterSpaceExpand")){
+                // if (footerMenuSpacer!= null && (footerMenuSpacer.style.display == "" || footerMenuSpacer.style.display == "none")){
+                    // footerMenuSpacer.style.display = "block"  
+                    if (footerMenuSpacer.classList.contains("blankFooterSpaceCollapse")){
+                        footerMenuSpacer.classList.remove("blankFooterSpaceCollapse")
+                    }
+                    footerMenuSpacer.classList.add("blankFooterSpaceExpand")  
                 } 
             }
         }
@@ -619,7 +677,7 @@ function addKeywords(kwList, list){
                 if(!(term in sessionStorageKeys)){
                     storageKeys[term] ={
                         "first_occur": currDateTime,
-                        "lastest_occur": null,
+                        "latest_occur": null,
                         "session_freq": 1,
                         "total_freq": 1,
                         "wordID": new_max_wordID++
@@ -629,7 +687,7 @@ function addKeywords(kwList, list){
                 else{
                     storageKeys[term] ={
                         "first_occur": sessionStorageKeys[term].first_occur,
-                        "lastest_occur": sessionStorageKeys[term].lastest_occur,
+                        "latest_occur": sessionStorageKeys[term].latest_occur,
                         "session_freq": sessionStorageKeys[term].session_freq,
                         "total_freq": sessionStorageKeys[term].total_freq,
                         "wordID": sessionStorageKeys[term].wordID
@@ -688,7 +746,7 @@ function removeKeyword(kw, keywordType) {
 }
 
 //SORTING FUNCTION TO PRODUCE THE ORDER OF THE RENDERED LISTS FORM TOP TO BOTTOM
-function sortByNonDecreasingFreq(keysObject, freqType ){
+function sortByNonDecreasingFreq(keysObject, freqType , reverse = false ){
     console.log("in sorting function: " , keysObject)
     var fType = "total_freq" // defaults to total_freq sorting if nothing is given
     if (freqType == "SESSION"){
@@ -705,7 +763,34 @@ function sortByNonDecreasingFreq(keysObject, freqType ){
     sortable.sort(function(a, b) {
         console.log("SORTING: b=",b, "a=", a)
         // return b[1]-a[1]
-        return parseInt(b[1], 10 )-parseInt(a[1], 10 ); //parseInt does not default to base 10/ decimal so we must set the radix
+        return ( reverse ? parseInt( a[1], 10 )-parseInt( b[1], 10 )  :  parseInt( b[1], 10 )-parseInt( a[1], 10 ) ); //parseInt does not default to base 10/ decimal so we must set the radix
+    });
+    console.log("New array: ",sortable )
+
+    return sortable
+}
+
+//SORTING FUNCTION TO PRODUCE THE ORDER OF MOST RECENT LISTS FROM TOP TO BOTTOM (newest to oldest by default)
+// oldestFirst  = oldest to newest (T-B)
+// !oldestFirst = newest to oldest (T-B)
+function sortByDate(keysObject, dateType , oldestFirst = false ){
+    console.log("in sorting function: " , keysObject)
+    var dType = "latest_occur" // defaults to total_freq sorting if nothing is given
+    if (dateType == "CREATED"){
+        dType = "first_occur"
+    }
+    var keys = keysObject;
+    var sortable = [];
+
+    for (var term in keys) {
+        if(keys.hasOwnProperty(term)){
+            sortable.push([term, keys[term][dType ? dType : "first_occur"]]);
+        } 
+    }
+    sortable.sort(function(a, b) {
+        console.log("SORTING: b=",b, "a=", a)
+        // return b[1]-a[1]
+        return (oldestFirst ? a[1]-b[1] : b[1]-a[1]) //can subtract because they are date objects
     });
     console.log("New array: ",sortable )
 
@@ -733,8 +818,8 @@ function fillKeywordInfo(clickedKeyword, keywordType ) {
         var currKeyword = clickedKeyword.innerHTML 
         var currKeywordDate = null;
         if (currKeyword in keys){
-            if (keys[currKeyword]["lastest_occur"] != null){
-                currKeywordDate = keys[currKeyword]["lastest_occur"]
+            if (keys[currKeyword]["latest_occur"] != null){
+                currKeywordDate = keys[currKeyword]["latest_occur"]
             }   
             else{
                 currKeywordDate = keys[currKeyword]["first_occur"]

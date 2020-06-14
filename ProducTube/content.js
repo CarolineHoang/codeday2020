@@ -625,14 +625,14 @@ function checkTitle( tabID, currUrl , pauseVideo,  videoType){
                                     console.log("STORAGEKEY freq:", term, storageKeys[term])
                                     storageKeys[term].total_freq++
                                     storageKeys[term].session_freq++
-                                    storageKeys[term].lastest_occur = currDateTime
+                                    storageKeys[term].latest_occur = currDateTime
                                     if (!(term in sessionStorageKeys)){
                                         console.log("THIS TERM IS NOT IN SSKEYS:", term, sessionStorageKeys[term])
                                         sessionStorageKeys[term] = {
                                             "total_freq": storageKeys[term].total_freq,
                                             "session_freq": 1,
                                             "first_occur": storageKeys[term].first_occur,
-                                            "lastest_occur": currDateTime,
+                                            "latest_occur": currDateTime,
                                             "wordID": storageKeys[term].max_wordID
                                         }
                                         isFirstSessionOccur =true
@@ -667,7 +667,7 @@ function checkTitle( tabID, currUrl , pauseVideo,  videoType){
                                 console.log("SESSIONSTORAGEKEY freq:", term, sessionStorageKeys[term])
                                 sessionStorageKeys[term].total_freq++
                                 sessionStorageKeys[term].session_freq++
-                                sessionStorageKeys[term].lastest_occur = currDateTime
+                                sessionStorageKeys[term].latest_occur = currDateTime
 
                                 console.log("SESSIONSTORAGEKEY freq incr:", term, sessionStorageKeys[term])
                             }
@@ -677,7 +677,7 @@ function checkTitle( tabID, currUrl , pauseVideo,  videoType){
                                         "total_freq": 1,
                                         "session_freq": 1,
                                         "first_occur": currDateTime,
-                                        "lastest_occur": null,
+                                        "latest_occur": null,
                                         "wordID": new_max_wordID++
                                 }
                                 console.log("NEW SESSIONSTORAGEKEY freq:", term, sessionStorageKeys[term])

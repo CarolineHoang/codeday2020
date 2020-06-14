@@ -1,10 +1,32 @@
-  .popup {
-    padding-top: 3rem;
+
+body{
+  margin: 0;
+  padding: 0;
+  font-family: "Roboto", "Arial", "sans-serif"
+}
+:root {
+  --popup-height: 600px; /* MAX HEIGHT POSSIBLE*/
+  --popup-width: 25rem; 
+  --headerWrapper-padding-top: .25rem;
+  --logo-height: 1.5rem;
+  --nav-button-height: 3rem;
+  --popup-padding-top:  calc( var(--headerWrapper-padding-top) + var(--logo-height) + var(--nav-button-height) );
+  --keywordSummary-toggle-button-height: 1.5rem;
+  --keywordSummary-content-height: calc( 100% - var(--keywordSummary-toggle-button-height) );
+  --keywordSummary-full-height: 12rem;
+
+
+}
+.popup {
+    padding-top: var(--popup-padding-top); /* headerWrapper padding-top + logo + height + navButtons height */
     /* padding:0px; */
     /* margin:2rem 2.5% 2rem 2.5%; */
-    background-color: #FFF;
-    height: 35rem;
-    width:23rem;
+    background-color: rgb(249, 249, 249);
+    /* background-color: #f9f9f9; */
+    /* background-color: #FFF; */
+    height: calc( var(--popup-height) - var(--popup-padding-top) ) ;
+    width: var(--popup-width);
+    overflow: hidden;
     /* overflow: scroll; */
     display: flex;
     flex-direction: column;
@@ -12,7 +34,7 @@
   }
 
 .topnav {
-  background-color: #ffe5e5;
+  /* background-color: #ffe5e5; */
   overflow: hidden;
   display: flex;
   flex-direction: row;
@@ -29,24 +51,75 @@
   text-decoration: none;
   font-size: 0.75rem;
   /* text-transform: uppercase; */
-  width:33%;
-  height: 1.5rem;
+  /* width:33%; */
+  flex:1;
+  min-height: fit-content;
+  height: var(--nav-button-height);
   display: flex;
   justify-content: center;
   align-items: center;
   border:none;
-  background-color: #ffe5e5;
+  background-color: white;
+  /* background-color: #ffe5e5; */
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-family: "Roboto", "Arial", "sans-serif";
+  color: #606060; 
+  fill: #606060;
+  stroke:#606060;
+  /*#606060*/
 }
+
+.navIcon{
+  width: 100%;
+  /* also no-longer necessary because it can be inherited from navbuttons */
+  /* fill: #606060;
+  stroke:#606060; */
+
+  /* fill: #ffe5e5;
+  stroke:#ffe5e5; */
+  /* fill:"#fcba03"; */
+  /* stroke: #606060;
+  fill: #606060; */
+  
+}
+
+
+/* no longer needed because it can take it from navIcon */
+/* .navIconStyle{ */
+      /* fill:"#fcba03";
+      stroke:none; */
+  /* stroke: #606060;
+  fill: #606060; */
+  
+/* } */
+
+
 
 /* Change the color of links on hover */
 .navButtons:hover {
-  background-color: #ff6666;
-  color: white;
+  background-color: #eeeeee;
+  /* --yt-opalescence-soft-grey: #eeeeee */
+  /* background-color: #ff6666; */
+  /* color: white; */
+}
+
+.navButtons:focus {
+  background-color: #eeeeee;
+  /* --yt-opalescence-soft-grey: #eeeeee */
+  /* background-color: #ff6666; */
+  /* color: white; */
 }
 .color_change{
-  background-color: #ff6666 !important;
-  color: white !important;
+  /* background-color: #ff6666 !important; */
+  /* color: white !important; */
+  color: red !important;
+  fill: red !important;;
+  stroke:red !important;;
 }
+
+
 
 .headerWrapper{
   position: fixed;
@@ -56,14 +129,21 @@
   width: calc(100% - 5%);
   z-index: 100;
   padding: 0 2.5%; 
-  padding-top: .25rem;
+  padding-top: var(--headerWrapper-padding-top);
   background-color: white;
   /* -webkit-box-shadow: 0px 17px 33px -17px rgba(0,0,0,0.75);
   -moz-box-shadow: 0px 17px 33px -17px rgba(0,0,0,0.75);
   box-shadow: 0px 17px 33px -17px rgba(0,0,0,0.75); */
-  -webkit-box-shadow: 0px 9px 33px -17px rgba(0,0,0,0.75);
+  /* -webkit-box-shadow: 0px 9px 33px -17px rgba(0,0,0,0.75);
   -moz-box-shadow: 0px 9px 33px -17px rgba(0,0,0,0.75);
-  box-shadow: 0px 9px 33px -17px rgba(0,0,0,0.75);
+  box-shadow: 0px 9px 33px -17px rgba(0,0,0,0.75); */
+  /* -webkit-box-shadow: 0px 9px 33px -17px rgba(0,0,0,0.75);
+  -moz-box-shadow: 0px 9px 33px -17px rgba(0,0,0,0.75);
+  box-shadow: 0px 9px 33px -17px rgba(0,0,0,0.75); */
+  -webkit-box-shadow: 0px 9px 20px -17px rgba(0,0,0,0.75);
+  -moz-box-shadow: 0px 9px 20px -17px rgba(0,0,0,0.75);
+  box-shadow: 0px 9px 20px -17px rgba(0,0,0,0.75);
+  border-bottom: solid 2px rgba(0, 0, 0, 0.1);
 }
 
 .headerBuffer{
@@ -71,7 +151,7 @@
   height:2rem; 
 }
 
-.sectionHeader{
+.logo{
   background:#f10000;
   color: white;
   font: bold 0.8rem courier;
@@ -81,37 +161,62 @@
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  height: 1.5rem;
+  height: var(--logo-height);
+  font-family: 'Fjalla One', sans-serif;
+  /* letter-spacing: -1px; */
+  letter-spacing: 1px;
 }
-.midsection{
- width: calc(100% - 5%);
+.midSection{
+ /* width: calc(100% - 5%); */
  height: 100%;
+
+ display: flex;
+ flex-direction: column;
  
 }
 
 .middleBlock {
   display:flex;
   margin: 0 auto;
-  margin-bottom: 1.5rem;
+  /* margin-bottom: 1.5rem; */
+  /* margin-bottom: .5rem; */
+  padding-bottom: .5rem; 
+  /* padding so that they don't push each other around on the homepage */
   flex-direction: column;
   align-items: center;
-  height: fit-content;
+  /* flex:1; */
+  /* height: fit-content; */
+  margin-top: 1rem; /* this is the padding used to make sure that information sits below the options menu */
   /* padding: 0.05rem 0.05rem; */
+  height: 100%;
+  padding-top: .5rem;
+
+
+  /* get rid of these two to have the whole page scroll and not just the keywords */
+  overflow: hidden;
+  flex: 1;
+  /* also add this: */
+  /* overflow: scroll; */
 }
 .middleBlock h3 {
   font: small-caps bold .8 rem sans-serif;
   text-align: center;
-  line-height:0rem;
-  margin-top: 1.3rem;
+  margin: 0;
+  margin-bottom: .5rem;
+  /* margin: .5rem 0; */
+  /* line-height:0rem; */
 }
 .middleBlock p {
-  font: .8 rem sans-serif;
-  line-height: 1rem;
+  font: .8rem sans-serif;
+  /* line-height: 1rem; */
   text-align: left;
 }
+
+#introBlock{
+  flex: none;
+} 
 /* visibility: hidden; */
 #timeBlock, #listBlock, #freqBlock{
-  overflow-y:auto;
   visibility: hidden
 } 
 
@@ -124,13 +229,7 @@
 #freqBlock{
   overflow-y:auto;
 }  */
-input[type=text2] {
-  background-image: url('rplus.png');
-  background-size: .84rem;
-  background-position: .25rem .1rem;
-  background-repeat: no-repeat;
-  padding-left: 1.5rem;  
-}
+
 
 #cheveron{
   background-image: url('cheveron.svg');
@@ -138,9 +237,14 @@ input[type=text2] {
   /* background-position: .25rem .1rem; */
   background-repeat: no-repeat;
   /* padding-left: 1.5rem;   */
-  width: 3rem;
-  height:3rem;
-  transition: transform 1s;
+  width:2rem;
+  height:2rem;
+
+  stroke:#909090;
+  
+  /* width: 3rem;
+  height:3rem; */
+  transition: transform 1s , stroke 1s ;
 }
 .cheveron:hover {
   transform: rotate(540deg);
@@ -148,14 +252,21 @@ input[type=text2] {
 }
 .cheveronFlip{
   transform: rotate(540deg);
+  stroke:red !important;
 }
-.cheveronFlipLeft{
+/* .cheveronFlipLeft{
   transform: rotate(5400deg);
-}
-#cheveron-vector{
+} */
+/* #cheveron-vector{
   fill:red;
   stroke: aqua;
-}
+} */
+.expand-list-padding-transition{
+  padding-bottom: var(--keywordSummary-full-height);
+  transition: padding-bottom 1s;
+} 
+
+
 
 /* div {
   transition: transform 1s;
@@ -174,21 +285,34 @@ div:hover {
   margin: 0.5rem 0.4rem; 
 } */
  /* Style the list items */
+ul{
+  background-color: rgb(241, 241, 241);
+  padding: 0;
+}
+
  ul li {
   position: relative;
   margin: .12rem .12rem .12rem .12rem; /*  0rem 0rem 0rem 0rem; */
   padding: 0.8rem 1.6rem 0.5rem 2.0rem; /* top right bottom left */
   list-style-type: none;
-  background: #fff;
+  /* background-color: rgb(241, 241, 241); */
+  /* #f9f9f9; */
+  /* background: #fff; */
   font-size: 1.0 rem;
   transition: 0.2s;
   list-style-position:inside;
-  border: 1px solid gray;
+  /* border-bottom:  1px solid rgba(0, 0, 0, 0.1); */
+  border-bottom:  1px solid rgb(216,216,216);
+  width: 90%;
+  
+  /* border: 1px solid gray; */
 }
  /* Lighter background-color on hover */
  ul li:hover {
-  background: #ff9b9b;
-  color:#fff;
+   background-color: rgba(0, 0, 0, 0.05);
+  /* background: #eeeeee; */
+  /* background: #ff9b9b; */
+  /* color:#fff; */
 }
 
 
@@ -196,8 +320,12 @@ div:hover {
 
 
 p{
-  padding:.5rem;
+  /* padding:.5rem; */
+  padding:0;
+  padding-bottom: 1rem;
   margin:0;
+  width: 80%;
+  
   /* max-width: calc(100% - 5%); */
 }
 
@@ -212,13 +340,70 @@ p{
 } */
 
 .keyword-adder-container{
-  padding-left: .5rem;
+  /* padding-left: .5rem; */
+  margin-bottom: 1rem;
+  width: 80%;
+  height: 1.5rem;
+  /* needed to get rid of space between input field and other elements if we leave it as inline-block */
+  font-size: 0;
+}
+input[type=text2] {
+  /* background-image: url('rplus.png');
+  background-size: .84rem;
+  background-position: .25rem .1rem;
+  background-repeat: no-repeat; */
+  display: inline-block;
+  text-indent: 1rem; 
+  /* text-indent: 1.5rem;  */
+
+  /* padding-left: 1.5rem;  */
+  /* width:100%; */
+  /* width: calc( 90% - 1.5rem); */
+
+  padding: 0;
+  /* width: 100%; */
+  /* width: calc( 90% - 2px - 2px);  */
+  /* The last 2px likely comes from comes from display inline block. It's an input field default setting */
+  /* width: calc( 90% - 2px);  */
+  border-width: 1px;
+  width: calc( 80% - 2px);  /* width - border width */
+  height: calc( 100% - 2px); /* height- border width */
+  
+  /* flex: 1; */
+  /* border: none; */
+  
+  border-color: #ccc;
+  border-style: solid;
+  border-right: none;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+
+  color: #909090;
+  /* border-style: dashed; */
+  /* flex: 1; */
 }
 
+#add_new_keyword{
+  /* width:100%; */
+  /* width:10%; */
+  width: calc( 20% - 2px );
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  border-width: 1px;
+  border-color: #ccc;
+  border-style: solid;
+
+  color: #909090;
+  /* flex: 1; */
+  /* background-color: #f44336;
+  color: white; */
+} 
 
 /* Style the close button */
-.close {
-  border-left: .065rem solid rgb(0, 0, 0);
+.close , .add{
+  /* border-left: .065rem solid rgb(0, 0, 0); */
   position: absolute;
   /* right: 0;
   top: 0;
@@ -229,17 +414,24 @@ p{
   width: 100%;
   height: 100%;
   /* padding: 0.8rem 1.6rem 0.5rem 1.6rem; */
-  background-color: #f44336;
-  color: white;
+  /* background-color: #f44336; */
+  /* color: white; */
   cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 1rem;
+  /* font-size: 1rem; */
+  font-size: 2rem;
+  color: #909090;
 }
-.close:active, .close-freq:active{
+.closeSpan, .plusSpan {
+  margin-top: 1px;
+ /* margin-top: -1px; */
+}
+/* .close:active, .close-freq:active{
   background-color: rgba(149,14,14,1);
-}
+  color: white;
+} */
 /* .close:hover {
   background-color: rgba(149,14,14,1);
   color: white;
@@ -248,6 +440,16 @@ p{
   background-color: rgba(149,14,14,1);
   color: white;
 }
+
+.add:hover{
+  background-color: rgb(21, 104, 10);
+  color:white;
+}
+/* .close:hover {
+  background-color: rgba(149,14,14,1);
+  color: white;
+} */
+
 
 .close-freq {
   border-left: .065rem solid rgb(0, 0, 0);
@@ -268,19 +470,13 @@ p{
   justify-content: center;
   align-items: center;
 }
-
-.add-freq {
+/* .add-freq {
   border-left: .065rem solid rgb(0, 0, 0);
   position: absolute;
-  /* right: 0;
-  top: 0;
-  width: 12.5%;
-  height:100%; */
   grid-column: col7-start / end;
   grid-row: start / center;
   width: 100%;
   height: 100%;
-  /* padding: 0.8rem 1.6rem 0.5rem 1.6rem; */
   background-color: #65f158;
   color: white;
   cursor: pointer;
@@ -288,7 +484,7 @@ p{
   justify-content: center;
   align-items: center;
   font-size: 1rem;
-}
+} */
 .add-freq:active{
   background-color: rgb(52, 149, 14);
 }
@@ -304,6 +500,40 @@ p{
   background-color: rgba(149,14,14,1);
   color: white;
 } */
+
+
+.list-group, .flist-group{
+  /* get rid of these two to have the whole page scroll and not just the keywords */
+  flex: 1;
+  overflow-y: scroll;
+  
+  margin:0;
+  width:100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* .list-group{ */
+  /* get rid of these two to have the whole page scroll and not just the keywords */
+  /* flex: 1;
+  overflow-y: scroll;
+  
+  margin:0;
+  width:100%;
+} */
+
+/* .flist-group{ */
+  /* get rid of these two to have the whole page scroll and not just the keywords */
+  /* flex: 1;
+  overflow-y: scroll;
+  
+  margin:0;
+  width:100%;
+} */
+
+
+
 
 
 .list-group-item{
@@ -371,7 +601,8 @@ align-items: center;
 word-break: break-word;
 hyphens: auto;
 overflow: scroll;
-color:lightgray;
+/* color:lightgray; */
+color: #909090;
 }
 .list-item-name{
 
@@ -504,10 +735,40 @@ box-shadow: inset 0px -14px 41px -32px rgba(0,0,0,0.75); */
   left:0; */
   
   width: calc(100% - 5%);
-  height:12rem;
-  display: none;
+  height:0px;
+  /* height: var(--keywordSummary-full-height); */
+  /* display: none; */
+
+
   /* background-color: green; */
 }
+
+.blankFooterSpaceExpand{
+  /* position: absolute;
+  bottom:0;
+  left:0; */
+  
+  /* width: calc(100% - 5%); */
+  height: var(--keywordSummary-full-height)!important;
+  transition: height .5s;
+  transition-timing-function: ease-in
+  /* display: none; */
+  /* background-color: green; */
+}
+
+.blankFooterSpaceCollapse{
+  /* position: absolute;
+  bottom:0;
+  left:0; */
+  
+  /* width: calc(100% - 5%); */
+  height: 1.5rem !important;
+  transition: height .5s;
+  transition-timing-function: ease-in
+  /* display: none; */
+  /* background-color: green; */
+}
+
 
 .keywordSummaryWrapper{
   position: fixed;
@@ -517,7 +778,7 @@ box-shadow: inset 0px -14px 41px -32px rgba(0,0,0,0.75); */
   width: calc(100% - 5%);
   z-index: 100;
   padding: 0 2.5%; 
-  height:12rem;
+  height: var(--keywordSummary-full-height);
   /* padding-bottom:5rem; */
   /* display: none; */
   visibility: hidden;
@@ -569,7 +830,8 @@ box-shadow: inset 0px -14px 41px -32px rgba(0,0,0,0.75); */
 }
 
 #closingButton{
-  background: rgba(255,155,155,1);
+  /* background: rgba(255,155,155,1); */
+  background-color: white;
   /* rgb(255,118,118); */
   /* background: none repeat scroll 0 0  #ff9b9b; */
   /* opacity: .5; */
@@ -584,21 +846,27 @@ box-shadow: inset 0px -14px 41px -32px rgba(0,0,0,0.75); */
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  border-bottom: solid rgba(255, 255, 255, 0.472) 1px;
+  border-bottom: solid 1px rgb(216,216,216);
+  
+  /* border-bottom: solid rgba(255, 255, 255, 0.472) 1px; */
 }
 #closingButton:hover{
   /* background: none repeat scroll 0 0  #ff7676; */
-  background:#ff9b9b;
-  background: linear-gradient(180deg, rgba(255,118,118,1) 0%, rgba(255,144,144,1) 60%, rgba(255,155,155,1) 100%);
+  background:#ffffff;
+  /* background:#ff9b9b; */
+  /* background: linear-gradient(180deg, rgba(255,118,118,1) 0%, rgba(255,144,144,1) 60%, rgba(255,155,155,1) 100%); */
+  background: linear-gradient(180deg, rgb(223, 223, 223) 0%, rgb(243, 243, 243) 60%, rgb(255, 255, 255) 100%);
   /* transition: background-color 5s; */
 }
 
 .keywordSummary{
-  background:#ff9b9b;
+  /* background:#ff9b9b; */
+  background-color: white;
   /* background: linear-gradient(180deg, rgba(255,118,118,1) 0%, rgba(255,144,144,1) 54%, rgba(255,155,155,1) 100%); */
   /* opacity: .5; */
-  color: white;
-  font: bold 0.8rem courier;
+  color: black;
+  /* color: white; */
+  /* font: bold 0.8rem courier; */
   margin: 0 auto;
   text-align: center;
   /* padding-bottom:5rem; */
@@ -607,7 +875,7 @@ box-shadow: inset 0px -14px 41px -32px rgba(0,0,0,0.75); */
   justify-content: center;
   align-items: center; */
   display: grid;
-  height: calc(100% - 1.5rem);
+  height: var(--keywordSummary-content-height);
   
   
   /* grid-template-columns: [start] 5% [col2-start] 60% [col3-start] 5% [col4-start] 5% [col5-start]20% [col6-start] 5% [end];
@@ -671,8 +939,11 @@ box-shadow: inset 0px -14px 41px -32px rgba(0,0,0,0.75); */
   grid-column: col2-start / col6-start;
   grid-row: row2-start / row3-start;
   display: flex;
-  border-top: solid white 1px;
-  border-bottom: solid rgba(255, 255, 255, 0.472) 1px;
+  /* border-top: solid white 1px; */
+  /* border-top: solid white 1px; */
+  border-top: solid 1px rgb(216,216,216);
+  /* border-bottom: solid rgba(255, 255, 255, 0.472) 1px; */
+  border-bottom: solid 1px rgb(216,216,216);
   flex-direction: row;
   align-items: center;
 }
@@ -703,7 +974,8 @@ box-shadow: inset 0px -14px 41px -32px rgba(0,0,0,0.75); */
 .keywordSummary-vertBar{
   grid-column: col3-start-fc / col4-start-fc ;
   grid-row: row2-start-fc / row3-start-fc;
-  border-right: solid rgba(255, 255, 255, 0.472) 1px;
+  /* border-right: solid rgba(255, 255, 255, 0.472) 1px; */
+  border-right: solid 1px rgb(216,216,216);
 }
 .keywordSummary-freq-last{
   grid-column: col5-start-fc / col6-start-fc;
