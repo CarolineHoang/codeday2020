@@ -162,6 +162,7 @@ body{
   justify-content: center;
   align-items: center;
   height: var(--logo-height);
+  /* font-family: 'Oswald', sans-serif; */
   font-family: 'Fjalla One', sans-serif;
   /* letter-spacing: -1px; */
   letter-spacing: 1px;
@@ -199,7 +200,8 @@ body{
   /* overflow: scroll; */
 }
 .middleBlock h3 {
-  font: small-caps bold .8 rem sans-serif;
+  /* font: small-caps bold .8rem sans-serif; */
+  /* font: small-caps bold .8 rem sans-serif; */
   text-align: center;
   margin: 0;
   margin-bottom: .5rem;
@@ -207,7 +209,7 @@ body{
   /* line-height:0rem; */
 }
 .middleBlock p {
-  font: .8rem sans-serif;
+  /* font: .8rem sans-serif; */
   /* line-height: 1rem; */
   text-align: left;
 }
