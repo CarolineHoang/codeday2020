@@ -6,6 +6,20 @@ var keyStoreVals = ['keywords', 'session_keywords' , 'max_wordID', 'session_bloc
 const FREQ_COUNT_CAP =1000000
 
 
+var lastDeletedKeywordObj = {"lastKey":null, "lastKeyInfo":null , "lastKeyStorageType":null}
+
+
+deletedKeywords= {   
+    "MUSICAL":[{
+                "total_freq": 10000000,
+                "session_freq": 0,
+                "first_occur": Date.now(),
+                "latest_occur": null,
+                "wordID":0
+                }, "NoNoWord"]
+}
+
+
 // MAIN RENDERING FUNCTION _____________________________________________________________________________________________
 document.addEventListener('DOMContentLoaded', function(){
     
@@ -35,17 +49,18 @@ document.addEventListener('DOMContentLoaded', function(){
         }
     });
     
-    show_list(function(){
-         //hide the blocks right after we intially render them to determine if a value can be scrolled (may need to be a callback, but I'll write this sequentially for now)
-        var blocks = document.querySelectorAll(".middleBlock")
-        console.log(blocks)
-        blocks.forEach(function(block){
-            if (block.id != "introBlock"){
-                block.style.display = "none"
-                block.style.visibility = "visible"
-            }  
-        })
-    })
+    show_list()
+            // show_list(function(){
+            //     //hide the blocks right after we intially render them to determine if a value can be scrolled (may need to be a callback, but I'll write this sequentially for now)
+            //     var blocks = document.querySelectorAll(".middleBlock")
+            //     console.log(blocks)
+            //     blocks.forEach(function(block){
+            //         if (block.id != "introBlock"){
+            //             block.style.display = "none"
+            //             block.style.visibility = "visible"
+            //         }  
+            //     })
+            // })
    
 
 
@@ -260,6 +275,16 @@ document.addEventListener('keypress', function (e) {
 })
 
 
+    // document.getElementById("restoreLastDeletedButton").addEventListener('click',function(){
+    //     restoreKeyword( addUI )
+        // var restoredUISpec = restoreKeyword()
+        // console.log(restoredUISpec)
+        // if (restoredUISpec != []){
+        //     addUI(restoredUISpec[0], restoredUISpec[1], restoredUISpec[2],restoredUISpec[3])
+        // }
+        
+    // })
+
 // HELPER FUNCTIONS ____________________________________________________________________________________________________
 
 /*Toggle Content and Navbar Color Changing Code*/
@@ -283,14 +308,17 @@ var display = function(block_name, title) {
   
   document.getElementById('timer').addEventListener('click', function() {
     display('timeBlock', this);
+    hideObj("added_warning")
   });
 
   document.getElementById('list').addEventListener('click', function() {
     display('listBlock', this);
+    hideObj("added_warning")
   });
 
   document.getElementById('freq').addEventListener('click', function() {
     display('freqBlock', this);
+    hideObj("added_warning")
   });
 
 //   $('#timer').on('click', function() {
@@ -324,7 +352,7 @@ navButtons.forEach(function(nb){
 // });
 
 //RENDER BOTH THE NONO LIST AND MOST FREQUENT LIST
-function show_list(  callback = null){
+function show_list(/*callback = null , */ oneList = null ){
     var list = document.getElementById("keys-list");
     var freq_list = document.getElementById("freq-list");
     chrome.storage.local.get( keyStoreVals, function(val) {
@@ -338,29 +366,50 @@ function show_list(  callback = null){
         var sortedSessionStorageKeysArr = sortByNonDecreasingFreq(sessionStorageKeys, "SESSION")
 
         var finishedCounter = 0
-        for (index = 0; index < sortedStorageKeysArr.length; index++) { 
-        // for(let term in storageKeys){
-            term = sortedStorageKeysArr[index][0]
-            console.log("Keyword: " + term)
-            addUI(list, term, storageKeys[term], "NoNoWord" )
-            if (index+1 == sortedStorageKeysArr.length){
-                finishedCounter++
-            }
+
+        if (oneList == null || oneList == "NoNoWord" ){
+            // list.innerHTML = ""
+            removeAllChildNodes(list)
+            for (index = 0; index < sortedStorageKeysArr.length; index++) { 
+                // for(let term in storageKeys){
+                    term = sortedStorageKeysArr[index][0]
+                    console.log("Keyword: " + term)
+                    addUI(list, term, storageKeys[term], "NoNoWord" )
+                    if (index+1 == sortedStorageKeysArr.length){
+                        finishedCounter++
+                    }
+                }
         }
-        for (index = 0; index < sortedSessionStorageKeysArr.length; index++) { 
-            term = sortedSessionStorageKeysArr[index][0]
-            console.log("Keyword: " + term)
-            addUI(freq_list, term, sessionStorageKeys[term], "FrequentWord")
-            if (index+1 == sortedStorageKeysArr.length){
-                finishedCounter++
-            }
+        if (oneList == null || oneList == "FrequentWord" ){
+            console.log("freq_list refresh!")
+            // freq_list.innerHTML = ""
+            removeAllChildNodes(freq_list)
+            for (index = 0; index < sortedSessionStorageKeysArr.length; index++) { 
+                term = sortedSessionStorageKeysArr[index][0]
+                console.log("Keyword: " + term)
+                addUI(freq_list, term, sessionStorageKeys[term], "FrequentWord")
+                if (index+1 == sortedStorageKeysArr.length){
+                    finishedCounter++
+                }
+            } 
         }
+
         // if (callback && finishedCounter == 2){
             // return callback()
         // }
     });
   
 }
+
+
+// FUNCTION TO REMOVE ALL NODES FROM A DOM OBJECT WITHOUT USING innerHTML and getting a memory leak from not clearing the event handlers on the children
+// e.g. each keyword has click events whose reference will be orphaned if we use innerHTMl = "" on the list
+function removeAllChildNodes(parent) {
+    while (parent.firstChild) {
+        parent.removeChild(parent.firstChild);
+    }
+}
+
 
 //DECIDE ON THE TYPE AND ASPECTS OF A KEYWORD TO RENDER
 function addUI(ul, value, keywordInfo, keywordType ) {
@@ -582,10 +631,13 @@ function addUIRender(ul, value, keywordInfo, keywordType, freqType, closeClassTy
                 // var keyword = div.firstChild.firstChild.innerHTML
                 console.log( "PARENT VAL", div.querySelector(".list-item-name").innerHTML )
                 var list = document.getElementById("keys-list");
-                addKeywords([keyword], list)
+                addKeywords([keyword], list, false)
             }
         },false);
     }
+    // var recoverDiv = document.createElement("div");
+    // recoverDiv.classList.add("list-item-recover");
+    // li.appendChild(recoverDiv);
 
     console.log("VALS5: " ,nameDiv.scrollHeight, nameDiv.clientHeight)
 
@@ -599,11 +651,34 @@ function addUIRender(ul, value, keywordInfo, keywordType, freqType, closeClassTy
     closeButton.addEventListener('click', function(event){
         var div = this.parentElement;
         console.log("PARENT DIV: ", div , "CHILD:" ,this)
-        this.remove()
+        // this.remove()
         if (div){
             console.log( "PARENT VAL", div.querySelector(".list-item-name").innerHTML )
             removeKeyword(div.querySelector(".list-item-name").innerHTML, keywordType)
-            div.remove()
+            // div.remove()
+            var recoverDiv = document.createElement("div");
+            var undoDiv = document.createElement("div");
+            undoDiv.textContent = "undo delete"
+            undoDiv.setAttribute("key", div.querySelector(".list-item-name").innerHTML )
+            undoDiv.classList.add("list-item-recover-text")
+            recoverDiv.appendChild(undoDiv);
+            recoverDiv.title = div.querySelector(".list-item-name").innerHTML 
+            recoverDiv.classList.add("list-item-recover");
+            li.appendChild(recoverDiv);
+
+            undoDiv.addEventListener('click', function(event){
+                if (this.getAttribute("key") in  deletedKeywords){
+                    // this.remove()
+                    var div = this.parentElement;
+                    div.remove()
+                    restoreKeyword( this.getAttribute("key") , function(){show_list("FrequentWord") } )  
+                     
+                    // deletedKeywords[this.key][0]                                              /////////////////////
+
+                }
+                
+               
+            },false);
         }
     },false);
 
@@ -663,7 +738,7 @@ function addUIRender(ul, value, keywordInfo, keywordType, freqType, closeClassTy
 }
 
 //ADD KEYWORDS TO CHROME STORAGE SYNC
-function addKeywords(kwList, list){
+function addKeywords(kwList, list, reloadFreqList = true /*, fromInput = false */ ){
 
     chrome.storage.local.get(['keywords', 'session_keywords', 'max_wordID' ], function(result) {
         var storageKeys = result.keywords
@@ -672,7 +747,7 @@ function addKeywords(kwList, list){
         console.log("kwList:", kwList, storageKeys)
         kwList.forEach(function(term){
             var currDateTime = Date.now()
-            if(!(term in storageKeys)){
+            if(!(term in storageKeys) && (!(term in deletedKeywords) || document.querySelectorAll('[key="'+term+'"]')[0] == undefined) ){
                 
                 if(!(term in sessionStorageKeys)){
                     storageKeys[term] ={
@@ -694,6 +769,41 @@ function addKeywords(kwList, list){
                     }
                     addUI(list, term, storageKeys[term], "NoNoWord")
                 }
+                if (reloadFreqList){
+                    show_list("FrequentWord")
+                }
+                if ( term in deletedKeywords ){
+                    // restoreKeyword(term)
+                    delete deletedKeywords[term]
+                }
+                // if ( !(document.getElementById("added_warning").classList.contains("hide"))){
+                //     document.getElementById("added_warning").classList.add("hide")
+                // }
+                hideObj("added_warning")
+            }
+            else if (term in deletedKeywords && document.querySelectorAll('[key="'+term+'"]')[0] != undefined){
+                var div = document.querySelectorAll('[key="'+term+'"]')[0].parentElement;
+                div.remove()
+                if (reloadFreqList){
+                    restoreKeyword( term , function(){show_list("FrequentWord") } )  
+                }
+                else{
+                    restoreKeyword(term)
+                }
+                // if ( !(document.getElementById("added_warning").classList.contains("hide"))){
+                //     document.getElementById("added_warning").classList.add("hide")
+                // }
+                hideObj("added_warning")
+                // restoreKeyword(term)
+
+                // document.querySelectorAll('[key="'+term+'"]')[0].click()
+            }
+            else{
+                //note: at this moment, it should be impossible to accidentally add a keyword from freq-list that is already in the NoNoList so this should work with no condition on where a keyword add is triggered
+                // if (/* fromInput &&  */ document.getElementById("added_warning").classList.contains("hide")){
+                //     document.getElementById("added_warning").classList.remove("hide")
+                // }
+                showObj("added_warning")
             }
         });
         //this one will make the changes instant
@@ -707,6 +817,16 @@ function addKeywords(kwList, list){
         // });
     });
 }
+function hideObj(id){
+    if ( !(document.getElementById(id).classList.contains("hide"))){
+        document.getElementById(id).classList.add("hide")
+    }
+}
+function showObj(id){
+    if (/* fromInput &&  */ document.getElementById(id).classList.contains("hide")){
+        document.getElementById(id).classList.remove("hide")
+    }
+}
 
 //REMOVE A DELETED KEYWORD FROM CHROME STORAGE SYNC
 function removeKeyword(kw, keywordType) {
@@ -717,10 +837,17 @@ function removeKeyword(kw, keywordType) {
         var new_max_wordID = val.max_wordID
         var block_sites = val.session_block
 
+
         if ( keywordType== "NoNoWord" && kw in storageKeys ){
+            //Add word info to lastDeletedKeywordObj for possible recovery
+            deletedKeywords[kw]=[ storageKeys[kw], keywordType ]
+            lastDeletedKeywordObj = {"lastKey":kw, "lastKeyInfo":storageKeys[kw], "lastKeyStorageType": keywordType}
             delete storageKeys[kw]
         }
         else if (keywordType== "FrequentWord" && kw in sessionStorageKeys){
+            //Add word info to lastDeletedKeywordObj for possible recovery
+            deletedKeywords[kw]=[ sessionStorageKeys[kw], keywordType ]
+            lastDeletedKeywordObj = {"lastKey":kw, "lastKeyInfo":sessionStorageKeys[kw], "lastKeyStorageType": keywordType}
             delete sessionStorageKeys[kw]
         }
 
@@ -740,8 +867,75 @@ function removeKeyword(kw, keywordType) {
         
 
         chrome.runtime.sendMessage({"message": "save_keys", "user_changes": { 'keywords': storageKeys, 'session_keywords': sessionStorageKeys, 'session_block': block_sites }} , function(){
+            if (keywordType== "NoNoWord"){
+                show_list("FrequentWord")
+            }
+            else if (keywordType== "FrequentWord"){
+                show_list("NoNoWord")
+            }
+            
             console.log("VALS LEFT AFTER DELETION: " , storageKeys)
         } ) 
+    }); 
+}
+
+//RESTORE LAST DELETED KEYWORD TO CHROME STORAGE SYNC
+function restoreKeyword( kw , reAddCallback = null ) {
+    chrome.storage.local.get( keyStoreVals, function(val) {
+        var storageKeys = val.keywords; 
+        var sessionStorageKeys = val.session_keywords;
+        var x = val.keywords.length; 
+        var new_max_wordID = val.max_wordID
+        var block_sites = val.session_block
+
+        var listDiv = "keys-list"
+
+        if ( !(kw in storageKeys)  || !(kw in sessionStorageKeys) ){
+            if ((kw in deletedKeywords) ){
+                if (deletedKeywords[kw][1] == "NoNoWord"){
+                    storageKeys[kw] = deletedKeywords[kw][0]
+                }
+                else if (deletedKeywords[kw][1] == "FrequentWord"){
+                    sessionStorageKeys[kw] = deletedKeywords[kw][0]
+                }
+                chrome.runtime.sendMessage({"message": "save_keys", "user_changes": { 'keywords': storageKeys, 'session_keywords': sessionStorageKeys }} , function(){
+                    if (reAddCallback!= null){
+                        //refresh the other list to show updates
+                        reAddCallback()
+                    }
+                    delete deletedKeywords[kw]
+
+
+                    console.log("new array: " , [ document.getElementById(listDiv), lastDeletedKeywordObj.lastKey , lastDeletedKeywordObj.lastKeyInfo , lastDeletedKeywordObj.lastKeyStorageType  ])
+                    // return [document.getElementById(listDiv), lastDeletedKeywordObj.lastKey , lastDeletedKeywordObj.lastKeyInfo , lastDeletedKeywordObj.lastKeyStorageType  ]
+                    // reAddCallback(document.getElementById(listDiv), lastDeletedKeywordObj.lastKey , lastDeletedKeywordObj.lastKeyInfo , lastDeletedKeywordObj.lastKeyStorageType )
+                } ) 
+            }
+        }
+        // if (!(kw in storageKeys) ){
+
+        // }
+
+        // if ( lastDeletedKeywordObj.lastKey != null && lastDeletedKeywordObj.lastKeyInfo != null &&  lastDeletedKeywordObj.lastKeyStorageType != null &&  !(lastDeletedKeywordObj.lastKey in storageKeys) ){
+        //     if (lastDeletedKeywordObj.lastKeyStorageType == "NoNoWord"){
+        //         storageKeys[lastDeletedKeywordObj.lastKey] = lastDeletedKeywordObj.lastKeyInfo
+        //     }
+        //     else if (lastDeletedKeywordObj.lastKeyStorageType == "sessionStorageKeys"){
+        //         sessionStorageKeys[lastDeletedKeywordObj.lastKey] = lastDeletedKeywordObj.lastKeyInfo
+        //         listDiv = "freq-list"
+        //     }
+            
+        //     chrome.runtime.sendMessage({"message": "save_keys", "user_changes": { 'keywords': storageKeys, 'session_keywords': sessionStorageKeys }} , function(){
+
+        //         console.log("new array: " , [ document.getElementById(listDiv), lastDeletedKeywordObj.lastKey , lastDeletedKeywordObj.lastKeyInfo , lastDeletedKeywordObj.lastKeyStorageType  ])
+        //         // return [document.getElementById(listDiv), lastDeletedKeywordObj.lastKey , lastDeletedKeywordObj.lastKeyInfo , lastDeletedKeywordObj.lastKeyStorageType  ]
+        //         reAddCallback(document.getElementById(listDiv), lastDeletedKeywordObj.lastKey , lastDeletedKeywordObj.lastKeyInfo , lastDeletedKeywordObj.lastKeyStorageType )
+        //     } ) 
+        // }
+
+        // else{
+        //     return []
+        // }
     }); 
 }
 
