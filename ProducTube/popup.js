@@ -765,6 +765,7 @@ $('.switch3 input').on('change', function(){
                 });
 
     }
+  
     
 
 
@@ -799,6 +800,9 @@ $('.switch3 input').on('change', function(){
 
     function reset_clock(){
         timer_pre_vis()
+        let start =  document.querySelector("#start_timer")
+        let starter =  document.querySelector("#time_setup")
+        console.log("Reset function reached")
         document.getElementById("hour_time").value = ""
         document.getElementById("min_time").value = ""
         document.getElementById("sec_time").value =""
