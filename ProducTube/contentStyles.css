@@ -24,11 +24,14 @@
     left:0;
     width: 100vw;
     height: calc( 100vh - 56px );
-    z-index: 3000;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    /* z-index: 3000; */
+    /* z-index: 2202; */
+
+    z-index: 2000;  /* THIS MUST BE SET TO ENSURE IT SITS BELOW THE SIDEBAR SCRIM SCREEN AND ABOVE EVERY TITLE ON THE HOMEPAGE AND VIDEO PAGE */
 }
 .ext-popup-button-container{
     width:80%;
@@ -102,17 +105,54 @@
     color:red;
   }
   
-/* necessary so that guide appears on top of the blox page without locating the div so that a miniplayer can appear before it */
-#guide{
-    z-index: 1000000;
-}
-body > iron-overlay-backdrop{
-    z-index: 1000001 !important;
+
+  /* 
+    we set the z index of the miniplayer to be the same as the popup because the popup is rendered after and will sit on top 
+    Also, we change the z index so that it will not only sit below the playlist grey screen (z-index: 2201) but also below the popup which is also below the sidebar and topbar 
+  */
+  ytd-miniplayer {
+    /* --ytd-miniplayer-width: 400px;
+    --ytd-miniplayer-height: 225px;
+    --ytd-miniplayer-playlist-height: 285px;
+    --ytd-miniplayer-fade-down-endpoint: 355px;
+    --ytd-miniplayer-fade-down-expanded-endpoint: 70px;
+    opacity: 0;
+    pointer-events: none;
+    position: fixed; */
+    /* z-index: 2025; */
+    z-index: 2000 !important;
+    /* right: 12px;
+    height: 574px;
+    transform: translate3d(0, 215px, 0);
+    bottom: 0;
+    background-color: var(--yt-spec-brand-background-primary);
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 3px 6px 0 rgba(0, 0, 0, 0.2); */
 }
 
-body > ytd-app > ytd-popup-container > paper-dialog{
-    z-index: 1000002 !important;
-}
-body > ytd-app > ytd-popup-container > paper-dialog:nth-child(1){
-    z-index: 1000002 !important;
-}
+
+
+
+
+/* screen guide css when screen is large */
+/* app-drawer.ytd-app[persistent] {
+    z-index: 2005;
+} */
+/* screen guide styles when the screen is small and the grey shaded screen appears */
+/* app-drawer.ytd-app:not([persistent]).ytd-app {
+    z-index: 2030;
+} */
+
+/* the top search bar css styles */
+/* #masthead-container.ytd-app {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 2020;
+    transform: translateY(0);
+    transition: transform 0.3s ease;
+} */
+
+/* the grey screen behind the playlist adding options css styles */
+/* body > iron-overlay-backdrop{
+    z-index: 2201;
+} */
