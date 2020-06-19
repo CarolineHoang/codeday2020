@@ -780,6 +780,7 @@ function showPopup(request, videoType ){//instigatorKeyword , title ){
     if (videoType == "player"){
         if (document.getElementsByClassName("ext-searchIndication")!= null  && document.getElementsByClassName("ext-searchIndication").length == 0  ){ //|| (document.getElementById("ext-styled-text")!= null && document.getElementById("ext-styled-text")== undefined)){
             if (document.getElementById("info-contents").querySelector("h1").firstChild.innerHTML.length > 0){
+                console.log("PLAYER PAUSE")
                 deletePopup() //if going from a blocked video to another one, this must be done to prevent them from stacking
                 document.getElementById("info-contents").querySelector("h1").firstChild.innerHTML = styleSearchString( /*titleVal*/ request.title , request.instigatorKeyword )  
                 // alert("ADDING title")
@@ -787,6 +788,8 @@ function showPopup(request, videoType ){//instigatorKeyword , title ){
         }
     }
     else if ("miniplayer"){
+        console.log("MINIPLAYER PAUSE")
+        deletePopup() 
         document.querySelector("#info-bar > div.metadata.style-scope.ytd-miniplayer > h1 > a > yt-formatted-string").innerHTML =styleSearchString( /*titleVal*/ request.title , request.instigatorKeyword )
     }
 
