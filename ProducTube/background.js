@@ -2,7 +2,7 @@
 chrome.runtime.onInstalled.addListener(function(details){
     console.log("previousVersion:" ,details.previousVersion)
     //set the dafault values for the empty Map object// scratch that, can't use a map object
-    chrome.storage.sync.set({
+    chrome.storage.local.set({
         //default mode to PRODUCTIVITY for testing
         "mode": "PRODUCTIVITY", //"LEISURE", 
         "keywords": {   
@@ -10,42 +10,42 @@ chrome.runtime.onInstalled.addListener(function(details){
                                     "total_freq": 10000000,
                                     "session_freq": 0,
                                     "first_occur": Date.now(),
-                                    "lastest_occur": null,
+                                    "latest_occur": null,
                                     "wordID":0
                                     },
                         "HAMILTON":{
                                     "total_freq": 7,
                                     "session_freq": 0,
                                     "first_occur": Date.now(),
-                                    "lastest_occur": null,
+                                    "latest_occur": null,
                                     "wordID":0
                                     },
                         "IUBLOIYBLIBYLIYBIYLI;UTBILTUBI7LRTVFILRTBIVTIKVTLTIUBLOIYBLIBYLIYBIYLI;UTBILTUBI7LRTVFILRTBIVTIKVTLT":{
                                     "total_freq": 60,
                                     "session_freq": 0,
                                     "first_occur": Date.now(),
-                                    "lastest_occur": null,
+                                    "latest_occur": null,
                                     "wordID":1
                                     },
                         "SUPERCALIFRAGILISTICEXPIALIDOCIOUS":{
                                     "total_freq": 50,
                                     "session_freq": 0,
                                     "first_occur": Date.now(),
-                                    "lastest_occur": null,
+                                    "latest_occur": null,
                                     "wordID":1
                                     },
                         "PNEUMONOULTRAMICROSCOPICSILICOVOLCANOCONIOSIS":{
                                     "total_freq": 55,
                                     "session_freq": 0,
                                     "first_occur": Date.now(),
-                                    "lastest_occur": null,
+                                    "latest_occur": null,
                                     "wordID":1
                                     },
                         "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW":{
                                     "total_freq": 100,
                                     "session_freq": 0,
                                     "first_occur": Date.now(),
-                                    "lastest_occur": null,
+                                    "latest_occur": null,
                                     "wordID":1
                                     },
 
@@ -53,7 +53,7 @@ chrome.runtime.onInstalled.addListener(function(details){
                                     "total_freq": 1,
                                     "session_freq": 0,
                                     "first_occur": Date.now(),
-                                    "lastest_occur": null,
+                                    "latest_occur": null,
                                     "wordID":1
                                     },
 
@@ -61,7 +61,7 @@ chrome.runtime.onInstalled.addListener(function(details){
                                     "total_freq": 1,
                                     "session_freq": 0,
                                     "first_occur": Date.now(),
-                                    "lastest_occur": null,
+                                    "latest_occur": null,
                                     "wordID":1
                                     },
 
@@ -69,21 +69,21 @@ chrome.runtime.onInstalled.addListener(function(details){
                                     "total_freq": 1,
                                     "session_freq": 0,
                                     "first_occur": Date.now(),
-                                    "lastest_occur": null,
+                                    "latest_occur": null,
                                     "wordID":1
                                     },
                         "POP":{
                                     "total_freq": 1,
                                     "session_freq": 0,
                                     "first_occur": Date.now(),
-                                    "lastest_occur": null,
+                                    "latest_occur": null,
                                     "wordID":1
                                     },
                         "TO":{
                                     "total_freq": 1,
                                     "session_freq": 0,
                                     "first_occur": Date.now(),
-                                    "lastest_occur": null,
+                                    "latest_occur": null,
                                     "wordID":1
                                     },
         },
@@ -92,42 +92,42 @@ chrome.runtime.onInstalled.addListener(function(details){
                         //             "total_freq": 10000000,
                         //             "session_freq": 10000000,
                         //             "first_occur": Date.now(),
-                        //             "lastest_occur": null,
+                        //             "latest_occur": null,
                         //             "wordID":0
                         //             },
                         // "HAMILTON":{
                         //             "total_freq": 7,
                         //             "session_freq": 7,
                         //             "first_occur": Date.now(),
-                        //             "lastest_occur": null,
+                        //             "latest_occur": null,
                         //             "wordID":0
                         //             },
                         // "IUBLOIYBLIBYLIYBIYLI;UTBILTUBI7LRTVFILRTBIVTIKVTLTIUBLOIYBLIBYLIYBIYLI;UTBILTUBI7LRTVFILRTBIVTIKVTLT":{
                         //             "total_freq": 60,
                         //             "session_freq": 60,
                         //             "first_occur": Date.now(),
-                        //             "lastest_occur": null,
+                        //             "latest_occur": null,
                         //             "wordID":1
                         //             },
                         // "SUPERCALIFRAGILISTICEXPIALIDOCIOUS":{
                         //             "total_freq": 50,
                         //             "session_freq": 50,
                         //             "first_occur": Date.now(),
-                        //             "lastest_occur": null,
+                        //             "latest_occur": null,
                         //             "wordID":1
                         //             },
                         // "PNEUMONOULTRAMICROSCOPICSILICOVOLCANOCONIOSIS":{
                         //             "total_freq": 55,
                         //             "session_freq": 55,
                         //             "first_occur": Date.now(),
-                        //             "lastest_occur": null,
+                        //             "latest_occur": null,
                         //             "wordID":1
                         //             },
                         // "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW":{
                         //             "total_freq": 100,
                         //             "session_freq": 0,
                         //             "first_occur": Date.now(),
-                        //             "lastest_occur": null,
+                        //             "latest_occur": null,
                         //             "wordID":1
                         //             },
 
@@ -135,21 +135,21 @@ chrome.runtime.onInstalled.addListener(function(details){
                         //             "total_freq": 1,
                         //             "session_freq": 1,
                         //             "first_occur": Date.now(),
-                        //             "lastest_occur": null,
+                        //             "latest_occur": null,
                         //             "wordID":1
                         //             },
                         // "POP":{
                         //             "total_freq": 1,
                         //             "session_freq": 1,
                         //             "first_occur": Date.now(),
-                        //             "lastest_occur": null,
+                        //             "latest_occur": null,
                         //             "wordID":1
                         //             },
                         // "TO":{
                         //             "total_freq": 1,
                         //             "session_freq": 1,
                         //             "first_occur": Date.now(),
-                        //             "lastest_occur": null,
+                        //             "latest_occur": null,
                         //             "wordID":1
                         //             },
         },
@@ -175,7 +175,7 @@ const notVideoRegex = /.*\/\/.*youtube.com\/(?!watch).*/
 //rendering listeners___________________________________________________________________________________________________
 
 // chrome.webNavigation.onHistoryStateUpdated.addListener(function(details) { 
-//     chrome.storage.sync.get(['keywords', 'session_keywords' , 'max_wordID', 'session_block', 'last_video', 'mode' ], function(result) {
+//     chrome.storage.local.get(['keywords', 'session_keywords' , 'max_wordID', 'session_block', 'last_video', 'mode' ], function(result) {
     
 
 //     console.log("NAV DATA:" , details)
@@ -492,13 +492,15 @@ chrome.runtime.onMessage.addListener( function (request, sender, sendResponse ){
     }
     //This is an important function since we're saving changes to storage in background and changes are immediate (saving from content scripts require for you to wait until the page is reloaded or changed)
     if (request.message == "save_keys"){
-        chrome.storage.sync.set(request.user_changes, function() {
+        chrome.storage.local.set(request.user_changes, function() {
             console.log("USER CHANGES", request.user_changes)
 
-            chrome.storage.sync.get("last_video", function(request){
+            chrome.storage.local.get("last_video", function(request){
                 console.log("Last video", request.last_video)
             })
         });
+        //must send SOME kind of response or else you will get an "Unchecked runtime.lastError: The message port closed before a response was received." error
+        sendResponse({"message": "success"})
     }
     //This responds to the popup return button to go to the last page you were on in history
     if (request.message == "GO_BACK"){
@@ -524,13 +526,14 @@ chrome.runtime.onMessage.addListener( function (request, sender, sendResponse ){
         //     case "STOP_TIMER":
         //         break;
         // }
+        // return true
 })
 
 chrome.alarms.onAlarm.addListener(function( alarm ) {
     // alert("you got an alarm")
     console.log("Got an alarm!", alarm);
     if(alarm.name == "PRODUCTIVITY_MODE"){
-        chrome.storage.sync.set({'mode':'LEISURE'}, function() {
+        chrome.storage.local.set({'mode':'LEISURE'}, function() {
             console.log('Alarm is firing! ');
         });
     }
@@ -548,7 +551,7 @@ function checkTitle( tabID, currUrl ){
             if (res && res.vidTitle){
                                 
               
-                chrome.storage.sync.get(['keywords', 'session_keywords' , 'max_wordID', 'session_block', 'last_video', 'mode' ], function(result) {
+                chrome.storage.local.get(['keywords', 'session_keywords' , 'max_wordID', 'session_block', 'last_video', 'mode' ], function(result) {
                     var string = ''
                     // var re = /(^\(\d*\)\s(.*)\s-\sYouTube$|^\(\d*\)\s(.*)$|^(.*)\s-\sYouTube$|^(.*)$)/
                     var re = /(^\(\d*\)\s([\s\S]*)\s-\sYouTube$|^\(\d*\)\s([\s\S]*)$|^([\s\S]*)\s-\sYouTube$|^([\s\S]*)$)/
@@ -642,14 +645,14 @@ function checkTitle( tabID, currUrl ){
                                     console.log("STORAGEKEY freq:", term, storageKeys[term])
                                     storageKeys[term].total_freq++
                                     storageKeys[term].session_freq++
-                                    storageKeys[term].lastest_occur = currDateTime
+                                    storageKeys[term].latest_occur = currDateTime
                                     if (!(term in sessionStorageKeys)){
                                         console.log("THIS TERM IS NOT IN SSKEYS:", term, sessionStorageKeys[term])
                                         sessionStorageKeys[term] = {
                                             "total_freq": storageKeys[term].total_freq,
                                             "session_freq": 1,
                                             "first_occur": storageKeys[term].first_occur,
-                                            "lastest_occur": currDateTime,
+                                            "latest_occur": currDateTime,
                                             "wordID": storageKeys[term].max_wordID
                                         }
                                         isFirstSessionOccur =true
@@ -679,7 +682,7 @@ function checkTitle( tabID, currUrl ){
                                 console.log("SESSIONSTORAGEKEY freq:", term, sessionStorageKeys[term])
                                 sessionStorageKeys[term].total_freq++
                                 sessionStorageKeys[term].session_freq++
-                                sessionStorageKeys[term].lastest_occur = currDateTime
+                                sessionStorageKeys[term].latest_occur = currDateTime
 
                                 console.log("SESSIONSTORAGEKEY freq incr:", term, sessionStorageKeys[term])
                             }
@@ -689,13 +692,13 @@ function checkTitle( tabID, currUrl ){
                                         "total_freq": 1,
                                         "session_freq": 1,
                                         "first_occur": currDateTime,
-                                        "lastest_occur": null,
+                                        "latest_occur": null,
                                         "wordID": new_max_wordID++
                                 }
                                 console.log("NEW SESSIONSTORAGEKEY freq:", term, sessionStorageKeys[term])
                             }
                         });
-                        chrome.storage.sync.set({'keywords': storageKeys, 'session_keywords': sessionStorageKeys , 'max_wordID': new_max_wordID, 'last_video': {'url': currUrl, 'toggle-cleared': false}, 'session_block': block_sites}, function() {
+                        chrome.storage.local.set({'keywords': storageKeys, 'session_keywords': sessionStorageKeys , 'max_wordID': new_max_wordID, 'last_video': {'url': currUrl, 'toggle-cleared': false}, 'session_block': block_sites}, function() {
                             console.log('Values changed to 1: ' , storageKeys);
                             console.log('Values changed to 2: ' , sessionStorageKeys);
                             console.log('Values changed to 3: ' , new_max_wordID);
@@ -716,7 +719,7 @@ function checkTitle( tabID, currUrl ){
 
 function pauseVideo( tabID, url, instigatorKeyword = [] , title ){
     // alert("arriced at pause function")
-    chrome.storage.sync.get(['session_block', 'popup_activated','keywords'], function(result) {
+    chrome.storage.local.get(['session_block', 'popup_activated','keywords'], function(result) {
         console.log("returned True!", url, result.session_block)
         // console.log(url, result.session_block)
         // console.log("returned True!", url, result.session_block)
@@ -737,7 +740,7 @@ function pauseVideo( tabID, url, instigatorKeyword = [] , title ){
                     {"message": "show_popup" , 'instigatorKeyword': instigatorKeyword , 'title': title }, function(res){
                     console.log("popup! 1")
                     console.log("THESE ARE THE PARTIALLY AVAILABLE KEYWORDS:",result.keywords )
-                    chrome.storage.sync.set({'popup_activated': true}, function() {
+                    chrome.storage.local.set({'popup_activated': true}, function() {
                     });
                     // alert("video is paused")
                 });
@@ -748,7 +751,7 @@ function pauseVideo( tabID, url, instigatorKeyword = [] , title ){
 }
 
 function resetPopup(){
-    chrome.storage.sync.set({'popup_activated': false}, function() {
+    chrome.storage.local.set({'popup_activated': false}, function() {
     });
 }
 

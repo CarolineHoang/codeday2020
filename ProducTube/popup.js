@@ -3,28 +3,67 @@
 // VARIABLES AND CONSTANTS _____________________________________________________________________________________________
 
 var keyStoreVals = ['keywords', 'session_keywords' , 'max_wordID', 'session_block' ]
+const FREQ_COUNT_CAP =1000000
+
+
+var lastDeletedKeywordObj = {"lastKey":null, "lastKeyInfo":null , "lastKeyStorageType":null}
+
+
+deletedKeywords= {   
+    "MUSICAL":[{
+                "total_freq": 10000000,
+                "session_freq": 0,
+                "first_occur": Date.now(),
+                "latest_occur": null,
+                "wordID":0
+                }, "NoNoWord"]
+}
 
 
 // MAIN RENDERING FUNCTION _____________________________________________________________________________________________
 document.addEventListener('DOMContentLoaded', function(){
     
     //flip the check box depending on the current mode // default initialization should be leisure
-    chrome.storage.sync.get( ['mode'], function(val) {
+    chrome.storage.local.get( ['mode'], function(val) {
         var currMode = val.mode
+        var dad = document.getElementById("focusSwitch").parentElement
+        
         console.log("WHAT IS THE CURRENT STATE? ", currMode )
         if (currMode == "PRODUCTIVITY"){
-            $("#focusSwitch").prop( "checked", true );
-            var dad = $("#focusSwitch").parent()
-            dad.addClass('switch3-checked');
+            // setTimeout(function() { document.getElementById("focusSwitch").checked = true; }, 0)
+            document.getElementById("focusSwitch").checked = true
+            // $("#focusSwitch").prop( "checked", true );
+            // var dad = $("#focusSwitch").parent()
+            // dad.classList.remove('switch3-checked')
+            // dad.offsetHeight
+            dad.classList.add('switch3-checked')
+            // dad.addClass('switch3-checked');
         }
         else{
-            $("#focusSwitch").prop( "checked", false);
-            var dad = $("#focusSwitch").parent()
-            dad.removeClass('switch3-checked');
+            // $("#focusSwitch").prop( "checked", false);
+            document.getElementById("focusSwitch").checked = false
+            // var dad = document.getElementById("focusSwitch").parentElement
+            dad.classList.remove('switch3-checked')
+            // var dad = $("#focusSwitch").parent()
+            // dad.removeClass('switch3-checked');
         }
     });
     
     show_list()
+            // show_list(function(){
+            //     //hide the blocks right after we intially render them to determine if a value can be scrolled (may need to be a callback, but I'll write this sequentially for now)
+            //     var blocks = document.querySelectorAll(".middleBlock")
+            //     console.log(blocks)
+            //     blocks.forEach(function(block){
+            //         if (block.id != "introBlock"){
+            //             block.style.display = "none"
+            //             block.style.visibility = "visible"
+            //         }  
+            //     })
+            // })
+   
+
+
 
     //put a listener on every button on the popup
     articles = document.getElementsByTagName('button');
@@ -66,7 +105,7 @@ document.addEventListener('DOMContentLoaded', function(){
                         console.log("PRODUCTIVE TIME NEW SESSION")
                         // alert("success")
                     } )
-                    // chrome.storage.sync.set({'mode':'PRODUCTIVITY'}, function() {
+                    // chrome.storage.local.set({'mode':'PRODUCTIVITY'}, function() {
                     //     // console.log('Value is set to ' + value);
                     // });
                     //this 1) sets the alarm and 2) changes the storage value for whether we're in productivity mode or not to true (value used for reference if we will pause video )
@@ -79,7 +118,7 @@ document.addEventListener('DOMContentLoaded', function(){
                         console.log("LEISURE TIME")
                         // alert("success")
                     } )
-                    // chrome.storage.sync.set({'mode':'LEISURE'}, function() {
+                    // chrome.storage.local.set({'mode':'LEISURE'}, function() {
                     //     // console.log('Value is set to ' + value);
                     // });
                     //this 1) clears ALL alarms (not refined further rn) and 2) changes the storage value for whether we're in productivity mode or not to false (value used for reference if we will pause video )
@@ -115,15 +154,22 @@ document.getElementById("closingButton").addEventListener('click',function(){
 
         //CONVERT TO JAVASCRIPT LATER:
 
-        if ($("#keywordSummaryWrapper").hasClass('animateOut')){
+        // if ($("#keywordSummaryWrapper").hasClass('animateOut')){
+        if (footerMenu.classList.contains('animateOut')){
             // styleOverflowScrollable(footerMenuInfo, "keywordSummary-s")
-            $("#keywordSummaryWrapper").removeClass('animateOut');
-            $("#keywordSummaryWrapper").addClass('animateIn');
-            console.log("ANIMATE IN")
+            footerMenu.classList.remove('animateOut')
+            footerMenu.classList.add('animateIn')
 
-            if (footerMenuSpacer!= null && (footerMenuSpacer.style.display == "" || footerMenuSpacer.style.display == "none")){
+            // $("#keywordSummaryWrapper").removeClass('animateOut');
+            // $("#keywordSummaryWrapper").addClass('animateIn');
+            console.log("ANIMATE IN")
+            if ( footerMenuSpacer!= null && footerMenuSpacer.classList.contains("blankFooterSpaceCollapse")){
+            // if (footerMenuSpacer!= null && (footerMenuSpacer.style.display == "" || footerMenuSpacer.style.display == "none")){
                 console.log("IT'S NONE!!!")
-                footerMenuSpacer.style.display = "block"   
+                // footerMenuSpacer.style.display = "block"  
+                footerMenuSpacer.classList.remove("blankFooterSpaceCollapse") 
+                footerMenuSpacer.classList.add("blankFooterSpaceExpand") 
+                
             }
             if (document.getElementById("cheveron").classList.contains("cheveronFlip")){
                 document.getElementById("cheveron").classList.remove("cheveronFlip")
@@ -134,14 +180,20 @@ document.getElementById("closingButton").addEventListener('click',function(){
                 console.log("ADDING CHEVERON")
             }
         }
-        else if ($("#keywordSummaryWrapper").hasClass('animateIn')){
-            $("#keywordSummaryWrapper").removeClass('animateIn');
-            $("#keywordSummaryWrapper").addClass('animateOut');
-            console.log("ANIMATE OUT")
-
-            if (footerMenuSpacer!= null && ( footerMenuSpacer.style.display == "block")){
+        // else if ($("#keywordSummaryWrapper").hasClass('animateIn')){
+        //     $("#keywordSummaryWrapper").removeClass('animateIn');
+        //     $("#keywordSummaryWrapper").addClass('animateOut');
+        //     console.log("ANIMATE OUT")
+        else if (footerMenu.classList.contains('animateIn')){
+            // styleOverflowScrollable(footerMenuInfo, "keywordSummary-s")
+            footerMenu.classList.remove('animateIn')
+            footerMenu.classList.add('animateOut')
+            if ( footerMenuSpacer!= null && footerMenuSpacer.classList.contains("blankFooterSpaceExpand")){
+            // if (footerMenuSpacer!= null && ( footerMenuSpacer.style.display == "block")){
                 console.log("IT'S NONE!!!")
-                footerMenuSpacer.style.display = "none"   
+                // footerMenuSpacer.style.display = "none"   
+                footerMenuSpacer.classList.remove("blankFooterSpaceExpand")
+                footerMenuSpacer.classList.add("blankFooterSpaceCollapse")
             }
             if (document.getElementById("cheveron").classList.contains("cheveronFlip")){
                 document.getElementById("cheveron").classList.remove("cheveronFlip")
@@ -157,24 +209,63 @@ document.getElementById("closingButton").addEventListener('click',function(){
 
 //SWITCH TO MANUALLY TURN PRODUCTIVITY MODE ON AND OFF
 // found on a Codepen by Joel César (sweet switch!)
-$('.switch3 input').on('change', function(){
-    var dad = $(this).parent();
-    if($(this).is(':checked')){
-        dad.addClass('switch3-checked');
-        chrome.storage.sync.get( ['last_video'], function(val) {
+document.querySelector('.switch3 input').addEventListener('change', function(){
+    var dad = this.parentElement;
+    if(this.checked == true){
+        dad.classList.add('switch3-checked')
+        chrome.storage.local.get( ['last_video'], function(val) {
             console.log(val.last_video.url, val.last_video)
             chrome.runtime.sendMessage({"message": "save_keys", "user_changes": {'mode':'PRODUCTIVITY', "session_keywords": {}, "session_block": {} , 'last_video': { 'url': val.last_video.url  , 'toggle-cleared': true}}} , function(){
                 console.log("PRODUCTIVE TIME NEW SESSION")
+                //if necessary we can reload the page but it seems like a systme that's working fine shouldn't have this issue
+                //location.reload()
             } )
         })
     }
     else{
-        dad.removeClass('switch3-checked');
+        dad.classList.remove('switch3-checked')
         chrome.runtime.sendMessage({"message": "save_keys", "user_changes": {'mode':'LEISURE'}} , function(){
             console.log("LEISURE TIME")
         } )
     }
   });
+// $('.switch3 input').on('change', function(){
+//     var dad = $(this).parent();
+//     if($(this).is(':checked')){
+//         dad.classList.add('switch3-checked')
+//         chrome.storage.local.get( ['last_video'], function(val) {
+//             console.log(val.last_video.url, val.last_video)
+//             chrome.runtime.sendMessage({"message": "save_keys", "user_changes": {'mode':'PRODUCTIVITY', "session_keywords": {}, "session_block": {} , 'last_video': { 'url': val.last_video.url  , 'toggle-cleared': true}}} , function(){
+//                 console.log("PRODUCTIVE TIME NEW SESSION")
+//             } )
+//         })
+//     }
+//     else{
+//         dad.classList.remove('switch3-checked')
+//         chrome.runtime.sendMessage({"message": "save_keys", "user_changes": {'mode':'LEISURE'}} , function(){
+//             console.log("LEISURE TIME")
+//         } )
+//     }
+//   });
+
+//   $('.switch3 input').on('change', function(){
+//     var dad = $(this).parent();
+//     if($(this).is(':checked')){
+//         dad.addClass('switch3-checked');
+//         chrome.storage.local.get( ['last_video'], function(val) {
+//             console.log(val.last_video.url, val.last_video)
+//             chrome.runtime.sendMessage({"message": "save_keys", "user_changes": {'mode':'PRODUCTIVITY', "session_keywords": {}, "session_block": {} , 'last_video': { 'url': val.last_video.url  , 'toggle-cleared': true}}} , function(){
+//                 console.log("PRODUCTIVE TIME NEW SESSION")
+//             } )
+//         })
+//     }
+//     else{
+//         dad.removeClass('switch3-checked');
+//         chrome.runtime.sendMessage({"message": "save_keys", "user_changes": {'mode':'LEISURE'}} , function(){
+//             console.log("LEISURE TIME")
+//         } )
+//     }
+//   });
 
 // SUBMIT INPUT FOR KEYWORD IF ENTER IS PRESSED IN INPUT FIELD
 document.addEventListener('keypress', function (e) {
@@ -184,42 +275,87 @@ document.addEventListener('keypress', function (e) {
 })
 
 
+    // document.getElementById("restoreLastDeletedButton").addEventListener('click',function(){
+    //     restoreKeyword( addUI )
+        // var restoredUISpec = restoreKeyword()
+        // console.log(restoredUISpec)
+        // if (restoredUISpec != []){
+        //     addUI(restoredUISpec[0], restoredUISpec[1], restoredUISpec[2],restoredUISpec[3])
+        // }
+        
+    // })
+
 // HELPER FUNCTIONS ____________________________________________________________________________________________________
 
 /*Toggle Content and Navbar Color Changing Code*/
 //THIS SHOULD BE CONVERTED TO PURE JAVASCRIPT LATER
 var display = function(block_name, title) {
     // Toogle Middle Block Content 
-    $('.middleBlock').css('display', 'none');
-    $('.middleBlock').css('visibility', 'visible');
+    var blocks = document.querySelectorAll(".middleBlock")
+    console.log(blocks)
+    blocks.forEach(function(block){
+        block.style.display = "none"
+        block.style.visibility = "visible"
+    })
+    // document.getElementById(block_name).style.display="block"
+    document.getElementById(block_name).style.display="flex"
+    // $('.middleBlock').css('display', 'none');
+    // $('.middleBlock').css('visibility', 'visible');
     
-    $('#' + block_name + '').css('display', 'block');
+    // $('#' + block_name + '').css('display', 'block');
   
   }
   
-  $('#timer').on('click', function() {
-    display('timeBlock', $(this));
-  });
-  
-  $('#list').on('click', function() {
-    display('listBlock', $(this));
-  });
-  
-  $('#freq').on('click', function() {
-    display('freqBlock', $(this));
+  document.getElementById('timer').addEventListener('click', function() {
+    display('timeBlock', this);
+    hideObj("added_warning")
   });
 
-    $('.navButtons').click(function(e){
-        console.log("clicking navs")
-    $('.navButtons').removeClass("color_change")
-    $(this).addClass("color_change")
-});
+  document.getElementById('list').addEventListener('click', function() {
+    display('listBlock', this);
+    hideObj("added_warning")
+  });
+
+  document.getElementById('freq').addEventListener('click', function() {
+    display('freqBlock', this);
+    hideObj("added_warning")
+  });
+
+//   $('#timer').on('click', function() {
+//     display('timeBlock', $(this));
+//   });
+  
+//   $('#list').on('click', function() {
+//     display('listBlock', $(this));
+//   });
+  
+//   $('#freq').on('click', function() {
+//     display('freqBlock', $(this));
+//   });
+
+var navButtons = document.querySelectorAll(".navButtons")
+console.log("navbuttons:" ,navButtons)
+navButtons.forEach(function(nb){
+    nb.addEventListener('click', function(e) {
+        var navButtonsReset = document.querySelectorAll(".navButtons")
+        navButtonsReset.forEach(function(nbr){
+            nbr.classList.remove("color_change")
+        })
+        this.classList.add("color_change")
+    })
+   
+})
+//     $('.navButtons').click(function(e){
+//         console.log("clicking navs")
+//     $('.navButtons').removeClass("color_change")
+//     $(this).addClass("color_change")
+// });
 
 //RENDER BOTH THE NONO LIST AND MOST FREQUENT LIST
-function show_list(){
+function show_list(/*callback = null , */ oneList = null ){
     var list = document.getElementById("keys-list");
     var freq_list = document.getElementById("freq-list");
-    chrome.storage.sync.get( keyStoreVals, function(val) {
+    chrome.storage.local.get( keyStoreVals, function(val) {
         var storageKeys = val.keywords; 
         var sessionStorageKeys = val.session_keywords;
         var x = val.keywords.length; 
@@ -228,28 +364,59 @@ function show_list(){
 
         var sortedStorageKeysArr = sortByNonDecreasingFreq(storageKeys, "TOTAL")
         var sortedSessionStorageKeysArr = sortByNonDecreasingFreq(sessionStorageKeys, "SESSION")
-        for (index = 0; index < sortedStorageKeysArr.length; index++) { 
-        // for(let term in storageKeys){
-            term = sortedStorageKeysArr[index][0]
-            console.log("Keyword: " + term)
-            addUI(list, term, storageKeys[term], "NoNoWord")
+
+        var finishedCounter = 0
+
+        if (oneList == null || oneList == "NoNoWord" ){
+            // list.innerHTML = ""
+            removeAllChildNodes(list)
+            for (index = 0; index < sortedStorageKeysArr.length; index++) { 
+                // for(let term in storageKeys){
+                    term = sortedStorageKeysArr[index][0]
+                    console.log("Keyword: " + term)
+                    addUI(list, term, storageKeys[term], "NoNoWord" )
+                    if (index+1 == sortedStorageKeysArr.length){
+                        finishedCounter++
+                    }
+                }
         }
-        for (index = 0; index < sortedSessionStorageKeysArr.length; index++) { 
-            term = sortedSessionStorageKeysArr[index][0]
-            console.log("Keyword: " + term)
-            addUI(freq_list, term, sessionStorageKeys[term], "FrequentWord")
-            
+        if (oneList == null || oneList == "FrequentWord" ){
+            console.log("freq_list refresh!")
+            // freq_list.innerHTML = ""
+            removeAllChildNodes(freq_list)
+            for (index = 0; index < sortedSessionStorageKeysArr.length; index++) { 
+                term = sortedSessionStorageKeysArr[index][0]
+                console.log("Keyword: " + term)
+                addUI(freq_list, term, sessionStorageKeys[term], "FrequentWord")
+                if (index+1 == sortedStorageKeysArr.length){
+                    finishedCounter++
+                }
+            } 
         }
+
+        // if (callback && finishedCounter == 2){
+            // return callback()
+        // }
     });
   
 }
+
+
+// FUNCTION TO REMOVE ALL NODES FROM A DOM OBJECT WITHOUT USING innerHTML and getting a memory leak from not clearing the event handlers on the children
+// e.g. each keyword has click events whose reference will be orphaned if we use innerHTMl = "" on the list
+function removeAllChildNodes(parent) {
+    while (parent.firstChild) {
+        parent.removeChild(parent.firstChild);
+    }
+}
+
 
 //DECIDE ON THE TYPE AND ASPECTS OF A KEYWORD TO RENDER
 function addUI(ul, value, keywordInfo, keywordType ) {
 
     //might be a smart idea to make this quicker by changing the divs when you click the button instead of load the whole thing in on condition
     if (keywordInfo!= undefined){
-        chrome.storage.sync.get( keyStoreVals, function(val) {
+        chrome.storage.local.get( keyStoreVals, function(val) {
             var storageKeys = val.keywords
         var freqType = null;
         var closeClassType = null;
@@ -260,7 +427,8 @@ function addUI(ul, value, keywordInfo, keywordType ) {
         else if ( keywordType=="FrequentWord" ){
             freqType="session_freq"
             if (value in storageKeys){
-                closeClassType = "close"
+                // closeClassType = "close"
+                closeClassType = "close-added" //we're not adding any buttons if it's been added before
             }
             else{
                 closeClassType = "close-freq"
@@ -324,13 +492,13 @@ function addUI(ul, value, keywordInfo, keywordType ) {
                                 //         }
 
                                 //         // var div = this.parentElement
-                                //         // chrome.storage.sync.get( keyStoreVals, function(val) {
+                                //         // chrome.storage.local.get( keyStoreVals, function(val) {
                                 //         //     var storageKeys = val.keywords
                                 //         //     var sessionStorageKeys = val.session_keywords
                                 //         //     var keyword = div.firstChild.firstChild.innerHTML
                                 //         //     storageKeys[keyword] = sessionStorageKeys[keyword]
                                 //         //     var list = document.getElementById("keys-list");
-                                //         //     chrome.storage.sync.set({'keywords': storageKeys, 'session_keywords': sessionStorageKeys }, function() {
+                                //         //     chrome.storage.local.set({'keywords': storageKeys, 'session_keywords': sessionStorageKeys }, function() {
                                 //         //     });
                                 //         //     addUI(list, keyword, storageKeys[keyword], "NoNoWord")
                                 //         // })
@@ -357,11 +525,17 @@ function addUIRender(ul, value, keywordInfo, keywordType, freqType, closeClassTy
     var li = document.createElement("li");
     li.classList.add("list-group-item")
 
+    // document.getElementById("myDIV").childElementCount
+
     var infoDiv = document.createElement("div");
     infoDiv.classList.add("info-container")
 
     li.appendChild(infoDiv);
     console.log("-------RENDERED2", keywordInfo[freqType])
+
+    var listNumDiv = document.createElement("div");
+    listNumDiv.classList.add("list-item-number")
+    listNumDiv.textContent =  "("+(ul.childElementCount+1)+")"
 
     var nameDiv = document.createElement("div");
     nameDiv.textContent = value
@@ -371,11 +545,23 @@ function addUIRender(ul, value, keywordInfo, keywordType, freqType, closeClassTy
         ul.appendChild(li);
     }
     var freqDiv = document.createElement("div");
-    freqDiv.textContent =  "("+keywordInfo[freqType]+")"
+    
+    //if we hit a cap, to not burst from the allocated space, just print a static number with a plus sign after it
+    console.log("freq num:", keywordInfo[freqType], parseInt(keywordInfo[freqType])<FREQ_COUNT_CAP)
+    if (parseInt(keywordInfo[freqType])<FREQ_COUNT_CAP){
+        freqDiv.textContent =  "("+keywordInfo[freqType]+")"
+    }
+    else{
+        freqDiv.textContent =  "("+(FREQ_COUNT_CAP-1)+"+"+")"
+    }
+    freqDiv.title = keywordInfo[freqType]
+    // freqDiv.textContent =  "("+keywordInfo[freqType]+")"
     freqDiv.classList.add("list-item-freq")
+    // freqDiv.classList.add("list-item-freq")
 
     //YOU MUST FIRST APPEND (AS SEEN BELOW) TO THE DOCUMENT TREE BEFORE TRYING TO FIND INFO ABOUT SIZE (ALSO IT MUST NOT BE DISPLAY NONE, VISIBILITY: HIDDEN WORKS, HOWEVER) 
     if (freqType in keywordInfo){
+        infoDiv.appendChild(listNumDiv)
         infoDiv.appendChild(nameDiv)
         infoDiv.appendChild(freqDiv)
 
@@ -403,36 +589,55 @@ function addUIRender(ul, value, keywordInfo, keywordType, freqType, closeClassTy
 
     var closeButton = document.createElement("SPAN");
     closeButton.title = "Delete \""+value+"\"";
+    var closeSpan = document.createElement("SPAN");
     var x_txt = document.createTextNode("\u00D7");
+    var plusSpan = document.createElement("SPAN");
     var plus_txt = document.createTextNode("+");
     
-    closeButton.classList.add(closeClassType);
-    closeButton.appendChild(x_txt);
-    li.appendChild(closeButton);
-    if ( closeClassType == "close-freq" ){
+    if (closeClassType == "close"){
+        closeButton.classList.add(closeClassType);
+        closeSpan.appendChild(x_txt);
+        closeSpan.classList.add("closeSpan");
+        closeButton.appendChild(closeSpan);
+        li.appendChild(closeButton);
+    }
+    
+    else if ( closeClassType == "close-freq" ){
+        // var addButton = document.createElement("SPAN");
+        // addButton.title = "Add to NoNoList"
+        // addButton.classList.add("add-freq");
+        // addButton.appendChild(plus_txt);
+        // li.appendChild(addButton);
         var addButton = document.createElement("SPAN");
         addButton.title = "Add to NoNoList"
-        addButton.classList.add("add-freq");
-        addButton.appendChild(plus_txt);
+        addButton.classList.add("add");
+        plusSpan.appendChild(plus_txt);
+        plusSpan.classList.add("plusSpan");
+        addButton.appendChild(plusSpan);
         li.appendChild(addButton);
+
         addButton.addEventListener('click', function(event){
             var div = this.parentElement;
             console.log("PARENT DIV: ", div , "CHILD:" ,this)
             //alternatively we can get rid of this removal and just apply a disable on the add button
             var prevKey = this.previousSibling
-            if(prevKey  && prevKey.classList.contains("close-freq") ){
-                prevKey.classList.remove("close-freq")
-                prevKey.classList.add("close")
-            }
+            // if(prevKey  && prevKey.classList.contains("close-freq") ){
+            //     prevKey.classList.remove("close-freq")
+            //     prevKey.classList.add("close")
+            // }
             this.remove()
             if (div){
-                var keyword = div.firstChild.firstChild.innerHTML
-                console.log( "PARENT VAL", div.firstChild.firstChild.innerHTML )
+                var keyword = div.querySelector(".list-item-name").innerHTML
+                // var keyword = div.firstChild.firstChild.innerHTML
+                console.log( "PARENT VAL", div.querySelector(".list-item-name").innerHTML )
                 var list = document.getElementById("keys-list");
-                addKeywords([keyword], list)
+                addKeywords([keyword], list, false)
             }
         },false);
     }
+    // var recoverDiv = document.createElement("div");
+    // recoverDiv.classList.add("list-item-recover");
+    // li.appendChild(recoverDiv);
 
     console.log("VALS5: " ,nameDiv.scrollHeight, nameDiv.clientHeight)
 
@@ -446,11 +651,34 @@ function addUIRender(ul, value, keywordInfo, keywordType, freqType, closeClassTy
     closeButton.addEventListener('click', function(event){
         var div = this.parentElement;
         console.log("PARENT DIV: ", div , "CHILD:" ,this)
-        this.remove()
+        // this.remove()
         if (div){
-            console.log( "PARENT VAL", div.firstChild.firstChild.innerHTML )
-            removeKeyword(div.firstChild.firstChild.innerHTML, keywordType)
-            div.remove()
+            console.log( "PARENT VAL", div.querySelector(".list-item-name").innerHTML )
+            removeKeyword(div.querySelector(".list-item-name").innerHTML, keywordType)
+            // div.remove()
+            var recoverDiv = document.createElement("div");
+            var undoDiv = document.createElement("div");
+            undoDiv.textContent = "undo delete"
+            undoDiv.setAttribute("key", div.querySelector(".list-item-name").innerHTML )
+            undoDiv.classList.add("list-item-recover-text")
+            recoverDiv.appendChild(undoDiv);
+            recoverDiv.title = div.querySelector(".list-item-name").innerHTML 
+            recoverDiv.classList.add("list-item-recover");
+            li.appendChild(recoverDiv);
+
+            undoDiv.addEventListener('click', function(event){
+                if (this.getAttribute("key") in  deletedKeywords){
+                    // this.remove()
+                    var div = this.parentElement;
+                    div.remove()
+                    restoreKeyword( this.getAttribute("key") , function(){show_list("FrequentWord") } )  
+                     
+                    // deletedKeywords[this.key][0]                                              /////////////////////
+
+                }
+                
+               
+            },false);
         }
     },false);
 
@@ -462,8 +690,8 @@ function addUIRender(ul, value, keywordInfo, keywordType, freqType, closeClassTy
         console.log(footerMenuInfo)
         var footerMenuSpacer = document.getElementById("blankFooterSpace")
 
-        console.log(event.currentTarget.firstChild)
-        fillKeywordInfo(event.currentTarget.firstChild, keywordType)
+        console.log(event.currentTarget.querySelector(".list-item-name") )
+        fillKeywordInfo(event.currentTarget.querySelector(".list-item-name"), keywordType)
 
         if (footerMenu!= null && (footerMenu.style.visibility == "" || footerMenu.style.visibility == "hidden")){
             footerMenu.style.visibility = "visible"
@@ -476,8 +704,14 @@ function addUIRender(ul, value, keywordInfo, keywordType, freqType, closeClassTy
                     document.getElementById("cheveron").classList.add("cheveronFlip")
                     console.log("ADDING CHEVERON FROM VAL")
                 }
-                if (footerMenuSpacer!= null && (footerMenuSpacer.style.display == "" || footerMenuSpacer.style.display == "none")){
-                    footerMenuSpacer.style.display = "block"   
+                // if (footerMenuSpacer!= null && (footerMenuSpacer.style.display == "" || footerMenuSpacer.style.display == "none")){
+                if ( footerMenuSpacer!= null && !footerMenuSpacer.classList.contains("blankFooterSpaceExpand")){
+                    if (footerMenuSpacer.classList.contains("blankFooterSpaceCollapse")){
+                        footerMenuSpacer.classList.remove("blankFooterSpaceCollapse")
+                    }
+                    footerMenuSpacer.classList.add("blankFooterSpaceExpand") 
+                    // footerMenuSpacer.style.display = "block"   
+                    // ul.classList.add("expand-list-padding-transition")
                 } 
             } 
         }
@@ -490,8 +724,13 @@ function addUIRender(ul, value, keywordInfo, keywordType, freqType, closeClassTy
                     document.getElementById("cheveron").classList.add("cheveronFlip")
                     console.log("ADDING CHEVERON FROM VAL")
                 }
-                if (footerMenuSpacer!= null && (footerMenuSpacer.style.display == "" || footerMenuSpacer.style.display == "none")){
-                    footerMenuSpacer.style.display = "block"   
+                if ( footerMenuSpacer!= null && !footerMenuSpacer.classList.contains("blankFooterSpaceExpand")){
+                // if (footerMenuSpacer!= null && (footerMenuSpacer.style.display == "" || footerMenuSpacer.style.display == "none")){
+                    // footerMenuSpacer.style.display = "block"  
+                    if (footerMenuSpacer.classList.contains("blankFooterSpaceCollapse")){
+                        footerMenuSpacer.classList.remove("blankFooterSpaceCollapse")
+                    }
+                    footerMenuSpacer.classList.add("blankFooterSpaceExpand")  
                 } 
             }
         }
@@ -499,21 +738,21 @@ function addUIRender(ul, value, keywordInfo, keywordType, freqType, closeClassTy
 }
 
 //ADD KEYWORDS TO CHROME STORAGE SYNC
-function addKeywords(kwList, list){
+function addKeywords(kwList, list, reloadFreqList = true /*, fromInput = false */ ){
 
-    chrome.storage.sync.get(['keywords', 'session_keywords', 'max_wordID' ], function(result) {
+    chrome.storage.local.get(['keywords', 'session_keywords', 'max_wordID' ], function(result) {
         var storageKeys = result.keywords
         var sessionStorageKeys = result.session_keywords
         var new_max_wordID = result.max_wordID
         console.log("kwList:", kwList, storageKeys)
         kwList.forEach(function(term){
             var currDateTime = Date.now()
-            if(!(term in storageKeys)){
+            if(!(term in storageKeys) && (!(term in deletedKeywords) || document.querySelectorAll('[key="'+term+'"]')[0] == undefined) ){
                 
                 if(!(term in sessionStorageKeys)){
                     storageKeys[term] ={
                         "first_occur": currDateTime,
-                        "lastest_occur": null,
+                        "latest_occur": null,
                         "session_freq": 1,
                         "total_freq": 1,
                         "wordID": new_max_wordID++
@@ -523,13 +762,48 @@ function addKeywords(kwList, list){
                 else{
                     storageKeys[term] ={
                         "first_occur": sessionStorageKeys[term].first_occur,
-                        "lastest_occur": sessionStorageKeys[term].lastest_occur,
+                        "latest_occur": sessionStorageKeys[term].latest_occur,
                         "session_freq": sessionStorageKeys[term].session_freq,
                         "total_freq": sessionStorageKeys[term].total_freq,
                         "wordID": sessionStorageKeys[term].wordID
                     }
                     addUI(list, term, storageKeys[term], "NoNoWord")
                 }
+                if (reloadFreqList){
+                    show_list("FrequentWord")
+                }
+                if ( term in deletedKeywords ){
+                    // restoreKeyword(term)
+                    delete deletedKeywords[term]
+                }
+                // if ( !(document.getElementById("added_warning").classList.contains("hide"))){
+                //     document.getElementById("added_warning").classList.add("hide")
+                // }
+                hideObj("added_warning")
+            }
+            else if (term in deletedKeywords && document.querySelectorAll('[key="'+term+'"]')[0] != undefined){
+                var div = document.querySelectorAll('[key="'+term+'"]')[0].parentElement;
+                div.remove()
+                if (reloadFreqList){
+                    restoreKeyword( term , function(){show_list("FrequentWord") } )  
+                }
+                else{
+                    restoreKeyword(term)
+                }
+                // if ( !(document.getElementById("added_warning").classList.contains("hide"))){
+                //     document.getElementById("added_warning").classList.add("hide")
+                // }
+                hideObj("added_warning")
+                // restoreKeyword(term)
+
+                // document.querySelectorAll('[key="'+term+'"]')[0].click()
+            }
+            else{
+                //note: at this moment, it should be impossible to accidentally add a keyword from freq-list that is already in the NoNoList so this should work with no condition on where a keyword add is triggered
+                // if (/* fromInput &&  */ document.getElementById("added_warning").classList.contains("hide")){
+                //     document.getElementById("added_warning").classList.remove("hide")
+                // }
+                showObj("added_warning")
             }
         });
         //this one will make the changes instant
@@ -537,26 +811,43 @@ function addKeywords(kwList, list){
             // alert("success")
         } )
         //this one will make all changes happen when the page refreshes or reloads
-        // chrome.storage.sync.set({ 'keywords': storageKeys, 'max_wordID': new_max_wordID }, function() {
+        // chrome.storage.local.set({ 'keywords': storageKeys, 'max_wordID': new_max_wordID }, function() {
         //     document.getElementById("text1").value = ''
         //     console.log("NEW ADDED VAL: " , storageKeys)
         // });
     });
 }
+function hideObj(id){
+    if ( !(document.getElementById(id).classList.contains("hide"))){
+        document.getElementById(id).classList.add("hide")
+    }
+}
+function showObj(id){
+    if (/* fromInput &&  */ document.getElementById(id).classList.contains("hide")){
+        document.getElementById(id).classList.remove("hide")
+    }
+}
 
 //REMOVE A DELETED KEYWORD FROM CHROME STORAGE SYNC
 function removeKeyword(kw, keywordType) {
-    chrome.storage.sync.get( keyStoreVals, function(val) {
+    chrome.storage.local.get( keyStoreVals, function(val) {
         var storageKeys = val.keywords; 
         var sessionStorageKeys = val.session_keywords;
         var x = val.keywords.length; 
         var new_max_wordID = val.max_wordID
         var block_sites = val.session_block
 
+
         if ( keywordType== "NoNoWord" && kw in storageKeys ){
+            //Add word info to lastDeletedKeywordObj for possible recovery
+            deletedKeywords[kw]=[ storageKeys[kw], keywordType ]
+            lastDeletedKeywordObj = {"lastKey":kw, "lastKeyInfo":storageKeys[kw], "lastKeyStorageType": keywordType}
             delete storageKeys[kw]
         }
         else if (keywordType== "FrequentWord" && kw in sessionStorageKeys){
+            //Add word info to lastDeletedKeywordObj for possible recovery
+            deletedKeywords[kw]=[ sessionStorageKeys[kw], keywordType ]
+            lastDeletedKeywordObj = {"lastKey":kw, "lastKeyInfo":sessionStorageKeys[kw], "lastKeyStorageType": keywordType}
             delete sessionStorageKeys[kw]
         }
 
@@ -576,13 +867,80 @@ function removeKeyword(kw, keywordType) {
         
 
         chrome.runtime.sendMessage({"message": "save_keys", "user_changes": { 'keywords': storageKeys, 'session_keywords': sessionStorageKeys, 'session_block': block_sites }} , function(){
+            if (keywordType== "NoNoWord"){
+                show_list("FrequentWord")
+            }
+            else if (keywordType== "FrequentWord"){
+                show_list("NoNoWord")
+            }
+            
             console.log("VALS LEFT AFTER DELETION: " , storageKeys)
         } ) 
     }); 
 }
 
+//RESTORE LAST DELETED KEYWORD TO CHROME STORAGE SYNC
+function restoreKeyword( kw , reAddCallback = null ) {
+    chrome.storage.local.get( keyStoreVals, function(val) {
+        var storageKeys = val.keywords; 
+        var sessionStorageKeys = val.session_keywords;
+        var x = val.keywords.length; 
+        var new_max_wordID = val.max_wordID
+        var block_sites = val.session_block
+
+        var listDiv = "keys-list"
+
+        if ( !(kw in storageKeys)  || !(kw in sessionStorageKeys) ){
+            if ((kw in deletedKeywords) ){
+                if (deletedKeywords[kw][1] == "NoNoWord"){
+                    storageKeys[kw] = deletedKeywords[kw][0]
+                }
+                else if (deletedKeywords[kw][1] == "FrequentWord"){
+                    sessionStorageKeys[kw] = deletedKeywords[kw][0]
+                }
+                chrome.runtime.sendMessage({"message": "save_keys", "user_changes": { 'keywords': storageKeys, 'session_keywords': sessionStorageKeys }} , function(){
+                    if (reAddCallback!= null){
+                        //refresh the other list to show updates
+                        reAddCallback()
+                    }
+                    delete deletedKeywords[kw]
+
+
+                    console.log("new array: " , [ document.getElementById(listDiv), lastDeletedKeywordObj.lastKey , lastDeletedKeywordObj.lastKeyInfo , lastDeletedKeywordObj.lastKeyStorageType  ])
+                    // return [document.getElementById(listDiv), lastDeletedKeywordObj.lastKey , lastDeletedKeywordObj.lastKeyInfo , lastDeletedKeywordObj.lastKeyStorageType  ]
+                    // reAddCallback(document.getElementById(listDiv), lastDeletedKeywordObj.lastKey , lastDeletedKeywordObj.lastKeyInfo , lastDeletedKeywordObj.lastKeyStorageType )
+                } ) 
+            }
+        }
+        // if (!(kw in storageKeys) ){
+
+        // }
+
+        // if ( lastDeletedKeywordObj.lastKey != null && lastDeletedKeywordObj.lastKeyInfo != null &&  lastDeletedKeywordObj.lastKeyStorageType != null &&  !(lastDeletedKeywordObj.lastKey in storageKeys) ){
+        //     if (lastDeletedKeywordObj.lastKeyStorageType == "NoNoWord"){
+        //         storageKeys[lastDeletedKeywordObj.lastKey] = lastDeletedKeywordObj.lastKeyInfo
+        //     }
+        //     else if (lastDeletedKeywordObj.lastKeyStorageType == "sessionStorageKeys"){
+        //         sessionStorageKeys[lastDeletedKeywordObj.lastKey] = lastDeletedKeywordObj.lastKeyInfo
+        //         listDiv = "freq-list"
+        //     }
+            
+        //     chrome.runtime.sendMessage({"message": "save_keys", "user_changes": { 'keywords': storageKeys, 'session_keywords': sessionStorageKeys }} , function(){
+
+        //         console.log("new array: " , [ document.getElementById(listDiv), lastDeletedKeywordObj.lastKey , lastDeletedKeywordObj.lastKeyInfo , lastDeletedKeywordObj.lastKeyStorageType  ])
+        //         // return [document.getElementById(listDiv), lastDeletedKeywordObj.lastKey , lastDeletedKeywordObj.lastKeyInfo , lastDeletedKeywordObj.lastKeyStorageType  ]
+        //         reAddCallback(document.getElementById(listDiv), lastDeletedKeywordObj.lastKey , lastDeletedKeywordObj.lastKeyInfo , lastDeletedKeywordObj.lastKeyStorageType )
+        //     } ) 
+        // }
+
+        // else{
+        //     return []
+        // }
+    }); 
+}
+
 //SORTING FUNCTION TO PRODUCE THE ORDER OF THE RENDERED LISTS FORM TOP TO BOTTOM
-function sortByNonDecreasingFreq(keysObject, freqType ){
+function sortByNonDecreasingFreq(keysObject, freqType , reverse = false ){
     console.log("in sorting function: " , keysObject)
     var fType = "total_freq" // defaults to total_freq sorting if nothing is given
     if (freqType == "SESSION"){
@@ -599,7 +957,34 @@ function sortByNonDecreasingFreq(keysObject, freqType ){
     sortable.sort(function(a, b) {
         console.log("SORTING: b=",b, "a=", a)
         // return b[1]-a[1]
-        return parseInt(b[1], 10 )-parseInt(a[1], 10 ); //parseInt does not default to base 10/ decimal so we must set the radix
+        return ( reverse ? parseInt( a[1], 10 )-parseInt( b[1], 10 )  :  parseInt( b[1], 10 )-parseInt( a[1], 10 ) ); //parseInt does not default to base 10/ decimal so we must set the radix
+    });
+    console.log("New array: ",sortable )
+
+    return sortable
+}
+
+//SORTING FUNCTION TO PRODUCE THE ORDER OF MOST RECENT LISTS FROM TOP TO BOTTOM (newest to oldest by default)
+// oldestFirst  = oldest to newest (T-B)
+// !oldestFirst = newest to oldest (T-B)
+function sortByDate(keysObject, dateType , oldestFirst = false ){
+    console.log("in sorting function: " , keysObject)
+    var dType = "latest_occur" // defaults to total_freq sorting if nothing is given
+    if (dateType == "CREATED"){
+        dType = "first_occur"
+    }
+    var keys = keysObject;
+    var sortable = [];
+
+    for (var term in keys) {
+        if(keys.hasOwnProperty(term)){
+            sortable.push([term, keys[term][dType ? dType : "first_occur"]]);
+        } 
+    }
+    sortable.sort(function(a, b) {
+        console.log("SORTING: b=",b, "a=", a)
+        // return b[1]-a[1]
+        return (oldestFirst ? a[1]-b[1] : b[1]-a[1]) //can subtract because they are date objects
     });
     console.log("New array: ",sortable )
 
@@ -609,7 +994,7 @@ function sortByNonDecreasingFreq(keysObject, freqType ){
 //PULL INFO ON A KEYWORD FROM CHROME STORAGE SYNC ON CLICK OF A OBJECT AND FILL THE KEYWORD SUMMARY OBJECT
 function fillKeywordInfo(clickedKeyword, keywordType ) {
 
-    chrome.storage.sync.get( keyStoreVals, function(val) {
+    chrome.storage.local.get( keyStoreVals, function(val) {
         var storageKeys = val.keywords; 
         var sessionStorageKeys = val.session_keywords;
         var x = val.keywords.length; 
@@ -627,8 +1012,8 @@ function fillKeywordInfo(clickedKeyword, keywordType ) {
         var currKeyword = clickedKeyword.innerHTML 
         var currKeywordDate = null;
         if (currKeyword in keys){
-            if (keys[currKeyword]["lastest_occur"] != null){
-                currKeywordDate = keys[currKeyword]["lastest_occur"]
+            if (keys[currKeyword]["latest_occur"] != null){
+                currKeywordDate = keys[currKeyword]["latest_occur"]
             }   
             else{
                 currKeywordDate = keys[currKeyword]["first_occur"]
@@ -655,7 +1040,7 @@ function fillKeywordInfo(clickedKeyword, keywordType ) {
 
 //this would be a general function but I don't want to mess with two types (callback true and false) of endless parameters so... not finishing for now
     // function inStorage( kw , storageType, callbackTrue, callbackFalse ){
-    //     chrome.storage.sync.get( keyStoreVals, function(val) {
+    //     chrome.storage.local.get( keyStoreVals, function(val) {
     //         var storageKeys = val.keywords
     //         var sessionStorageKeys = val.session_keywords
     //         var keys = null
